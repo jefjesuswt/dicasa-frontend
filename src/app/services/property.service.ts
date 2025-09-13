@@ -7,7 +7,7 @@ export type PropertyFilter = {
 };
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class PropertyService {
   private properties: Property[] = [
@@ -19,9 +19,10 @@ export class PropertyService {
       bedrooms: 2,
       bathrooms: 2,
       area: 1200,
-      image: 'https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=800&auto=format&fit=crop&q=60',
+      image:
+        'https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=800&auto=format&fit=crop&q=60',
       type: 'sale',
-      featured: true
+      featured: true,
     },
     {
       id: 2,
@@ -31,9 +32,10 @@ export class PropertyService {
       bedrooms: 4,
       bathrooms: 3.5,
       area: 2800,
-      image: 'https://images.unsplash.com/photo-1613490493576-7fde63acd811?w=800&auto=format&fit=crop&q=60',
+      image:
+        'https://images.unsplash.com/photo-1613490493576-7fde63acd811?w=800&auto=format&fit=crop&q=60',
       type: 'rent',
-      featured: true
+      featured: true,
     },
     {
       id: 3,
@@ -43,9 +45,10 @@ export class PropertyService {
       bedrooms: 1,
       bathrooms: 1,
       area: 650,
-      image: 'https://images.unsplash.com/photo-1502672260266-37c4ad445d69?w=800&auto=format&fit=crop&q=60',
+      image:
+        'https://images.unsplash.com/photo-1502672260266-37c4ad445d69?w=800&auto=format&fit=crop&q=60',
       type: 'rent',
-      featured: false
+      featured: false,
     },
     {
       id: 4,
@@ -55,9 +58,10 @@ export class PropertyService {
       bedrooms: 3,
       bathrooms: 2,
       area: 2100,
-      image: 'https://images.unsplash.com/photo-1580587771525-78b9dba3b914?w=800&auto=format&fit=crop&q=60',
+      image:
+        'https://images.unsplash.com/photo-1580587771525-78b9dba3b914?w=800&auto=format&fit=crop&q=60',
       type: 'sale',
-      featured: true
+      featured: true,
     },
     {
       id: 5,
@@ -67,9 +71,10 @@ export class PropertyService {
       bedrooms: 1,
       bathrooms: 1,
       area: 950,
-      image: 'https://images.unsplash.com/photo-1484154218962-a197def68984?w=800&auto=format&fit=crop&q=60',
+      image:
+        'https://images.unsplash.com/photo-1484154218962-a197def68984?w=800&auto=format&fit=crop&q=60',
       type: 'sale',
-      featured: false
+      featured: false,
     },
     {
       id: 6,
@@ -79,10 +84,11 @@ export class PropertyService {
       bedrooms: 3,
       bathrooms: 3.5,
       area: 2400,
-      image: 'https://images.unsplash.com/photo-1507089947368-19c1da9775ae?w=800&auto=format&fit=crop&q=60',
+      image:
+        'https://images.unsplash.com/photo-1507089947368-19c1da9775ae?w=800&auto=format&fit=crop&q=60',
       type: 'rent',
-      featured: true
-    }
+      featured: true,
+    },
   ];
 
   getPropertyTypes() {
@@ -93,13 +99,13 @@ export class PropertyService {
     let result = [...this.properties];
 
     if (filter.type && filter.type !== 'all') {
-      result = result.filter(property => property.type === filter.type);
+      result = result.filter((property) => property.type === filter.type);
     }
 
     if (filter.search) {
       const searchLower = filter.search.toLowerCase();
       result = result.filter(
-        property =>
+        (property) =>
           property.title.toLowerCase().includes(searchLower) ||
           property.location.toLowerCase().includes(searchLower)
       );
@@ -109,10 +115,10 @@ export class PropertyService {
   }
 
   getFeaturedProperties() {
-    return this.properties.filter(property => property.featured);
+    return this.properties.filter((property) => property.featured);
   }
 
   getPropertyById(id: number): Property | undefined {
-    return this.properties.find(property => property.id === id);
+    return this.properties.find((property) => property.id === id);
   }
 }

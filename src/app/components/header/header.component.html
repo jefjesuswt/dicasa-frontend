@@ -1,0 +1,44 @@
+<header class="bg-white shadow-md sticky top-0 z-10">
+    <nav class="container mx-auto px-4 py-4 flex flex-col md:flex-row justify-between items-center">
+      <div class="flex items-center mb-4 md:mb-0">
+        <a routerLink="/" class="text-2xl font-bold text-indigo-600">
+          DICASA
+        </a>
+      </div>
+      
+      <div class="flex flex-col md:flex-row space-y-2 md:space-y-0 md:space-x-6 items-center">
+        <a 
+          routerLink="/" 
+          routerLinkActive="text-indigo-600 font-medium" 
+          [routerLinkActiveOptions]="{exact: true}"
+          class="text-gray-700 hover:text-indigo-600 transition-colors"
+        >
+          Home
+        </a>
+        <a 
+          routerLink="/properties" 
+          routerLinkActive="text-indigo-600 font-medium" 
+          class="text-gray-700 hover:text-indigo-600 transition-colors"
+        >
+          Properties
+        </a>
+        <a 
+          routerLink="/about" 
+          routerLinkActive="text-indigo-600 font-medium" 
+          class="text-gray-700 hover:text-indigo-600 transition-colors"
+        >
+          About Us
+        </a>
+        <a 
+          routerLink="/contact" 
+          routerLinkActive="text-indigo-600 font-medium" 
+          class="text-gray-700 hover:text-indigo-600 transition-colors"
+        >
+          Contact
+        </a>
+        <button class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition-colors">
+          List Your Property
+        </button>
+      </div>
+    </nav>
+  </header>
