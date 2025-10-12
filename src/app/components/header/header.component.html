@@ -1,44 +1,81 @@
-<header class="bg-white shadow-md sticky top-0 z-10">
-    <nav class="container mx-auto px-4 py-4 flex flex-col md:flex-row justify-between items-center">
-      <div class="flex items-center mb-4 md:mb-0">
-        <a routerLink="/" class="text-2xl font-bold text-indigo-600">
-          DICASA
-        </a>
-      </div>
+<header class="bg-white shadow-md sticky top-0 z-50">
+  <nav class="w-full px-4 py-4">
+    <div class="flex items-center w-full">
+      <!-- Logo - Far Left -->
+      <a routerLink="/" class="text-2xl font-bold text-sky-600 flex-shrink-0">
+        Dicasa Group
+      </a>
       
-      <div class="flex flex-col md:flex-row space-y-2 md:space-y-0 md:space-x-6 items-center">
+      <!-- Spacer to push navigation to the right -->
+      <div class="flex-grow"></div>
+      
+      <!-- Desktop Navigation - Right Aligned -->
+      <div class="hidden md:flex items-center space-x-6">
         <a 
-          routerLink="/" 
-          routerLinkActive="text-indigo-600 font-medium" 
-          [routerLinkActiveOptions]="{exact: true}"
-          class="text-gray-700 hover:text-indigo-600 transition-colors"
+          *ngFor="let link of navLinks"
+          [routerLink]="link.path" 
+          routerLinkActive="text-sky-600 font-medium" 
+          [routerLinkActiveOptions]="{exact: link.exact}"
+          class="text-gray-700 hover:text-sky-600 transition-colors whitespace-nowrap"
         >
-          Home
+          {{ link.label }}
         </a>
-        <a 
-          routerLink="/properties" 
-          routerLinkActive="text-indigo-600 font-medium" 
-          class="text-gray-700 hover:text-indigo-600 transition-colors"
-        >
-          Properties
-        </a>
-        <a 
-          routerLink="/about" 
-          routerLinkActive="text-indigo-600 font-medium" 
-          class="text-gray-700 hover:text-indigo-600 transition-colors"
-        >
-          About Us
-        </a>
-        <a 
-          routerLink="/contact" 
-          routerLinkActive="text-indigo-600 font-medium" 
-          class="text-gray-700 hover:text-indigo-600 transition-colors"
-        >
-          Contact
-        </a>
-        <button class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition-colors">
-          List Your Property
+        <button class="bg-sky-600 text-white px-4 py-2 rounded-lg hover:bg-sky-700 transition-colors ml-4">
+          Publica con Nosotros
         </button>
       </div>
-    </nav>
-  </header>
+      
+      <!-- Mobile menu button -->
+      <button 
+        (click)="toggleMenu()" 
+        class="md:hidden text-gray-700 hover:text-sky-600 focus:outline-none ml-4"
+        aria-label="Toggle menu"
+      >
+        <svg 
+          class="w-6 h-6" 
+          fill="none" 
+          stroke="currentColor" 
+          viewBox="0 0 24 24" 
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path 
+            *ngIf="!isMenuOpen" 
+            stroke-linecap="round" 
+            stroke-linejoin="round" 
+            stroke-width="2" 
+            d="M4 6h16M4 12h16m-7 6h7"
+          ></path>
+          <path 
+            *ngIf="isMenuOpen" 
+            stroke-linecap="round" 
+            stroke-linejoin="round" 
+            stroke-width="2" 
+            d="M6 18L18 6M6 6l12 12"
+          ></path>
+        </svg>
+      </button>
+    </div>
+    
+    <!-- Mobile menu -->
+    <div 
+      class="md:hidden mt-4 pb-2" 
+      [class.hidden]="!isMenuOpen"
+    >
+      <div class="flex flex-col space-y-3">
+        <a 
+          *ngFor="let link of navLinks"
+          [routerLink]="link.path"
+          (click)="isMenuOpen = false"
+          routerLinkActive="text-sky-600 font-medium"
+          [routerLinkActiveOptions]="{exact: link.exact}"
+          class="block py-2 text-gray-700 hover:text-sky-600 transition-colors"
+        >
+          {{ link.label }}
+        </a>
+        <button class="w-full bg-sky-600 text-white px-4 py-2 rounded-lg hover:bg-sky-700 transition-colors mt-2">
+          Publica con Nosotros
+        </button>
+      </div>
+    </div>
+  </nav>
+</header>

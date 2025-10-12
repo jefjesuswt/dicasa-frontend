@@ -1,18 +1,37 @@
 export interface Property {
   id: number;
   title: string;
-  price: number;
   location: string;
+  price: number;
+  image: string;
+  images?: string[];
   bedrooms: number;
   bathrooms: number;
   area: number;
-  image: string;
-  type: 'sale' | 'rent';
-  featured: boolean;
+  type: PropertyType;
+  status: PropertyStatus;
+  featured?: boolean;
+  description?: string;
+  features?: {
+    hasParking?: boolean;
+    hasAC?: boolean;
+    hasFurniture?: boolean;
+    hasPool?: boolean;
+    hasGarden?: boolean;
+    isPetFriendly?: boolean;
+  };
+  address?: {
+    street: string;
+    city: string;
+    state: string;
+    zipCode: string;
+    country: string;
+  };
+  createdAt?: Date;
+  updatedAt?: Date;
 }
 
-export const propertyTypes = [
-  { id: 'all', name: 'All Properties' },
-  { id: 'sale', name: 'For Sale' },
-  { id: 'rent', name: 'For Rent' }
-];
+export type PropertyType = 'apartment' | 'house' | 'villa' | 'land' | 'commercial';
+export type PropertyStatus = 'sale' | 'rent' | 'sold' | 'rented';
+
+export const propertyTypes: PropertyType[] = ['apartment', 'house', 'villa', 'land', 'commercial'];

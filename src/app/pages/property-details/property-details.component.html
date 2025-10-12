@@ -1,0 +1,219 @@
+<div class="bg-gray-50 min-h-screen">
+  <!-- Back button -->
+  <div class="container mx-auto px-4 py-6">
+    <button (click)="goBack()" class="flex items-center text-indigo-600 hover:text-indigo-800 mb-6">
+      <i class="fas fa-arrow-left mr-2"></i> Volver
+    </button>
+  </div>
+
+  <!-- Loading State -->
+  @if (loading) {
+    <div class="flex justify-center items-center h-64">
+      <div class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-indigo-500"></div>
+    </div>
+  }
+
+  <!-- Error State -->
+  @if (error && !loading) {
+    <div class="p-4 bg-red-50 text-red-700 rounded-lg">
+      <p>{{ error }}</p>
+      <button (click)="goBack()" class="mt-2 px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700">
+        Volver
+      </button>
+    </div>
+  }
+
+  <!-- Property Details -->
+  @if (!loading && !error && property) {
+    <div class="container mx-auto px-4 py-8">
+      <!-- Image Gallery -->
+      <div class="mb-8 bg-white rounded-xl shadow-sm overflow-hidden">
+        <!-- Main Image -->
+        <div class="relative w-full h-96 bg-gray-200 rounded-lg overflow-hidden">
+          @if (property.images?.length ?? 0 > 0) {
+            <img
+              [src]="property!.images![activeImageIndex]"
+              [alt]="property.title || 'Property image'"
+              class="w-full h-full object-cover"
+            >
+          } @else {
+            <div class="w-full h-full flex items-center justify-center bg-gray-100">
+              <span class="text-gray-400">No images available</span>
+            </div>
+          }
+
+          <!-- Navigation Arrows -->
+          @if ((property.images?.length ?? 0) > 1) {
+            <button
+              (click)="previousImage()"
+              [disabled]="activeImageIndex === 0"
+              class="absolute left-2 top-1/2 transform -translate-y-1/2 bg-white/80 hover:bg-white text-gray-800 p-2 rounded-full shadow-md disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+            >
+              <i class="fas fa-chevron-left"></i>
+            </button>
+
+            <button
+              (click)="nextImage()"
+              [disabled]="activeImageIndex === (property!.images!.length - 1)"
+              class="absolute right-2 top-1/2 transform -translate-y-1/2 bg-white/80 hover:bg-white text-gray-800 p-2 rounded-full shadow-md disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+            >
+              <i class="fas fa-chevron-right"></i>
+            </button>
+          }
+        </div>
+
+        <!-- Thumbnails -->
+        <div class="p-4 flex space-x-2 overflow-x-auto">
+          @for (img of property!.images!; track i; let i = $index) {
+            <div
+              (click)="setActiveImage(i)"
+              [class.border-2]="i === activeImageIndex"
+              [class.border-indigo-600]="i === activeImageIndex"
+              class="flex-shrink-0 w-20 h-20 rounded-md overflow-hidden cursor-pointer border-2 border-transparent"
+            >
+              <img [src]="img" [alt]="'Thumbnail ' + (i + 1)" class="w-full h-full object-cover">
+            </div>
+          }
+        </div>
+      </div>
+
+      <!-- Property Info -->
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <!-- Main Content -->
+        <div class="lg:col-span-2">
+          <!-- Header -->
+          <div class="bg-white rounded-xl shadow-sm p-6 mb-6">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between mb-4">
+              <div>
+                <h1 class="text-2xl font-bold text-gray-900">{{ property!.title }}</h1>
+                <div class="flex items-center text-gray-600 mt-1">
+                  <i class="fas fa-map-marker-alt text-indigo-500 mr-2"></i>
+                  <span>{{ property!.location }}</span>
+                </div>
+              </div>
+              <div class="mt-4 sm:mt-0">
+                <span class="text-2xl font-bold text-indigo-600">
+                  {{ property!.status === 'sale'
+                    ? '$' + (property!.price | number)
+                    : '$' + (property!.price | number) + '/mes' }}
+                </span>
+              </div>
+            </div>
+
+            <!-- Status Badge -->
+            <span
+              [ngClass]="{
+                'bg-green-100 text-green-800': property!.status === 'sale',
+                'bg-blue-100 text-blue-800': property!.status === 'rent',
+                'bg-gray-100 text-gray-800': property!.status === 'sold'
+              }"
+              class="inline-block px-3 py-1 rounded-full text-sm font-medium"
+            >
+              {{ property!.status === 'sale'
+                ? 'En Venta'
+                : property!.status === 'rent'
+                  ? 'En Alquiler'
+                  : 'Vendido' }}
+            </span>
+          </div>
+
+          <!-- Description -->
+          <div class="bg-white rounded-xl shadow-sm p-6 mb-6">
+            <h2 class="text-xl font-semibold text-gray-900 mb-4">Descripción</h2>
+            <p class="text-gray-700 leading-relaxed">{{ property!.description || 'No hay descripción disponible.' }}</p>
+          </div>
+
+          <!-- Features -->
+          <div class="bg-white rounded-xl shadow-sm p-6 mb-6">
+            <h2 class="text-xl font-semibold text-gray-900 mb-4">Características</h2>
+            <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
+              <div class="flex items-center">
+                <i class="fas fa-bed text-indigo-500 mr-2"></i>
+                <span class="text-gray-700">{{ property!.bedrooms }} Habitaciones</span>
+              </div>
+              <div class="flex items-center">
+                <i class="fas fa-bath text-indigo-500 mr-2"></i>
+                <span class="text-gray-700">{{ property!.bathrooms }} Baños</span>
+              </div>
+              <div class="flex items-center">
+                <i class="fas fa-ruler-combined text-indigo-500 mr-2"></i>
+                <span class="text-gray-700">{{ property!.area }} m²</span>
+              </div>
+              @if (property!.features?.hasParking) {
+                <div class="flex items-center">
+                  <i class="fas fa-car text-indigo-500 mr-2"></i>
+                  <span class="text-gray-700">Estacionamiento</span>
+                </div>
+              }
+              @if (property!.features?.hasAC) {
+                <div class="flex items-center">
+                  <i class="fas fa-snowflake text-indigo-500 mr-2"></i>
+                  <span class="text-gray-700">Aire Acondicionado</span>
+                </div>
+              }
+              @if (property!.features?.hasFurniture) {
+                <div class="flex items-center">
+                  <i class="fas fa-couch text-indigo-500 mr-2"></i>
+                  <span class="text-gray-700">Amueblado</span>
+                </div>
+              }
+            </div>
+          </div>
+        </div>
+
+        <!-- Sidebar -->
+        <div class="lg:col-span-1">
+          <!-- Contact Form -->
+          <div class="bg-white rounded-xl shadow-sm p-6 mb-6">
+            <h2 class="text-xl font-semibold text-gray-900 mb-4">Solicitar Información</h2>
+            <form class="space-y-4">
+              <div>
+                <label for="name" class="block text-sm font-medium text-gray-700 mb-1">Nombre</label>
+                <input type="text" id="name" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500">
+              </div>
+              <div>
+                <label for="email" class="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                <input type="email" id="email" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500">
+              </div>
+              <div>
+                <label for="phone" class="block text-sm font-medium text-gray-700 mb-1">Teléfono</label>
+                <input type="tel" id="phone" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500">
+              </div>
+              <div>
+                <label for="message" class="block text-sm font-medium text-gray-700 mb-1">Mensaje</label>
+                <textarea id="message" rows="4" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"></textarea>
+              </div>
+              <button type="submit" class="w-full bg-indigo-600 text-white py-2 px-4 rounded-md hover:bg-indigo-700 transition-colors">
+                Enviar Mensaje
+              </button>
+            </form>
+          </div>
+
+          <!-- Contact Info -->
+          <div class="bg-white rounded-xl shadow-sm p-6">
+            <h2 class="text-xl font-semibold text-gray-900 mb-4">Contacto</h2>
+            <div class="space-y-4">
+              <div class="flex items-start">
+                <div class="flex-shrink-0 h-10 w-10 rounded-full bg-indigo-100 flex items-center justify-center">
+                  <i class="fas fa-user text-indigo-600"></i>
+                </div>
+                <div class="ml-3">
+                  <h4 class="text-sm font-medium text-gray-900">Juan Pérez</h4>
+                  <p class="text-sm text-gray-500">Agente Inmobiliario</p>
+                </div>
+              </div>
+              <div class="flex items-center text-gray-600">
+                <i class="fas fa-phone-alt text-indigo-500 w-5 mr-3"></i>
+                <span>+1 (555) 123-4567</span>
+              </div>
+              <div class="flex items-center text-gray-600">
+                <i class="fas fa-envelope text-indigo-500 w-5 mr-3"></i>
+                <span>contacto&#64;dicasagroup.com</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  }
+</div>
