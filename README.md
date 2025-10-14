@@ -1,59 +1,89 @@
-# DicasaFrontend
+# 🏠 Dicasa - Inmobiliaria
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 19.2.9.
+Aplicación web moderna para la visualización de propiedades inmobiliarias, desarrollada con Angular y Tailwind CSS.
 
-## Development server
+## ✨ Características
 
-To start a local development server, run:
+- 📱 Diseño responsive que se adapta a cualquier dispositivo
+- 🖼️ Galería de imágenes interactiva
+- 🔍 Búsqueda y filtrado de propiedades
+- 📱 Navegación fluida entre páginas
+- 🎨 Interfaz de usuario moderna y atractiva
+- ⚡ Optimizada para un rendimiento óptimo
 
-```bash
-ng serve
+## 🚀 Empezando
+
+### Requisitos previos
+
+- Node.js (v16 o superior)
+- npm (v8 o superior) o Bun (recomendado)
+- Angular CLI (opcional, se puede usar Bun)
+
+### Instalación
+
+1. Clona el repositorio:
+   ```bash
+   git clone https://github.com/tu-usuario/dicasa-frontend.git
+   cd dicasa-frontend
+   ```
+
+2. Instala las dependencias:
+   ```bash
+   # Usando Bun (recomendado)
+   bun install
+   
+   # O usando npm
+   npm install
+   ```
+
+3. Inicia el servidor de desarrollo:
+   ```bash
+   # Usando Bun
+   bun start
+   
+   # O usando Angular CLI
+   ng serve
+   ```
+
+4. Abre tu navegador y navega a `http://localhost:4200/`
+
+## 🛠️ Comandos útiles
+
+- **Iniciar servidor de desarrollo**: `bun start` o `ng serve`
+- **Compilar para producción**: `bun build` o `ng build`
+- **Ejecutar pruebas unitarias**: `bun test` o `ng test`
+- **Lint del código**: `bun lint` o `ng lint`
+- **Formatear código**: `bun format`
+
+## 🏗️ Estructura del proyecto
+
+```
+src/
+├── app/
+│   ├── components/     # Componentes reutilizables
+│   ├── pages/          # Páginas de la aplicación
+│   ├── services/       # Servicios para manejo de datos
+│   └── models/         # Interfaces y tipos de TypeScript
+├── assets/            # Recursos estáticos (imágenes, fuentes, etc.)
+└── styles/            # Estilos globales
 ```
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+## 🎨 Tecnologías utilizadas
 
-## Code scaffolding
+- [Angular](https://angular.io/) - Framework de aplicaciones web
+- [Tailwind CSS](https://tailwindcss.com/) - Framework CSS utilitario
+- [PrimeNG](https://primeng.org/) - Biblioteca de componentes UI
+- [TypeScript](https://www.typescriptlang.org/) - Lenguaje tipado que se compila a JavaScript
+- [RxJS](https://rxjs.dev/) - Biblioteca para programación reactiva
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+## 🤝 Contribución
 
-```bash
-ng generate component component-name
-```
+Las contribuciones son bienvenidas. Por favor, lee las [pautas de contribución](CONTRIBUTING.md) antes de enviar un pull request.
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+## 📄 Licencia
 
-```bash
-ng generate --help
-```
+Este proyecto está bajo la Licencia MIT - ver el archivo [LICENSE](LICENSE) para más detalles.
 
-## Building
+---
 
-To build the project run:
-
-```bash
-ng build
-```
-
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
-
-## Running unit tests
-
-To execute unit tests with the [Karma](https://karma-runner.github.io) test runner, use the following command:
-
-```bash
-ng test
-```
-
-## Running end-to-end tests
-
-For end-to-end (e2e) testing, run:
-
-```bash
-ng e2e
-```
-
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
-
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+Desarrollado con ❤️ por [Tu Nombre]
