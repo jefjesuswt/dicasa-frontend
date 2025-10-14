@@ -76,9 +76,6 @@ src/
 - [TypeScript](https://www.typescriptlang.org/) - Lenguaje tipado que se compila a JavaScript
 - [RxJS](https://rxjs.dev/) - Biblioteca para programación reactiva
 
-## 🤝 Contribución
-
-Las contribuciones son bienvenidas. Por favor, lee las [pautas de contribución](CONTRIBUTING.md) antes de enviar un pull request.
 
 ## 📄 Licencia
 
