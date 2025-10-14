@@ -83,4 +83,4 @@ Este proyecto está bajo la Licencia MIT - ver el archivo [LICENSE](LICENSE) par
 
 ---
 
-Desarrollado con ❤️ por [Jeffrey Jesús Jimenez Malave]
+Desarrollado con ❤️ por [Jeffrey Jesús Jimenez Malave](https://github.com/jefjesuswt)
