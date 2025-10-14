@@ -26,21 +26,18 @@
     </div>
 
     <p class="text-gray-600 text-sm mb-3 line-clamp-1" title="{{ property.location }}">
-      <i class="fas fa-map-marker-alt text-sky-500 mr-1"></i>
+      <i class="pi pi-map-marker"></i>
       {{ property.location }}
     </p>
 
     <div class="flex justify-between text-sm text-gray-500 border-t border-gray-100 pt-3 mt-auto">
       <div class="flex items-center">
-        <i class="fas fa-bed text-sky-500 mr-1"></i>
         <span>{{ property.bedrooms }} {{ property.bedrooms === 1 ? 'Dormitorio' : 'Dormitorios' }}</span>
       </div>
       <div class="flex items-center">
-        <i class="fas fa-bath text-sky-500 mr-1"></i>
         <span>{{ property.bathrooms }} {{ property.bathrooms === 1 ? 'Baño' : 'Baños' }}</span>
       </div>
       <div class="flex items-center">
-        <i class="fas fa-ruler-combined text-sky-500 mr-1"></i>
         <span>{{ property.area }} m²</span>
       </div>
     </div>
@@ -52,6 +49,7 @@
       class="w-full inline-flex justify-center items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-sky-600 hover:bg-sky-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-sky-500 transition-colors"
     >
       Ver detalles
+      <i class="pi pi-arrow-right ml-2"></i>
     </a>
   </div>
 </div>

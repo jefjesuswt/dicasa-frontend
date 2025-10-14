@@ -114,6 +114,25 @@ export class PropertyDetailsComponent implements OnInit {
     this.router.navigate(['/properties']);
   }
 
+  onContactSubmit(event: Event): void {
+    event.preventDefault();
+    const form = event.target as HTMLFormElement;
+    const formData = new FormData(form);
+    
+    const contactData = {
+      name: formData.get('name') as string,
+      email: formData.get('email') as string,
+      phone: formData.get('phone') as string,
+      message: formData.get('message') as string
+    };
+
+    console.log('Contact form submitted:', contactData);
+    // Here you would typically send the data to your backend
+    // For now, we'll just show a success message
+    alert('¡Gracias por tu mensaje! Nos pondremos en contacto contigo pronto.');
+    form.reset();
+  }
+
   // Getters for template
   get property(): Property | null {
     return this.state.property;

@@ -27,4 +27,13 @@ export class HeaderComponent {
   toggleMenu() {
     this.isMenuOpen = !this.isMenuOpen;
   }
+
+  getIconForRoute(path: string): string {
+    const iconMap: {[key: string]: string} = {
+      '/': 'home',
+      '/properties': 'book',
+      '/contact': 'envelope'
+    };
+    return iconMap[path] || 'circle';
+  }
 }

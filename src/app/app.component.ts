@@ -1,7 +1,8 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { HeaderComponent } from './components/header/header.component';
 import { FooterComponent } from './components/footer/footer.component';
+import { ScrollTopService } from './services/scroll-top.service';
 
 @Component({
   selector: 'app-root',
@@ -16,4 +17,10 @@ import { FooterComponent } from './components/footer/footer.component';
   `,
   styles: [],
 })
-export class AppComponent {}
+export class AppComponent implements OnInit {
+  constructor(private scrollTopService: ScrollTopService) {}
+
+  ngOnInit() {
+    this.scrollTopService.enable();
+  }
+}

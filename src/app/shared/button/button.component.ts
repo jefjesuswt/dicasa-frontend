@@ -12,14 +12,15 @@ type ButtonSize = 'sm' | 'md' | 'lg';
     <button
       (click)="onClick.emit($event)"
       [type]="type"
-      [disabled]="disabled"
+      [disabled]="disabled || loading"
       [class]="getButtonClasses()"
       [ngClass]="{
-        'opacity-50 cursor-not-allowed': loading || disabled
+        'opacity-50 cursor-not-allowed': disabled || loading,
+        'w-full': fullWidth
       }"
     >
       <span *ngIf="loading" class="inline-block animate-spin mr-2">
-        <i class="fas fa-spinner"></i>
+        <i class="pi pi-spinner"></i>
       </span>
       <ng-content></ng-content>
     </button>

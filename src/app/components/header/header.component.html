@@ -21,6 +21,7 @@
           {{ link.label }}
         </a>
         <button class="bg-sky-600 text-white px-4 py-2 rounded-lg hover:bg-sky-700 transition-colors ml-4">
+          <i class="pi pi-megaphone mr-2"></i>
           Publica con Nosotros
         </button>
       </div>
@@ -31,28 +32,8 @@
         class="md:hidden text-gray-700 hover:text-sky-600 focus:outline-none ml-4"
         aria-label="Toggle menu"
       >
-        <svg 
-          class="w-6 h-6" 
-          fill="none" 
-          stroke="currentColor" 
-          viewBox="0 0 24 24" 
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <path 
-            *ngIf="!isMenuOpen" 
-            stroke-linecap="round" 
-            stroke-linejoin="round" 
-            stroke-width="2" 
-            d="M4 6h16M4 12h16m-7 6h7"
-          ></path>
-          <path 
-            *ngIf="isMenuOpen" 
-            stroke-linecap="round" 
-            stroke-linejoin="round" 
-            stroke-width="2" 
-            d="M6 18L18 6M6 6l12 12"
-          ></path>
-        </svg>
+        <i *ngIf="!isMenuOpen" class="pi pi-bars text-2xl"></i>
+        <i *ngIf="isMenuOpen" class="pi pi-times text-2xl"></i>
       </button>
     </div>
     
@@ -68,11 +49,13 @@
           (click)="isMenuOpen = false"
           routerLinkActive="text-sky-600 font-medium"
           [routerLinkActiveOptions]="{exact: link.exact}"
-          class="block py-2 text-gray-700 hover:text-sky-600 transition-colors"
+          class="flex items-center py-2 text-gray-700 hover:text-sky-600 transition-colors"
         >
+          <i class="pi pi-{{ getIconForRoute(link.path) }} mr-2"></i>
           {{ link.label }}
         </a>
-        <button class="w-full bg-sky-600 text-white px-4 py-2 rounded-lg hover:bg-sky-700 transition-colors mt-2">
+        <button class="w-full bg-sky-600 text-white px-4 py-2 rounded-lg hover:bg-sky-700 transition-colors mt-2 flex items-center justify-center">
+          <i class="pi pi-megaphone mr-2"></i>
           Publica con Nosotros
         </button>
       </div>

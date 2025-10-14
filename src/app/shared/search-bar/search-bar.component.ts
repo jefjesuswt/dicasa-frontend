@@ -30,7 +30,7 @@ interface SearchParams {
               class="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-transparent h-[38px]"
             />
             <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
-              <i class="fas fa-map-marker-alt text-gray-400 text-sm"></i>
+              <i class="pi pi-map-marker text-gray-400 text-sm"></i>
             </div>
           </div>
         </div>
@@ -52,7 +52,7 @@ interface SearchParams {
               </option>
             </select>
             <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
-              <i class="fas fa-chevron-down text-gray-400 text-xs"></i>
+              <i class="pi pi-chevron-down text-gray-400 text-xs"></i>
             </div>
           </div>
         </div>
@@ -62,7 +62,7 @@ interface SearchParams {
           (click)="onSearch()"
           class="w-full md:w-auto bg-sky-600 hover:bg-sky-700 text-white font-medium py-2 px-6 rounded-lg transition-colors h-[38px] flex-shrink-0 flex items-center justify-center"
         >
-          <i class="fas fa-search"></i>
+          <i class="pi pi-search mr-2"></i>
           {{ buttonText || 'Buscar' }}
         </button>
       </div>
