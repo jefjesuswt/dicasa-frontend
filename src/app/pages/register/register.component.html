@@ -1,0 +1,141 @@
+<div class="flex flex-col min-h-[calc(100vh-30rem)] justify-start px-4 pt-32 pb-60 sm:justify-center sm:py-8 sm:px-6 lg:px-8">
+  <div class="max-w-md w-full space-y-16 sm:space-y-6 mx-auto">
+    <div class="text-center">
+      <h2 class="text-2xl font-bold text-gray-900">
+        Crear una cuenta
+      </h2>
+      <p class="mt-2 text-sm text-gray-600">
+        ¿Ya tienes una cuenta? 
+        <a routerLink="/login" class="font-medium text-sky-600 hover:text-sky-500">
+          Inicia sesión aquí
+        </a>
+      </p>
+    </div>
+
+    <form class="mt-12 space-y-16 sm:space-y-6" [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+      <div class="rounded-md space-y-12 sm:space-y-4">
+        <!-- Name Field -->
+        <div>
+          <label for="name" class="sr-only">Nombre completo</label>
+          <div class="relative">
+            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+              <i class="pi pi-user text-gray-400"></i>
+            </div>
+            <input 
+              id="name" 
+              name="name" 
+              type="text" 
+              formControlName="name"
+              autocomplete="name" 
+              required 
+              class="appearance-none relative block w-full px-10 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-sky-500 focus:border-sky-500 focus:z-10 sm:text-sm"
+              placeholder="Nombre completo"
+              [ngClass]="{
+                'border-red-300': name?.invalid && (name?.dirty || name?.touched),
+                'border-gray-300': !name?.invalid || (!name?.dirty && !name?.touched)
+              }"
+            >
+          </div>
+          <p *ngIf="name?.invalid && (name?.dirty || name?.touched)" class="mt-1 text-sm text-red-600">
+            <span *ngIf="name?.errors?.['required']">El nombre es requerido</span>
+          </p>
+        </div>
+
+        <!-- Email Field -->
+        <div>
+          <label for="email-address" class="sr-only">Correo electrónico</label>
+          <div class="relative">
+            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+              <i class="pi pi-envelope text-gray-400"></i>
+            </div>
+            <input 
+              id="email-address" 
+              name="email" 
+              type="email" 
+              formControlName="email"
+              autocomplete="email" 
+              required 
+              class="appearance-none relative block w-full px-10 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-sky-500 focus:border-sky-500 focus:z-10 sm:text-sm"
+              placeholder="Correo electrónico"
+              [ngClass]="{
+                'border-red-300': email?.invalid && (email?.dirty || email?.touched),
+                'border-gray-300': !email?.invalid || (!email?.dirty && !email?.touched)
+              }"
+            >
+          </div>
+          <p *ngIf="email?.invalid && (email?.dirty || email?.touched)" class="mt-1 text-sm text-red-600">
+            <span *ngIf="email?.errors?.['required']">El correo electrónico es requerido</span>
+            <span *ngIf="email?.errors?.['email']">Ingresa un correo electrónico válido</span>
+          </p>
+        </div>
+
+        <!-- Password Field -->
+        <div>
+          <label for="password" class="sr-only">Contraseña</label>
+          <div class="relative">
+            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+              <i class="pi pi-lock text-gray-400"></i>
+            </div>
+            <input 
+              id="password" 
+              name="password" 
+              type="password" 
+              formControlName="password"
+              autocomplete="new-password" 
+              required 
+              class="appearance-none relative block w-full px-10 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-sky-500 focus:border-sky-500 focus:z-10 sm:text-sm"
+              placeholder="Contraseña"
+              [ngClass]="{
+                'border-red-300': password?.invalid && (password?.dirty || password?.touched),
+                'border-gray-300': !password?.invalid || (!password?.dirty && !password?.touched)
+              }"
+            >
+          </div>
+          <p *ngIf="password?.invalid && (password?.dirty || password?.touched)" class="mt-1 text-sm text-red-600">
+            <span *ngIf="password?.errors?.['required']">La contraseña es requerida</span>
+            <span *ngIf="password?.errors?.['minlength']">La contraseña debe tener al menos 6 caracteres</span>
+          </p>
+        </div>
+
+        <!-- Confirm Password Field -->
+        <div>
+          <label for="confirm-password" class="sr-only">Confirmar contraseña</label>
+          <div class="relative">
+            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+              <i class="pi pi-lock text-gray-400"></i>
+            </div>
+            <input 
+              id="confirm-password" 
+              name="confirmPassword" 
+              type="password" 
+              formControlName="confirmPassword"
+              autocomplete="new-password" 
+              required 
+              class="appearance-none relative block w-full px-10 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-sky-500 focus:border-sky-500 focus:z-10 sm:text-sm"
+              placeholder="Confirmar contraseña"
+              [ngClass]="{
+                'border-red-300': (confirmPassword?.invalid || registerForm.hasError('mismatch')) && (confirmPassword?.dirty || confirmPassword?.touched),
+                'border-gray-300': !confirmPassword?.invalid && !registerForm.hasError('mismatch') || (!confirmPassword?.dirty && !confirmPassword?.touched)
+              }"
+            >
+          </div>
+          <p *ngIf="(confirmPassword?.invalid || registerForm.hasError('mismatch')) && (confirmPassword?.dirty || confirmPassword?.touched)" class="mt-1 text-sm text-red-600">
+            <span *ngIf="confirmPassword?.errors?.['required']">Por favor confirma tu contraseña</span>
+            <span *ngIf="registerForm.hasError('mismatch')">Las contraseñas no coinciden</span>
+          </p>
+        </div>
+      </div>
+
+      <div>
+        <button 
+          type="submit" 
+          class="group relative w-full flex justify-center py-2.5 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-sky-600 hover:bg-sky-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-sky-500 mt-4"
+          [disabled]="loading"
+        >
+          <span *ngIf="!loading">Crear cuenta</span>
+          <span *ngIf="loading">Cargando...</span>
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

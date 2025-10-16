@@ -9,11 +9,13 @@ import { ScrollTopService } from './services/scroll-top.service';
   standalone: true,
   imports: [RouterOutlet, HeaderComponent, FooterComponent],
   template: `
-    <app-header></app-header>
-    <main class="min-h-screen">
-      <router-outlet></router-outlet>
-    </main>
-    <app-footer></app-footer>
+    <div class="min-h-screen flex flex-col">
+      <app-header></app-header>
+      <main class="flex-1">
+        <router-outlet></router-outlet>
+      </main>
+      <app-footer></app-footer>
+    </div>
   `,
   styles: [],
 })

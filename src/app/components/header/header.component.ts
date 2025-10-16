@@ -19,9 +19,9 @@ export class HeaderComponent {
   isMenuOpen = false;
   
   navLinks: NavLink[] = [
-    { path: '/', label: 'Inicio', exact: true },
     { path: '/properties', label: 'Propiedades', exact: false },
-    { path: '/contact', label: 'Contacto', exact: false }
+    { path: '/contact', label: 'Contacto', exact: false },
+    { path: '/login', label: 'Iniciar sesión', exact: false }
   ];
 
   toggleMenu() {
@@ -31,9 +31,10 @@ export class HeaderComponent {
   getIconForRoute(path: string): string {
     const iconMap: {[key: string]: string} = {
       '/': 'home',
-      '/properties': 'book',
-      '/contact': 'envelope'
+      '/properties': 'home',
+      '/contact': 'envelope',
+      '/login': 'user'
     };
-    return iconMap[path] || 'circle';
+    return iconMap[path] || 'link';
   }
 }

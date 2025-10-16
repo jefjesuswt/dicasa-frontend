@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Property } from '../models/property.model';
+import { Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -169,7 +170,20 @@ export class PropertyService {
   constructor() {}
 
   getProperties(): Property[] {
-    return this.properties;
+    return [...this.properties];
+  }
+
+  deleteProperty(id: number): Observable<void> {
+    return new Observable(observer => {
+      const index = this.properties.findIndex(p => p.id === id);
+      if (index !== -1) {
+        this.properties.splice(index, 1);
+        observer.next();
+        observer.complete();
+      } else {
+        observer.error(new Error('Property not found'));
+      }
+    });
   }
 
   getFeaturedProperties(): Property[] {
