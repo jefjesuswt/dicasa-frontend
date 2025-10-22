@@ -21,7 +21,7 @@ export class HeaderComponent {
   navLinks: NavLink[] = [
     { path: '/properties', label: 'Propiedades', exact: false },
     { path: '/contact', label: 'Contacto', exact: false },
-    { path: '/login', label: 'Iniciar sesión', exact: false }
+
   ];
 
   toggleMenu() {

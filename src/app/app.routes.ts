@@ -1,24 +1,24 @@
 import { Routes } from '@angular/router';
-import { HomeComponent } from './pages/home/home.component';
-import { PropertiesComponent } from './pages/properties/properties.component';
-import { PropertyDetailsComponent } from './pages/property-details/property-details.component';
-import { LoginComponent } from './pages/login/login.component';
-import { RegisterComponent } from './pages/register/register.component';
-import { DashboardComponent } from './pages/dashboard/dashboard.component';
 import { AuthGuard } from './guards/auth.guard';
 
 export const routes: Routes = [
-  { path: '', component: HomeComponent, pathMatch: 'full' },
-  { path: 'properties', component: PropertiesComponent },
-  { path: 'properties/:id', component: PropertyDetailsComponent },
-  { path: 'login', component: LoginComponent },
-  { path: 'register', component: RegisterComponent },
+  { 
+    path: '', 
+    loadComponent: () => import('./pages/home/home.component').then(m => m.HomeComponent),
+    pathMatch: 'full' 
+  },
+  { 
+    path: 'properties', 
+    loadChildren: () => import('./pages/properties/properties.routes').then(m => m.PROPERTIES_ROUTES)
+  },
+  { 
+    path: 'auth', 
+    loadChildren: () => import('./pages/auth/auth.routes').then(m => m.AUTH_ROUTES)
+  },
   { 
     path: 'dashboard', 
-    component: DashboardComponent,
-    // canActivate: [AuthGuard] 
+    loadChildren: () => import('./pages/dashboard/dashboard.routes').then(m => m.DASHBOARD_ROUTES),
+    canActivate: [AuthGuard]
   },
-  
-  // Fallback route - must be the last one
-  { path: '**', redirectTo: '' }
+{ path: '**', redirectTo: '' }
 ];

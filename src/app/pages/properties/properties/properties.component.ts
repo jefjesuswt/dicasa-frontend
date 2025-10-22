@@ -1,10 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
-import { PropertyService } from '../../services/property.service';
-import { Property, propertyTypes, PropertyType } from '../../models/property.model';
-import { PropertyCardComponent } from '../../shared/property-card/property-card.component';
-import { SearchBarComponent } from '../../shared/search-bar/search-bar.component';
+import { PropertyService } from '../../../services/property.service';
+import { Property, propertyTypes, PropertyType } from '../../../models/property.model';
+import { PropertyCardComponent } from '../../../shared/property-card/property-card.component';
+import { SearchBarComponent } from '../../../shared/search-bar/search-bar.component';
 import { FormsModule } from '@angular/forms';
 
 type PropertyStatus = 'sale' | 'rent' | 'sold' | 'rented';

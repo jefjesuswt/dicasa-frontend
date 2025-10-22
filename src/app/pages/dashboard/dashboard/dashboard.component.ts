@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterModule } from '@angular/router';
-import { PropertyService } from '../../services/property.service';
-import { Property } from '../../models/property.model';
+import { PropertyService } from '../../../services/property.service';
+import { Property } from '../../../models/property.model';
 
 
 

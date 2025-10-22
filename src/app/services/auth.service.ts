@@ -17,7 +17,7 @@ export class AuthService {
   public currentUser$ = this.currentUserSubject.asObservable();
 
   constructor(private router: Router) {
-    // Check for user in localStorage on service initialization
+    
     const user = localStorage.getItem('currentUser');
     if (user) {
       this.currentUserSubject.next(JSON.parse(user));

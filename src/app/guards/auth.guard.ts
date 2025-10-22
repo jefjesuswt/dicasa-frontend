@@ -14,7 +14,7 @@ export class AuthGuard implements CanActivate {
       return true;
     }
     
-    // Redirect to login page if not authenticated
+    
     return this.router.createUrlTree(['/login'], {
       queryParams: { returnUrl: this.router.url }
     });
@@ -32,7 +32,7 @@ export class AdminGuard implements CanActivate {
       return true;
     }
     
-    // Redirect to home page if not admin
+    
     return this.router.createUrlTree(['/']);
   }
 }
