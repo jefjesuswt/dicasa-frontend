@@ -1,17 +1,15 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, computed, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterModule } from '@angular/router';
 import { PropertyService } from '../../../services/property.service';
 import { Property } from '../../../models/property.model';
+import { AuthService } from '../../../services/auth.service';
 
 
 
-// Define the type for the status mapping
 const statusTypes = ['for_sale', 'for_rent', 'sold', 'rented'] as const;
 type StatusType = typeof statusTypes[number];
 
-// Define the type for the type mapping
-const propertyTypes = ['house', 'apartment', 'land', 'commercial', 'villa'] as const;
 
 interface StatCard {
   title: string;
@@ -22,7 +20,7 @@ interface StatCard {
 }
 
 @Component({
-  selector: 'app-dashboard',
+  selector: 'dashboard-dashboard',
   standalone: true,
   imports: [
     CommonModule, 
@@ -31,11 +29,16 @@ interface StatCard {
   templateUrl: './dashboard.component.html',
 })
 export class DashboardComponent implements OnInit {
-  properties: Property[] = [];
-  loading = true;
-  error: string | null = null;
 
-  // Stats for the dashboard cards
+  private authService = inject(AuthService);
+  private propertyService = inject(PropertyService);
+  private router = inject(Router);
+
+  public properties: Property[] = [];
+  public loading = true;
+  public error: string | null = null;
+
+  public user = computed(() => this.authService.currentUser());
   stats: StatCard[] = [
     { 
       title: 'Total de Propiedades', 
@@ -66,11 +69,12 @@ export class DashboardComponent implements OnInit {
       textColor: 'text-yellow-800' 
     }
   ];
+  
 
-  constructor(
-    private propertyService: PropertyService,
-    private router: Router
-  ) {}
+
+  constructor() {}
+
+ 
 
   ngOnInit(): void {
     this.loadProperties();

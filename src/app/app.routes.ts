@@ -1,5 +1,5 @@
 import { Routes } from '@angular/router';
-import { AuthGuard } from './guards/auth.guard';
+import { authGuard, adminGuard, superAdminGuard } from './guards/auth.guards';
 
 export const routes: Routes = [
   { 
@@ -18,7 +18,8 @@ export const routes: Routes = [
   { 
     path: 'dashboard', 
     loadChildren: () => import('./pages/dashboard/dashboard.routes').then(m => m.DASHBOARD_ROUTES),
-    canActivate: [AuthGuard]
+    canActivate: [authGuard, adminGuard],
+    data: { preload: false }
   },
 { path: '**', redirectTo: '' }
 ];

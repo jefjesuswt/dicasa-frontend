@@ -1,86 +1,150 @@
-import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable, of } from 'rxjs';
+import { computed, inject, Injectable, signal } from '@angular/core';
+import { catchError, map, Observable, of, tap, throwError } from 'rxjs';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Router } from '@angular/router';
-
-export interface User {
-  id: string;
-  email: string;
-  name: string;
-  role: 'admin' | 'user';
-}
+import { environment } from '../../environments/environment';
+import { AuthResponse, User } from '../interfaces'
+import { AuthStatus } from '../enums/auth-status.enum';
+import { RegisterData } from '../interfaces/register-data.interace';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
-  private currentUserSubject = new BehaviorSubject<User | null>(null);
-  public currentUser$ = this.currentUserSubject.asObservable();
 
-  constructor(private router: Router) {
-    
-    const user = localStorage.getItem('currentUser');
-    if (user) {
-      this.currentUserSubject.next(JSON.parse(user));
+  private _currentUser = signal<User | null>(null);
+  private _authStatus = signal<AuthStatus>(AuthStatus.checking);
+
+  public currentUser = computed(() => this._currentUser());
+  public authStatus = computed(() => this._authStatus());
+
+  private readonly apiUrl: string = environment.API_URL
+  
+  private router = inject(Router)
+  private http = inject(HttpClient)
+
+  setCurrentUser = ({user, token}: AuthResponse) => {
+    this._currentUser.set(user)
+    this._authStatus.set(AuthStatus.authenticated)
+    localStorage.setItem('accessToken', token.accessToken)
+    if (token.refreshToken) {
+      localStorage.setItem('refreshToken', token.refreshToken)
     }
+    console.log({user, accessToken: token.accessToken, refreshToken: token.refreshToken});
+    
   }
 
   login(email: string, password: string): Observable<boolean> {
-    // In a real app, this would be an HTTP request to your backend
-    // This is a mock implementation
-    if (email === 'admin@example.com' && password === 'admin123') {
-      const user: User = {
-        id: '1',
-        email,
-        name: 'Admin User',
-        role: 'admin'
-      };
-      localStorage.setItem('currentUser', JSON.stringify(user));
-      this.currentUserSubject.next(user);
-      return of(true);
+    const url = `${this.apiUrl}/auth/login`
+    const body = { email, password }
+    return this.http.post<AuthResponse>(url, body).pipe(
+      tap(({user, token})=> {
+        this.setCurrentUser({user, token})
+      }),
+      map(() => true),
+      catchError((error) => {
+        console.log(error);
+        return throwError(() => error.error.message)
+      })
+    )
+  }
+
+  register(data: RegisterData): Observable<boolean> {
+    const url = `${this.apiUrl}/auth/register`
+    const body = { ...data }
+    return this.http.post<{message: string}>(url, body).pipe(
+      tap((message)=> {
+        console.log(message);
+      }),
+      map(() => true),
+      catchError((error) => {
+        console.log(error);
+        return throwError(() => error.error.message)
+      })
+    )
+  }
+  
+  forgotPassword(email: string): Observable<{ message: string }> {
+    return this.http.post<{ message: string }>(`${this.apiUrl}/auth/forgot-password`, { email });
+  }
+
+  verifyResetCode(email: string, code: string): Observable<boolean> {
+    const url = `${this.apiUrl}/auth/verify-reset-code`;
+    const body = { email, code };
+    return this.http.post<{ valid: boolean }>(url, body).pipe(
+      map(response => response.valid), // Extrae el 'valid: true'
+      catchError((error) => {
+        // Lanza el mensaje de error del backend (ej: "Invalid code")
+        return throwError(() => error.error?.message || 'Código inválido o expirado');
+      })
+    );
+  }
+
+  resetPassword(email: string, newPassword: string, code: string): Observable<{ message: string }> {
+    const url = `${this.apiUrl}/auth/reset-password`;
+    const body = { email, newPassword, code };
+    return this.http.post<{ message: string }>(url, body).pipe(
+      catchError((error) => {
+        return throwError(() => error.error?.message || 'Error al resetear contraseña');
+      })
+    );
+  }
+
+  checkAuthStatus(): Observable<boolean> {
+    const url = `${this.apiUrl}/auth/check-status`
+    const token = localStorage.getItem('accessToken')
+
+    if (!token) {
+      this._authStatus.set(AuthStatus.unauthenticated)
+      return of(false)
     }
+
+    const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`)
     
-    // For demo purposes, create a regular user
-    const user: User = {
-      id: '2',
-      email,
-      name: email.split('@')[0],
-      role: 'user'
-    };
-    localStorage.setItem('currentUser', JSON.stringify(user));
-    this.currentUserSubject.next(user);
-    return of(true);
+    return this.http.get<AuthResponse>(url, { headers }).pipe(
+      map(({user, token}) => {
+        this.setCurrentUser({user, token})
+        return true
+      }),
+      catchError(() => of(false))
+    )
   }
 
-  register(userData: any): Observable<boolean> {
-    // In a real app, this would be an HTTP request to your backend
-    const user: User = {
-      id: Math.random().toString(36).substr(2, 9),
-      email: userData.email,
-      name: userData.name,
-      role: 'user' // By default, new users are regular users
-    };
+  confirmEmail(token: string): Observable<boolean> {
+    const url = `${this.apiUrl}/auth/confirm-email?token=${token}`;
     
-    localStorage.setItem('currentUser', JSON.stringify(user));
-    this.currentUserSubject.next(user);
-    return of(true);
-  }
-
-  logout(): void {
-    localStorage.removeItem('currentUser');
-    this.currentUserSubject.next(null);
-    this.router.navigate(['/login']);
-  }
-
-  getCurrentUser(): User | null {
-    return this.currentUserSubject.value;
+    // Tu backend devuelve un AuthResponse (user + token)
+    return this.http.get<AuthResponse>(url).pipe(
+      tap(({user, token}) => {
+        // Logueamos al usuario directamente usando tu helper
+        this.setCurrentUser({user, token});
+      }),
+      map(() => true),
+      catchError((error) => {
+        return throwError(() => error.error?.message || 'Error al confirmar el email')
+      })
+    );
   }
 
   isAuthenticated(): boolean {
-    return !!this.getCurrentUser();
+    return this.authStatus() === AuthStatus.authenticated;
   }
 
   isAdmin(): boolean {
-    const user = this.getCurrentUser();
-    return user ? user.role === 'admin' : false;
+    const user = this.currentUser();
+    return user ? user.roles.includes('ADMIN') : false;
+  }
+
+  isSuperAdmin(): boolean {
+    const user = this.currentUser();
+    return user ? user.roles.includes('SUPERADMIN') : false;
+  }
+
+  logout() {
+    this._currentUser.set(null)
+    this._authStatus.set(AuthStatus.unauthenticated)
+    localStorage.removeItem('accessToken')
+    localStorage.removeItem('refreshToken')
+    this.router.navigate(['/auth/login'])
   }
 }

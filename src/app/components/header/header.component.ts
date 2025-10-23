@@ -1,6 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, computed, ElementRef, HostListener, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterLink, RouterLinkActive } from '@angular/router';
+import { Router, RouterLink, RouterLinkActive } from '@angular/router';
+import { AuthService } from '../../services/auth.service';
 
 interface NavLink {
   path: string;
@@ -16,16 +17,38 @@ interface NavLink {
   styles: []
 })
 export class HeaderComponent {
-  isMenuOpen = false;
+
+  private authService = inject(AuthService);
+  private router = inject(Router);
+  private eRef = inject(ElementRef); 
+ 
+  public user = computed(() => this.authService.currentUser());
+  public isMenuOpen = false;
+  public isProfileMenuOpen = false;
   
+  public isPrivilegedUser = computed(() => {
+    return this.authService.isAdmin() || this.authService.isSuperAdmin();
+  });
+  
+  @HostListener('document:click', ['$event'])
+  clickOutside(event: Event) {
+    // Si el menú de perfil está abierto Y el clic NO fue dentro de este componente
+    if (this.isProfileMenuOpen && !this.eRef.nativeElement.contains(event.target)) {
+      this.isProfileMenuOpen = false;
+    }
+  }
+
   navLinks: NavLink[] = [
     { path: '/properties', label: 'Propiedades', exact: false },
-    { path: '/contact', label: 'Contacto', exact: false },
-
+    { path: '/contact', label: 'Contacto', exact: false },    
   ];
 
-  toggleMenu() {
-    this.isMenuOpen = !this.isMenuOpen;
+  toggleMobileMenu() {
+    this.isMenuOpen = !this.isMenuOpen; 
+  }
+
+  toggleProfileMenu() {
+    this.isProfileMenuOpen = !this.isProfileMenuOpen;
   }
 
   getIconForRoute(path: string): string {
@@ -33,8 +56,16 @@ export class HeaderComponent {
       '/': 'home',
       '/properties': 'home',
       '/contact': 'envelope',
-      '/login': 'user'
+      '/auth/login': 'user',
+      'logout': 'sign-out',
+      '/dashboard': 'cog',
     };
     return iconMap[path] || 'link';
+  }
+
+  logout() {
+    this.isProfileMenuOpen = false; 
+    this.isMenuOpen = false; 
+    this.authService.logout(); 
   }
 }

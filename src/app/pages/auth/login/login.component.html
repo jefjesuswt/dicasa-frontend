@@ -1,4 +1,4 @@
-<div class="flex flex-col min-h-[calc(100vh-30rem)] justify-start px-4 pt-32 pb-60 sm:justify-center sm:py-8 sm:px-6 lg:px-8">
+<div class="flex flex-col min-h-[calc(100vh-4rem)] justify-center px-4 py-12 sm:px-6 lg:px-8">
   <div class="max-w-md w-full space-y-16 sm:space-y-6 mx-auto">
     <div class="text-center">
       <h2 class="text-2xl font-bold text-gray-900">
@@ -27,18 +27,23 @@
               formControlName="email"
               autocomplete="email" 
               required 
-              class="appearance-none relative block w-full px-10 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-sky-500 focus:border-sky-500 focus:z-10 sm:text-sm"
+              class="appearance-none relative block w-full px-10 py-3 border placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-sky-500 focus:border-sky-500 focus:z-10 sm:text-sm"
               placeholder="Correo electrónico"
-              [ngClass]="{
-                'border-red-300': email?.invalid && (email?.dirty || email?.touched),
-                'border-gray-300': !email?.invalid || (!email?.dirty && !email?.touched)
-              }"
+              [class.border-red-300]="email?.invalid && (email?.dirty || email?.touched)"
+              [class.border-gray-300]="!email?.invalid || (!email?.dirty && !email?.touched)"
             >
           </div>
-          <p *ngIf="email?.invalid && (email?.dirty || email?.touched)" class="mt-1 text-sm text-red-600">
-            <span *ngIf="email?.errors?.['required']">El correo electrónico es requerido</span>
-            <span *ngIf="email?.errors?.['email']">Ingresa un correo electrónico válido</span>
-          </p>
+          
+          @if (email?.invalid && (email?.dirty || email?.touched)) {
+            <p class="mt-1 text-sm text-red-600">
+              @if (email?.errors?.['required']) {
+                <span>El correo electrónico es requerido</span>
+              }
+              @if (email?.errors?.['email']) {
+                <span>Ingresa un correo electrónico válido</span>
+              }
+            </p>
+          }
         </div>
         <div>
           <label for="password" class="sr-only">Contraseña</label>
@@ -53,18 +58,23 @@
               formControlName="password"
               autocomplete="current-password" 
               required 
-              class="appearance-none relative block w-full px-10 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-sky-500 focus:border-sky-500 focus:z-10 sm:text-sm"
+              class="appearance-none relative block w-full px-10 py-3 border placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-sky-500 focus:border-sky-500 focus:z-10 sm:text-sm"
               placeholder="Contraseña"
-              [ngClass]="{
-                'border-red-300': password?.invalid && (password?.dirty || password?.touched),
-                'border-gray-300': !password?.invalid || (!password?.dirty && !password?.touched)
-              }"
+              [class.border-red-300]="password?.invalid && (password?.dirty || password?.touched)"
+              [class.border-gray-300]="!password?.invalid || (!password?.dirty && !password?.touched)"
             >
           </div>
-          <p *ngIf="password?.invalid && (password?.dirty || password?.touched)" class="mt-1 text-sm text-red-600">
-            <span *ngIf="password?.errors?.['required']">La contraseña es requerida</span>
-            <span *ngIf="password?.errors?.['minlength']">La contraseña debe tener al menos 6 caracteres</span>
-          </p>
+          
+          @if (password?.invalid && (password?.dirty || password?.touched)) {
+            <p class="mt-1 text-sm text-red-600">
+              @if (password?.errors?.['required']) {
+                <span>La contraseña es requerida</span>
+              }
+              @if (password?.errors?.['minlength']) {
+                <span>La contraseña debe tener al menos 6 caracteres</span>
+              }
+            </p>
+          }
         </div>
       </div>
 
@@ -82,7 +92,7 @@
         </div>
 
         <div class="text-sm">
-          <a href="#" class="font-medium text-sky-600 hover:text-sky-500">
+          <a routerLink="/auth/forgot-password" class="font-medium text-sky-600 hover:text-sky-500">
             ¿Olvidaste tu contraseña?
           </a>
         </div>
@@ -91,11 +101,14 @@
       <div>
         <button 
           type="submit" 
-          class="group relative w-full flex justify-center py-2.5 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-sky-600 hover:bg-sky-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-sky-500 mt-4"
-          [disabled]="loading"
+          class="group relative w-full flex justify-center py-2.5 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-sky-600 hover:bg-sky-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-sky-500 mt-4 disabled:opacity-50 disabled:cursor-not-allowed"
+          [disabled]="loading || loginForm.invalid"
         >
-          <span *ngIf="!loading">Iniciar sesión</span>
-          <span *ngIf="loading">Cargando...</span>
+          @if(!loading) {
+            <span>Iniciar sesión</span>
+          } @else {
+            <span>Cargando...</span>
+          }
         </button>
       </div>
     </form>

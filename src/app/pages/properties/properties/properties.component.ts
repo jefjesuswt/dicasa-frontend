@@ -16,7 +16,7 @@ interface SearchParams {
 }
 
 @Component({
-  selector: 'app-properties',
+  selector: 'properties-properties',
   standalone: true,
   imports: [
     CommonModule, 

@@ -9,7 +9,7 @@ import { PropertyService } from '../../services/property.service';
 import { Property } from '../../models/property.model';
 
 @Component({
-  selector: 'app-home',
+  selector: 'home-home',
   standalone: true,
   imports: [
     CommonModule,

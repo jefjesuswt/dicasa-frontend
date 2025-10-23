@@ -1,10 +1,14 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormGroup, Validators, ReactiveFormsModule, FormControl } from '@angular/forms';
+import { FormGroup, Validators, ReactiveFormsModule, FormBuilder } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 
+import { HotToastService } from '@ngxpert/hot-toast';
+
+import { AuthService } from '../../../services/auth.service';
+
 @Component({
-  selector: 'app-login',
+  selector: 'auth-login',
   standalone: true,
   imports: [
     CommonModule, 
@@ -14,33 +18,52 @@ import { Router, RouterModule } from '@angular/router';
   templateUrl: './login.component.html',
 })
 export class LoginComponent {
-  loginForm: FormGroup;
+  private fb = inject(FormBuilder)
+  private router = inject(Router)
+  private authService = inject(AuthService)
+  private toast = inject(HotToastService)
   loading = false;
 
-  constructor(
-    private router: Router
-  ) {
-    this.loginForm = new FormGroup({
-      email: new FormControl('', [Validators.required, Validators.email]),
-      password: new FormControl('', [Validators.required, Validators.minLength(6)])
-    });
+  constructor() {}
+
+  customToastSuccess() {
+    this.toast.success('Login exitoso', {
+      duration: 5000,
+      style: {
+        padding: '16px',
+        fontSize: '16px',
+      },
+    })
   }
 
-  onSubmit() {
-    if (this.loginForm.invalid) {
-      // Show error message using alert for now
-      alert('Por favor completa todos los campos correctamente.');
-      return;
-    }
+  customToastError(error: string) {
+    this.toast.error('Error al iniciar sesión', {
+      duration: 5000,
+      style: {
+        padding: '16px',
+        fontSize: '16px',
+      },
+    })
+  }
 
-    this.loading = true;
+  loginForm: FormGroup = this.fb.group({
+    email: ['', [Validators.required, Validators.email]],
+    password: ['', [Validators.required, Validators.minLength(6)]],
+  });
+
+  onSubmit() {
+    const {email, password} = this.loginForm.value;
+    const user = this.authService.login(email, password)
+    user.subscribe({
+      next: () => {
+        this.customToastSuccess();
+        this.router.navigate(['/']);
+      },
+      error: (error) => {
+        this.customToastError(error);
+      }
+    })
     
-    // Simulate API call
-    setTimeout(() => {
-      this.loading = false;
-      this.router.navigate(['/']); // Redirect to home after successful login
-      // Show success message
-    }, 1000);
   }
 
   get email() { return this.loginForm.get('email'); }

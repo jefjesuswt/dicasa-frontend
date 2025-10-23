@@ -21,7 +21,7 @@ const initialState: PropertyState = {
 };
 
 @Component({
-  selector: 'app-property-details',
+  selector: 'properties-property-details',
   standalone: true,
   imports: [CommonModule, FormsModule],
   templateUrl: './property-details.component.html',

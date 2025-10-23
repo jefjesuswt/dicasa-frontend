@@ -3,10 +3,11 @@
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
-    "start": "ng serve --host 192.168.0.182",
-    "build": "ng build",
-    "watch": "ng build --watch --configuration development",
-    "test": "ng test"
+    "env": "bun scripts/set-envs.js",
+    "start": "bun run env && ng serve --host 192.168.0.182",
+    "build": "bun run env && ng build",
+    "watch": "bun run env && ng build --watch --configuration development",
+    "test": "bun run env && ng test"
   },
   "private": true,
   "dependencies": {
@@ -18,7 +19,9 @@
     "@angular/platform-browser-dynamic": "^19.2.0",
     "@angular/router": "^19.2.0",
     "@fortawesome/free-solid-svg-icons": "^7.1.0",
+    "@ngxpert/hot-toast": "^5.1.2",
     "@tailwindcss/postcss": "^4.1.13",
+    "dotenv": "^17.2.3",
     "postcss": "^8.5.6",
     "primeicons": "^7.0.0",
     "rxjs": "~7.8.0",
@@ -35,6 +38,7 @@
     "@typescript-eslint/parser": "^5.0.1",
     "eslint": "^8.7.0",
     "globals": "^16.4.0",
+    "intl-tel-input": "19",
     "jasmine-core": "~5.6.0",
     "jiti": "^2.6.1",
     "karma": "~6.4.0",

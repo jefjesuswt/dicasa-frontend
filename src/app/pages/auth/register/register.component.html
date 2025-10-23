@@ -1,141 +1,242 @@
-<div class="flex flex-col min-h-[calc(100vh-30rem)] justify-start px-4 pt-32 pb-60 sm:justify-center sm:py-8 sm:px-6 lg:px-8">
+<div class="flex flex-col min-h-[calc(100vh-4rem)] justify-center px-4 py-12 sm:px-6 lg:px-8">
   <div class="max-w-md w-full space-y-16 sm:space-y-6 mx-auto">
-    <div class="text-center">
-      <h2 class="text-2xl font-bold text-gray-900">
-        Crear una cuenta
-      </h2>
-      <p class="mt-2 text-sm text-gray-600">
-        ¿Ya tienes una cuenta? 
-        <a routerLink="/auth/login" class="font-medium text-sky-600 hover:text-sky-500">
-          Inicia sesión aquí
-        </a>
-      </p>
-    </div>
-
-    <form class="mt-12 space-y-16 sm:space-y-6" [formGroup]="registerForm" (ngSubmit)="onSubmit()">
-      <div class="rounded-md space-y-12 sm:space-y-4">
-        <!-- Name Field -->
-        <div>
-          <label for="name" class="sr-only">Nombre completo</label>
-          <div class="relative">
-            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-              <i class="pi pi-user text-gray-400"></i>
-            </div>
-            <input 
-              id="name" 
-              name="name" 
-              type="text" 
-              formControlName="name"
-              autocomplete="name" 
-              required 
-              class="appearance-none relative block w-full px-10 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-sky-500 focus:border-sky-500 focus:z-10 sm:text-sm"
-              placeholder="Nombre completo"
-              [ngClass]="{
-                'border-red-300': name?.invalid && (name?.dirty || name?.touched),
-                'border-gray-300': !name?.invalid || (!name?.dirty && !name?.touched)
-              }"
-            >
-          </div>
-          <p *ngIf="name?.invalid && (name?.dirty || name?.touched)" class="mt-1 text-sm text-red-600">
-            <span *ngIf="name?.errors?.['required']">El nombre es requerido</span>
+      <div class="text-center">
+          <h2 class="text-2xl font-bold text-gray-900">
+              Crear una cuenta
+          </h2>
+          <p class="mt-2 text-sm text-gray-600">
+              ¿Ya tienes una cuenta?
+              <a routerLink="/auth/login" class="font-medium text-sky-600 hover:text-sky-500">
+                  Inicia sesión aquí
+              </a>
           </p>
-        </div>
-
-        <!-- Email Field -->
-        <div>
-          <label for="email-address" class="sr-only">Correo electrónico</label>
-          <div class="relative">
-            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-              <i class="pi pi-envelope text-gray-400"></i>
-            </div>
-            <input 
-              id="email-address" 
-              name="email" 
-              type="email" 
-              formControlName="email"
-              autocomplete="email" 
-              required 
-              class="appearance-none relative block w-full px-10 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-sky-500 focus:border-sky-500 focus:z-10 sm:text-sm"
-              placeholder="Correo electrónico"
-              [ngClass]="{
-                'border-red-300': email?.invalid && (email?.dirty || email?.touched),
-                'border-gray-300': !email?.invalid || (!email?.dirty && !email?.touched)
-              }"
-            >
-          </div>
-          <p *ngIf="email?.invalid && (email?.dirty || email?.touched)" class="mt-1 text-sm text-red-600">
-            <span *ngIf="email?.errors?.['required']">El correo electrónico es requerido</span>
-            <span *ngIf="email?.errors?.['email']">Ingresa un correo electrónico válido</span>
-          </p>
-        </div>
-
-        <!-- Password Field -->
-        <div>
-          <label for="password" class="sr-only">Contraseña</label>
-          <div class="relative">
-            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-              <i class="pi pi-lock text-gray-400"></i>
-            </div>
-            <input 
-              id="password" 
-              name="password" 
-              type="password" 
-              formControlName="password"
-              autocomplete="new-password" 
-              required 
-              class="appearance-none relative block w-full px-10 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-sky-500 focus:border-sky-500 focus:z-10 sm:text-sm"
-              placeholder="Contraseña"
-              [ngClass]="{
-                'border-red-300': password?.invalid && (password?.dirty || password?.touched),
-                'border-gray-300': !password?.invalid || (!password?.dirty && !password?.touched)
-              }"
-            >
-          </div>
-          <p *ngIf="password?.invalid && (password?.dirty || password?.touched)" class="mt-1 text-sm text-red-600">
-            <span *ngIf="password?.errors?.['required']">La contraseña es requerida</span>
-            <span *ngIf="password?.errors?.['minlength']">La contraseña debe tener al menos 6 caracteres</span>
-          </p>
-        </div>
-
-        <!-- Confirm Password Field -->
-        <div>
-          <label for="confirm-password" class="sr-only">Confirmar contraseña</label>
-          <div class="relative">
-            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-              <i class="pi pi-lock text-gray-400"></i>
-            </div>
-            <input 
-              id="confirm-password" 
-              name="confirmPassword" 
-              type="password" 
-              formControlName="confirmPassword"
-              autocomplete="new-password" 
-              required 
-              class="appearance-none relative block w-full px-10 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-sky-500 focus:border-sky-500 focus:z-10 sm:text-sm"
-              placeholder="Confirmar contraseña"
-              [ngClass]="{
-                'border-red-300': (confirmPassword?.invalid || registerForm.hasError('mismatch')) && (confirmPassword?.dirty || confirmPassword?.touched),
-                'border-gray-300': !confirmPassword?.invalid && !registerForm.hasError('mismatch') || (!confirmPassword?.dirty && !confirmPassword?.touched)
-              }"
-            >
-          </div>
-          <p *ngIf="(confirmPassword?.invalid || registerForm.hasError('mismatch')) && (confirmPassword?.dirty || confirmPassword?.touched)" class="mt-1 text-sm text-red-600">
-            <span *ngIf="confirmPassword?.errors?.['required']">Por favor confirma tu contraseña</span>
-            <span *ngIf="registerForm.hasError('mismatch')">Las contraseñas no coinciden</span>
-          </p>
-        </div>
       </div>
 
-      <div>
-        <button 
-          type="submit" 
-          class="group relative w-full flex justify-center py-2.5 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-sky-600 hover:bg-sky-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-sky-500 mt-4"
-          [disabled]="loading"
-        >
-          <span *ngIf="!loading">Crear cuenta</span>
-          <span *ngIf="loading">Cargando...</span>
-        </button>
-      </div>
-    </form>
+      <form class="mt-12 space-y-16 sm:space-y-6" [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+          <div class="rounded-md space-y-12 sm:space-y-4">
+
+              <!-- Name Field -->
+              <div>
+                  <label for="name" class="sr-only">Nombre completo</label>
+                  <div class="relative">
+                      <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                          <i class="pi pi-user text-gray-400"></i>
+                      </div>
+                      <input id="name" name="name" type="text" formControlName="name" autocomplete="name" required
+                          class="appearance-none relative block w-full px-10 py-3 border placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-sky-500 focus:border-sky-500 focus:z-10 sm:text-sm"
+                          placeholder="Nombre completo" [class.border-red-300]="name?.invalid && (name?.dirty || name?.touched)"
+                          [class.border-gray-300]="!name?.invalid || (!name?.dirty && !name?.touched)">
+                  </div>
+
+                  @if (name?.invalid && (name?.dirty || name?.touched)) {
+                  <p class="mt-1 text-sm text-red-600">
+                      @if (name?.errors?.['required']) {
+                      <span>El nombre es requerido</span>
+                      }
+                  </p>
+                  }
+              </div>
+
+              <!-- Email Field -->
+              <div>
+                  <label for="email-address" class="sr-only">Correo electrónico</label>
+                  <div class="relative">
+                      <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                          <i class="pi pi-envelope text-gray-400"></i>
+                      </div>
+                      <input id="email-address" name="email" type="email" formControlName="email" autocomplete="email" required
+                          class="appearance-none relative block w-full px-10 py-3 border placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-sky-500 focus:border-sky-500 focus:z-10 sm:text-sm"
+                          placeholder="Correo electrónico"
+                          [class.border-red-300]="email?.invalid && (email?.dirty || email?.touched)"
+                          [class.border-gray-300]="!email?.invalid || (!email?.dirty && !email?.touched)">
+                  </div>
+
+                  @if (email?.invalid && (email?.dirty || email?.touched)) {
+                  <p class="mt-1 text-sm text-red-600">
+                      @if (email?.errors?.['required']) {
+                      <span>El correo electrónico es requerido</span>
+                      }
+                      @if (email?.errors?.['email']) {
+                      <span>Ingresa un correo electrónico válido</span>
+                      }
+                  </p>
+                  }
+              </div>
+
+              <!-- Password Field -->
+              <div>
+                  <label for="password" class="sr-only">Contraseña</label>
+                  <div class="relative">
+                      <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                          <i class="pi pi-lock text-gray-400"></i>
+                      </div>
+                      <input id="password" name="password" type="password" formControlName="password"
+                          autocomplete="new-password" required
+                          class="appearance-none relative block w-full px-10 py-3 border placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-sky-500 focus:border-sky-500 focus:z-10 sm:text-sm"
+                          placeholder="Contraseña"
+                          [class.border-red-300]="password?.invalid && (password?.dirty || password?.touched)"
+                          [class.border-gray-300]="!password?.invalid || (!password?.dirty && !password?.touched)">
+                  </div>
+
+                  @if (password?.invalid && (password?.dirty || password?.touched)) {
+                  <p class="mt-1 text-sm text-red-600">
+                      @if (password?.errors?.['required']) {
+                      <span>La contraseña es requerida</span>
+                      }
+                      @if (password?.errors?.['minlength']) {
+                      <span>La contraseña debe tener al menos 6 caracteres</span>
+                      }
+                  </p>
+                  }
+              </div>
+
+              <!-- Confirm Password Field -->
+              <div>
+                  <label for="confirm-password" class="sr-only">Confirmar contraseña</label>
+                  <div class="relative">
+                      <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                          <i class="pi pi-lock text-gray-400"></i>
+                      </div>
+                      <input id="confirm-password" name="confirmPassword" type="password"
+                          formControlName="confirmPassword" autocomplete="new-password" required
+                          class="appearance-none relative block w-full px-10 py-3 border placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-sky-500 focus:border-sky-500 focus:z-10 sm:text-sm"
+                          placeholder="Confirmar contraseña"
+                          [class.border-red-300]="(confirmPassword?.invalid || registerForm.hasError('mismatch')) && (confirmPassword?.dirty || confirmPassword?.touched)"
+                          [class.border-gray-300]="(!confirmPassword?.invalid && !registerForm.hasError('mismatch')) || (!confirmPassword?.dirty && !confirmPassword?.touched)">
+                  </div>
+
+                  @if ((confirmPassword?.invalid || registerForm.hasError('mismatch')) && (confirmPassword?.dirty || confirmPassword?.touched)) {
+                  <p class="mt-1 text-sm text-red-600">
+                      @if (confirmPassword?.errors?.['required']) {
+                      <span>Por favor confirma tu contraseña</span>
+                      }
+                      @if (registerForm.hasError('mismatch')) {
+                      <span>Las contraseñas no coinciden</span>
+                      }
+                  </p>
+                  }
+              </div>
+
+              <!-- === Campo de Teléfono con ngx-intl-tel-input === -->
+              <div>
+                  <label for="phoneNumber" class="block text-sm font-medium text-gray-700 mb-1">Número de
+                      teléfono</label>
+                  <!-- <ngx-intl-tel-input
+                      [cssClass]="'custom-tel-input-container w-full'" 
+                      [preferredCountries]="preferredCountries" [enableAutoCountrySelect]="true"
+                      [enablePlaceholder]="true" [searchCountryFlag]="true"
+                      [searchCountryField]="searchCountryField" [selectFirstCountry]="false"
+                      [selectedCountryISO]="CountryISO.Venezuela" [maxLength]="15"
+                      [phoneValidation]="true" [separateDialCode]="true" [numberFormat]="phoneFormat"
+                      name="phoneNumber" formControlName="phoneNumber" id="phoneNumber">
+                  </ngx-intl-tel-input> -->
+
+                  <!-- Mensajes de error -->
+                  @if (phoneNumber?.invalid && (phoneNumber?.dirty || phoneNumber?.touched)) {
+                  <p class="mt-1 text-sm text-red-600">
+                      @if (phoneNumber?.errors?.['required']) {
+                      <span>El número de teléfono es requerido.</span>
+                      }
+                      @if (phoneNumber?.errors?.['validatePhoneNumber']) {
+                      <!-- Error específico de la librería -->
+                      <span>Ingresa un número de teléfono válido para el país seleccionado.</span>
+                      }
+                      @if (phoneNumber?.errors?.['invalidNumber']) {  
+                      <!-- Error manual si la extracción falla -->
+                      <span>Número de teléfono inválido.</span>
+                      }
+                  </p>
+                  }
+              </div>
+              <!-- === FIN Campo de Teléfono === -->
+
+          </div> <!-- Fin de rounded-md -->
+
+          <div>
+              <button type="submit"
+                  class="group relative w-full flex justify-center py-2.5 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-sky-600 hover:bg-sky-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-sky-500 mt-4 disabled:opacity-50 disabled:cursor-not-allowed"
+                  [disabled]="loading || registerForm.invalid">
+                  @if(!loading) {
+                  <span>Crear cuenta</span>
+                  } @else {
+                  <span>Cargando...</span>
+                  }
+              </button>
+          </div>
+      </form>
   </div>
 </div>
+
+<!-- Estilos Opcionales para ajustar el input interno (en styles.css o [styles]) -->
+<style>
+  /* Contenedor principal de la librería */
+  .custom-tel-input-container .iti {
+      width: 100%;
+      /* Asegura que ocupe todo el ancho */
+  }
+
+  /* Estilo para el input que la librería genera DENTRO del componente */
+  /* Apuntamos al input directamente dentro del contenedor iti */
+   .custom-tel-input-container .iti__tel-input {
+      /* Aplica aquí las clases de Tailwind que quitamos del binding [inputClass] */
+      appearance: none;
+      position: relative; /* O 'static' si no necesitas z-index */
+      display: block;
+      width: 100%;
+      padding-top: 0.75rem; /* py-3 */
+      padding-bottom: 0.75rem; /* py-3 */
+      border-width: 1px; /* border */
+      border-color: #d1d5db; /* border-gray-300 */
+      color: #111827; /* text-gray-900 */
+      border-radius: 0.375rem; /* rounded-md */
+      font-size: 0.875rem; /* sm:text-sm */
+      line-height: 1.25rem; /* sm:text-sm */
+      /* Placeholder styling se hereda o se puede añadir específico */
+      
+      /* Focus styles */
+      outline: 2px solid transparent;
+      outline-offset: 2px;
+      /* Simula focus:ring-sky-500 y focus:border-sky-500 */
+       box-shadow: none; /* Asegura que no haya shadow por defecto */
+       transition: border-color .15s ease-in-out,box-shadow .15s ease-in-out; /* Transición suave */
+  }
+  .custom-tel-input-container .iti__tel-input:focus {
+       border-color: #0ea5e9; /* focus:border-sky-500 */
+       --tw-ring-color: #0ea5e9; /* focus:ring-sky-500 */
+       --tw-ring-offset-shadow: var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);
+       --tw-ring-shadow: var(--tw-ring-inset) 0 0 0 calc(1px + var(--tw-ring-offset-width)) var(--tw-ring-color); /* Simula focus:ring-1 */
+       box-shadow: var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow, 0 0 #0000);
+       z-index: 10; /* focus:z-10 */
+  }
+   /* Estilo específico para placeholder */
+  .custom-tel-input-container .iti__tel-input::placeholder {
+      color: #6b7280; /* placeholder-gray-500 */
+      opacity: 1; /* Asegura visibilidad */
+  }
+
+
+  /* Ajusta el padding izquierdo para la bandera */
+   .custom-tel-input-container .iti__tel-input {
+      padding-left: 52px !important; /* Espacio para la bandera */
+      height: auto; /* Permite que el py-3 funcione */
+  }
+
+  /* Ajusta el borde rojo en caso de error (si no lo hereda bien) */
+   .custom-tel-input-container .iti--allow-dropdown input.ng-invalid.ng-touched {
+      border-color: #fca5a5 !important; /* Color red-300 de Tailwind */
+      /* Asegúrate que el focus ring no oculte el borde rojo */
+       box-shadow: none;
+  }
+  .custom-tel-input-container .iti--allow-dropdown input.ng-invalid.ng-touched:focus {
+      border-color: #fca5a5 !important;
+       --tw-ring-color: #fca5a5; /* Ring rojo en focus de error */
+       box-shadow: var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow, 0 0 #0000);
+  }
+
+
+  /* Z-index del dropdown */
+  .iti__country-list {
+      z-index: 20;
+  }
+</style>
+
