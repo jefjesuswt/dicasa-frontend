@@ -29,7 +29,7 @@
             "styles": [
               "src/styles.css",
               "node_modules/@ngxpert/hot-toast/src/styles/styles.css",
-              "node_modules/intl-tel-input/build/css/intlTelInput.css"
+              "./node_modules/intl-tel-input/build/css/intlTelInput.css"
             ],
             "scripts": []
           },
@@ -88,8 +88,8 @@
             ],
             "styles": [
               "src/styles.css",
-              "node_modules/intl-tel-input/build/css/intlTelInput.css",
-              "node_modules/@ngxpert/hot-toast/src/styles/styles.css"
+              "node_modules/@ngxpert/hot-toast/src/styles/styles.css",
+              "./node_modules/intl-tel-input/build/css/intlTelInput.css"
             ],
             "scripts": []
           }

@@ -1,0 +1,206 @@
+<div class="flex flex-col items-center mb-8">
+  <div class="relative w-32 h-32">
+    <shared-avatar
+      class="w-32 h-32 rounded-full object-cover border-4 border-gray-200"
+      [src]="currentUser()?.profileImageUrl"
+      [id]="currentUser()?._id"
+      alt="Foto de perfil"
+    ></shared-avatar>
+
+    <button
+      (click)="triggerFileInput()"
+      [disabled]="uploadingPicture"
+      type="button"
+      class="absolute -bottom-0 -right-0 bg-sky-600 text-white rounded-full w-8 h-8 flex items-center justify-center hover:bg-sky-700 transition-colors shadow-md disabled:opacity-50 disabled:cursor-wait"
+      aria-label="Cambiar foto de perfil"
+    >
+      <i class="pi pi-pencil text-sm"></i>
+    </button>
+
+    <input
+      type="file"
+      class="hidden"
+      #fileInput
+      (change)="onFileSelected($event)"
+      accept="image/png, image/jpeg, image/jpg, image/webp, image/gif"
+    />
+
+    @if (uploadingPicture) {
+    <div
+      class="absolute inset-0 bg-black bg-opacity-50 rounded-full flex items-center justify-center"
+    >
+      <i class="pi pi-spin pi-spinner text-white text-3xl"></i>
+    </div>
+    }
+  </div>
+</div>
+
+<h2 class="text-2xl font-bold text-gray-900 mb-6">Información Personal</h2>
+
+<form [formGroup]="infoForm" (ngSubmit)="onInfoSubmit()" class="space-y-4">
+  <div>
+    <label for="email" class="block text-sm font-medium text-gray-700"
+      >Email</label
+    >
+    <input
+      type="email"
+      id="email"
+      formControlName="email"
+      class="p-2 mt-1 block w-full rounded-md border-gray-300 shadow-sm cursor-not-allowed sm:text-sm disabled:cursor-not-allowed disabled:bg-gray-100"
+      title="El email no se puede cambiar."
+    />
+  </div>
+  <div>
+    <label for="name" class="block text-sm font-medium text-gray-700"
+      >Nombre</label
+    >
+    <input
+      type="text"
+      id="name"
+      formControlName="name"
+      class="p-2 mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-sky-500 focus:ring-sky-500 sm:text-sm"
+    />
+
+    @if (name?.invalid && name?.touched) {
+    <p class="mt-1 text-sm text-red-600">
+      @if (name?.errors?.['required']) {
+      <span>El nombre es requerido</span>
+      }
+    </p>
+    }
+  </div>
+
+  <div>
+    <label for="phone" class="block text-sm font-medium text-gray-700 mb-1"
+      >Teléfono</label
+    >
+    <ngx-intl-tel-input
+      [cssClass]="'custom'"
+      [preferredCountries]="preferredCountries"
+      [enableAutoCountrySelect]="true"
+      [enablePlaceholder]="true"
+      [selectedCountryISO]="CountryISO.Venezuela"
+      [phoneValidation]="true"
+      [separateDialCode]="true"
+      [numberFormat]="phoneFormat"
+      name="phoneNumber"
+      formControlName="phoneNumber"
+      id="phoneNumber"
+    >
+    </ngx-intl-tel-input>
+
+    @if (phoneNumber?.invalid && phoneNumber?.touched) {
+    <p class="mt-1 text-sm text-red-600">
+      @if (phoneNumber?.errors?.['validatePhoneNumber']) {
+      <span
+        >Ingresa un número de teléfono válido para el país seleccionado.</span
+      >
+      } @else if (phoneNumber?.errors?.['required']) {
+      <span>El número de teléfono es requerido.</span>
+      } @else if (phoneNumber?.errors?.['invalidNumber']) {
+      <span>Número de teléfono inválido.</span>
+      }
+    </p>
+    }
+  </div>
+
+  <button
+    type="submit"
+    [disabled]="infoForm.invalid || infoForm.pristine || loadingInfo"
+    class="px-4 py-2 bg-sky-600 text-white rounded-md font-medium hover:bg-sky-700 disabled:opacity-50 disabled:cursor-not-allowed"
+  >
+    @if (loadingInfo) {
+    <span>Guardando...</span>
+    } @else {
+    <span>Guardar Cambios</span>
+    }
+  </button>
+</form>
+
+<hr class="my-8 border-gray-200" />
+
+<div class="flex justify-between items-center mb-6">
+  <h2 class="text-2xl font-bold text-gray-900">Cambiar contraseña</h2>
+  <button
+    (click)="togglePasswordForm()"
+    type="button"
+    class="inline-flex items-center gap-2 px-3 py-1.5 text-sm font-medium rounded-md text-sky-600 hover:bg-sky-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-sky-500 transition-colors"
+  >
+    @if (showPasswordForm) {
+    <i class="pi pi-eye-slash text-base"></i>
+    } @else {
+    <i class="pi pi-eye text-base"></i>
+    }
+  </button>
+</div>
+
+<div
+  class="transition-all duration-300 ease-in-out overflow-hidden max-w-lg"
+  [class.max-h-0]="!showPasswordForm"
+  [class.max-h-[500px]]="showPasswordForm"
+  [class.opacity-0]="!showPasswordForm"
+  [class.opacity-100]="showPasswordForm"
+  [class.mt-0]="!showPasswordForm"
+  [class.mt-4]="showPasswordForm"
+>
+  <form
+    [formGroup]="passwordForm"
+    (ngSubmit)="onPasswordSubmit()"
+    class="space-y-4"
+  >
+    <div>
+      <label
+        for="currentPassword"
+        class="block text-sm font-medium text-gray-700"
+        >Contraseña Actual</label
+      >
+      <input
+        type="password"
+        id="currentPassword"
+        formControlName="currentPassword"
+        class="p-2 mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-sky-500 focus:ring-sky-500 sm:text-sm"
+      />
+    </div>
+    <div>
+      <label for="newPassword" class="block text-sm font-medium text-gray-700"
+        >Nueva Contraseña</label
+      >
+      <input
+        type="password"
+        id="newPassword"
+        formControlName="newPassword"
+        class="p-2 mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-sky-500 focus:ring-sky-500 sm:text-sm"
+      />
+    </div>
+    <div>
+      <label
+        for="confirmPassword"
+        class="block text-sm font-medium text-gray-700"
+        >Confirmar Nueva Contraseña</label
+      >
+      <input
+        type="password"
+        id="confirmPassword"
+        formControlName="confirmPassword"
+        class="p-2 mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-sky-500 focus:ring-sky-500 sm:text-sm"
+      />
+    </div>
+
+    @if (passwordForm.hasError('mismatch') &&
+    passwordForm.get('confirmPassword')?.touched) {
+    <p class="text-sm text-red-600">Las nuevas contraseñas no coinciden.</p>
+    }
+
+    <button
+      type="submit"
+      [disabled]="passwordForm.invalid || loadingPassword"
+      class="px-4 py-2 bg-sky-600 text-white rounded-md font-medium hover:bg-sky-700 disabled:opacity-50 disabled:cursor-not-allowed"
+    >
+      @if (loadingPassword) {
+      <span>Cambiando...</span>
+      } @else {
+      <span>Cambiar Contraseña</span>
+      }
+    </button>
+  </form>
+</div>

@@ -1,4 +1,5 @@
 import { Routes, RouterModule } from '@angular/router';
+import { flowGuard } from '../../guards/auth.guards';
 
 const routes: Routes = [
   { 
@@ -14,20 +15,23 @@ const routes: Routes = [
     loadComponent: () => import('./forgot-password/forgot-password.component').then(m => m.ForgotPasswordComponent)
   },
   { 
-    path: 'set-password', 
-    loadComponent: () => import('./reset-password/set-password.component').then(m => m.SetPasswordComponent)
+    path: 'reset-password', 
+    loadComponent: () => import('./reset-password/reset-password.component').then(m => m.ResetPasswordComponent),
+    canActivate: [flowGuard]
   },
   {
     path: 'verify-code',
-    loadComponent: () => import('./verify-code/verify-code.component').then(m => m.VerifyCodeComponent)
+    loadComponent: () => import('./verify-code/verify-code.component').then(m => m.VerifyCodeComponent),
+    canActivate: [flowGuard]
   },
   { 
     path: 'check-email', 
-    loadComponent: () => import('./check-email/check-email.component').then(m => m.CheckEmailComponent)
+    loadComponent: () => import('./check-email/check-email.component').then(m => m.CheckEmailComponent),
+    canActivate: [flowGuard]
   },
   { 
     path: 'confirm-email', 
-    loadComponent: () => import('./confirm-email/confirm-email.component').then(m => m.ConfirmEmailComponent)
+    loadComponent: () => import('./confirm-email/confirm-email.component').then(m => m.ConfirmEmailComponent),
   },
   {
     path: '',

@@ -1,8 +1,10 @@
 import { Component, inject } from '@angular/core';
-import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, FormControl } from '@angular/forms';
+import { FormBuilder, Validators, ReactiveFormsModule, FormGroup } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { Router, RouterModule } from '@angular/router';
 import { AuthService } from '../../../services/auth.service';
+import { HotToastService } from '@ngxpert/hot-toast';
+import { finalize } from 'rxjs/operators';
 
 @Component({
   selector: 'auth-forgot-password',
@@ -15,43 +17,40 @@ import { AuthService } from '../../../services/auth.service';
   templateUrl: './forgot-password.component.html'
 })
 export class ForgotPasswordComponent {
-  private router = inject(Router)
+  private router = inject(Router);
+  private authService = inject(AuthService);
+  private toast = inject(HotToastService);
+  private fb = inject(FormBuilder);
 
-  forgotForm: FormGroup;
   loading = false;
-  error: string | null = null;
-  success = false;
 
-  constructor(private authService: AuthService) {
-    this.forgotForm = new FormGroup({
-      email: new FormControl('', [Validators.required, Validators.email])
-    });
-  }
+  forgotForm: FormGroup = this.fb.group({
+    email: ['', [Validators.required, Validators.email]]
+  });
 
   get email() { return this.forgotForm.get('email'); }
 
   onSubmit() {
     if (this.forgotForm.invalid) {
+      this.forgotForm.markAllAsTouched();
       return;
     }
 
     this.loading = true;
-    this.error = null;
     const email = this.forgotForm.value.email;
 
     this.authService.forgotPassword(email)
+      .pipe(
+        finalize(() => this.loading = false)
+      )
       .subscribe({
-        next: () => {
-          this.loading = false;
-          this.success = true;
-          
-          localStorage.setItem('resetEmail', email); 
-          
+        next: (response) => {
+          this.authService.setTempEmailForFlow(email);
+          this.toast.success(response.message || 'Correo de recuperación enviado.');
           this.router.navigate(['/auth/verify-code']);
         },
-        error: (error) => {
-          this.loading = false;
-          this.error = error.message || 'Ocurrió un error al procesar tu solicitud. Por favor, inténtalo de nuevo.';
+        error: (errMessage) => {
+          this.toast.error(errMessage);
         }
       });
   }

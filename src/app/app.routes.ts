@@ -1,5 +1,5 @@
 import { Routes } from '@angular/router';
-import { authGuard, adminGuard, superAdminGuard } from './guards/auth.guards';
+import { authGuard, adminGuard, unauthGuard } from './guards/auth.guards';
 
 export const routes: Routes = [
   { 
@@ -13,7 +13,13 @@ export const routes: Routes = [
   },
   { 
     path: 'auth', 
-    loadChildren: () => import('./pages/auth/auth.routes').then(m => m.AUTH_ROUTES)
+    loadChildren: () => import('./pages/auth/auth.routes').then(m => m.AUTH_ROUTES),
+    canActivate: [unauthGuard]
+  },
+  { 
+    path: 'profile', 
+    loadChildren: () => import('./pages/profile/profile.routes').then(m => m.PROFILE_ROUTES),
+    canActivate: [authGuard]
   },
   { 
     path: 'dashboard', 
