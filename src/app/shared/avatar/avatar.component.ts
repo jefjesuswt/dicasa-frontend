@@ -8,7 +8,7 @@ import { computed } from "@angular/core";
   imports: [CommonModule],
   template: `
     <img
-      [src]="avatarUrl()"
+      [src]="imageUrlToDisplay"
       (error)="onImageError($event)"
       [alt]="alt"
       class="w-full h-full rounded-full object-cover"
@@ -26,15 +26,13 @@ export class AvatarComponent {
 
   @Input() alt: string = "Avatar de perfil";
 
-  public avatarUrl = computed(() => {
+  get imageUrlToDisplay(): string {
     if (this.src) {
       return this.src;
     }
-
-    return `https://api.dicebear.com/8.x/avataaars/svg?seed=${
-      this.id || "User"
-    }`;
-  });
+    const seed = this.id || "User";
+    return `https://api.dicebear.com/8.x/avataaars/svg?seed=${seed}`;
+  }
 
   onImageError(event: Event): void {
     const element = event.target as HTMLImageElement;

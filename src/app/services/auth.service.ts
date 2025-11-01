@@ -3,10 +3,10 @@ import { catchError, map, Observable, of, tap } from "rxjs";
 import { HttpClient } from "@angular/common/http";
 import { Router } from "@angular/router";
 import { environment } from "../../environments/environment";
-import { AuthResponse, User } from "../interfaces";
 import { AuthStatus } from "../enums/auth-status.enum";
-import { RegisterData } from "../interfaces/register-data.interace";
 import { handleApiError } from "./utils/api-error-handler";
+import { AuthResponse, RegisterData, User } from "../interfaces/users";
+import { UserRole } from "../interfaces/users/roles.enum";
 
 @Injectable({
   providedIn: "root",
@@ -19,7 +19,7 @@ export class AuthService {
   public currentUser = computed(() => this._currentUser());
   public authStatus = computed(() => this._authStatus());
 
-  private readonly apiUrl: string = environment.API_URL;
+  private readonly apiUrl: string = `${environment.API_URL}/auth`;
 
   private router = inject(Router);
   private http = inject(HttpClient);
@@ -55,7 +55,7 @@ export class AuthService {
   };
 
   login(email: string, password: string): Observable<boolean> {
-    const url = `${this.apiUrl}/auth/login`;
+    const url = `${this.apiUrl}/login`;
     const body = { email, password };
     return this.http.post<AuthResponse>(url, body).pipe(
       tap(({ user, token }) => {
@@ -69,7 +69,7 @@ export class AuthService {
   }
 
   register(data: RegisterData): Observable<boolean> {
-    const url = `${this.apiUrl}/auth/register`;
+    const url = `${this.apiUrl}/register`;
     const body = { ...data };
     return this.http.post<{ message: string }>(url, body).pipe(
       tap((message) => {
@@ -84,14 +84,14 @@ export class AuthService {
 
   forgotPassword(email: string): Observable<{ message: string }> {
     return this.http
-      .post<{ message: string }>(`${this.apiUrl}/auth/forgot-password`, {
+      .post<{ message: string }>(`${this.apiUrl}/forgot-password`, {
         email,
       })
       .pipe(catchError(handleApiError));
   }
 
   verifyResetCode(email: string, code: string): Observable<boolean> {
-    const url = `${this.apiUrl}/auth/verify-reset-code`;
+    const url = `${this.apiUrl}/verify-reset-code`;
     const body = { email, code };
     return this.http.post<{ valid: boolean }>(url, body).pipe(
       map((response) => response.valid),
@@ -106,7 +106,7 @@ export class AuthService {
     newPassword: string,
     code: string
   ): Observable<{ message: string }> {
-    const url = `${this.apiUrl}/auth/reset-password`;
+    const url = `${this.apiUrl}/reset-password`;
     const body = { email, newPassword, code };
     return this.http.post<{ message: string }>(url, body).pipe(
       catchError((error) => {
@@ -116,7 +116,7 @@ export class AuthService {
   }
 
   checkAuthStatus(): Observable<boolean> {
-    const url = `${this.apiUrl}/auth/checkToken`;
+    const url = `${this.apiUrl}/checkToken`;
     const token = localStorage.getItem("accessToken");
 
     if (!token) {
@@ -140,7 +140,7 @@ export class AuthService {
   }
 
   confirmEmail(token: string): Observable<boolean> {
-    const url = `${this.apiUrl}/auth/confirm-email?token=${token}`;
+    const url = `${this.apiUrl}/confirm-email?token=${token}`;
 
     return this.http.get<AuthResponse>(url).pipe(
       tap(({ user, token }) => {
@@ -157,12 +157,12 @@ export class AuthService {
 
   isAdmin(): boolean {
     const user = this.currentUser();
-    return user ? user.roles.includes("ADMIN") : false;
+    return user ? user.roles.includes(UserRole.ADMIN) : false;
   }
 
   isSuperAdmin(): boolean {
     const user = this.currentUser();
-    return user ? user.roles.includes("SUPERADMIN") : false;
+    return user ? user.roles.includes(UserRole.SUPERADMIN) : false;
   }
 
   private clearAuthData() {

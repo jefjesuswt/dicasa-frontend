@@ -1,165 +1,97 @@
-import { Component, computed, inject, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { Router, RouterModule } from '@angular/router';
-import { PropertyService } from '../../../services/property.service';
-import { Property } from '../../../models/property.model';
-import { AuthService } from '../../../services/auth.service';
+import { Component, computed, DestroyRef, inject, OnInit } from "@angular/core";
+import { CommonModule } from "@angular/common";
+import { Router, RouterModule, RouterOutlet } from "@angular/router";
+import { PropertyService } from "../../../services/property.service";
+import { AuthService } from "../../../services/auth.service";
+import { finalize } from "rxjs";
+import { Property } from "../../../interfaces/properties";
+import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
+import { PaginatedProperties } from "../../../interfaces/properties/paginated-properties.interface";
+import { DashboardPropertyCardComponent } from "../../../components/dashboard/dashboard-property-card/dashboard-property-card.component";
+import { StatCard } from "../../../interfaces/dashboard/stat-card.interface";
+import { StatCardsComponent } from "../../../components/dashboard/stat-cards/stat-cards.component";
 
-
-
-const statusTypes = ['for_sale', 'for_rent', 'sold', 'rented'] as const;
-type StatusType = typeof statusTypes[number];
-
-
-interface StatCard {
-  title: string;
-  value: number;
-  icon: string;
-  color: string;
-  textColor: string;
-}
+const statusTypes = ["for_sale", "for_rent", "sold", "rented"] as const;
 
 @Component({
-  selector: 'dashboard-dashboard',
+  selector: "dashboard-dashboard",
   standalone: true,
-  imports: [
-    CommonModule, 
-    RouterModule,
-  ],
-  templateUrl: './dashboard.component.html',
+  imports: [CommonModule, RouterModule, RouterOutlet, StatCardsComponent],
+  templateUrl: "./dashboard.component.html",
 })
 export class DashboardComponent implements OnInit {
-
   private authService = inject(AuthService);
   private propertyService = inject(PropertyService);
+  private destroyRef = inject(DestroyRef);
   private router = inject(Router);
 
-  public properties: Property[] = [];
-  public loading = true;
-  public error: string | null = null;
-
+  public statsLoading = true;
   public user = computed(() => this.authService.currentUser());
-  stats: StatCard[] = [
-    { 
-      title: 'Total de Propiedades', 
-      value: 0, 
-      icon: 'pi pi-home', 
-      color: 'bg-blue-100', 
-      textColor: 'text-blue-800' 
-    },
-    { 
-      title: 'En Venta', 
-      value: 0, 
-      icon: 'pi pi-tag', 
-      color: 'bg-green-100', 
-      textColor: 'text-green-800' 
-    },
-    { 
-      title: 'En Renta', 
-      value: 0, 
-      icon: 'pi pi-key', 
-      color: 'bg-purple-100', 
-      textColor: 'text-purple-800' 
-    },
-    { 
-      title: 'Vendidas/Rentadas', 
-      value: 0, 
-      icon: 'pi pi-check-circle', 
-      color: 'bg-yellow-100', 
-      textColor: 'text-yellow-800' 
-    }
-  ];
-  
+  public isSuperAdmin = computed(() => this.authService.isSuperAdmin());
 
+  public stats: StatCard[] = [
+    {
+      title: "Total de Propiedades",
+      value: 0,
+      icon: "pi pi-home",
+      color: "bg-blue-100",
+      textColor: "text-blue-800",
+    },
+    {
+      title: "En Venta",
+      value: 0,
+      icon: "pi pi-tag",
+      color: "bg-green-100",
+      textColor: "text-green-800",
+    },
+    {
+      title: "En Alquiler",
+      value: 0,
+      icon: "pi pi-key",
+      color: "bg-purple-100",
+      textColor: "text-purple-800",
+    },
+    {
+      title: "Vendidas/Rentadas",
+      value: 0,
+      icon: "pi pi-check-circle",
+      color: "bg-yellow-100",
+      textColor: "text-yellow-800",
+    },
+  ];
 
   constructor() {}
 
- 
-
   ngOnInit(): void {
-    this.loadProperties();
+    this.loadStatsData();
+    this.propertyService.statsUpdates$
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(() => {
+        this.loadStatsData();
+      });
   }
 
-  loadProperties(): void {
-    this.loading = true;
-    this.error = null;
-    
-    try {
-      const properties = this.propertyService.getProperties();
-      this.properties = properties;
-      this.updateStats(properties);
-      this.loading = false;
-    } catch (error) {
-      console.error('Error loading properties', error);
-      this.error = 'Error al cargar las propiedades';
-      this.loading = false;
-    }
+  loadStatsData(): void {
+    this.statsLoading = true;
+    this.propertyService
+      .getProperties({ page: 1, limit: 1000 })
+      .pipe(finalize(() => (this.statsLoading = false)))
+      .subscribe({
+        next: (response: PaginatedProperties) => {
+          this.updateStats(response.data);
+        },
+        error: (error) => {
+          console.error("Error loading stats data", error);
+        },
+      });
   }
 
   private updateStats(properties: Property[]): void {
     this.stats[0].value = properties.length;
-    this.stats[1].value = properties.filter(p => p.status === 'sale').length; // Changed from 'for_sale' to 'sale'
-    this.stats[2].value = properties.filter(p => p.status === 'rent').length; // Changed from 'for_rent' to 'rent'
-    this.stats[3].value = properties.filter(p => p.status === 'sold' || p.status === 'rented').length;
-  }
-
-  getStatusBadgeClass(status: string): string {
-    const statusClasses: Record<string, string> = {
-      'sale': 'bg-blue-100 text-blue-800',
-      'rent': 'bg-purple-100 text-purple-800',
-      'sold': 'bg-green-100 text-green-800',
-      'rented': 'bg-yellow-100 text-yellow-800'
-    };
-    return statusClasses[status] || 'bg-gray-100 text-gray-800';
-  }
-
-  getStatusLabel(status: string): string {
-    const statusLabels: Record<string, string> = {
-      'sale': 'En Venta',
-      'rent': 'En Renta',
-      'sold': 'Vendido',
-      'rented': 'Rentado'
-    };
-    return statusLabels[status] || status;
-  }
-
-  getTypeLabel(type: string): string {
-    const typeLabels: Record<string, string> = {
-      'house': 'Casa',
-      'apartment': 'Departamento',
-      'land': 'Terreno',
-      'commercial': 'Comercial',
-      'villa': 'Villa'
-    };
-    return typeLabels[type] || type;
-  }
-
-  // Navigation methods
-  viewProperty(id: number): void {
-    this.router.navigate(['/properties', id]);
-  }
-
-  editProperty(property: Property): void {
-    // Will be implemented later
-    console.log('Edit property:', property.id);
-  }
-
-  deleteProperty(id: number): void {
-    if (confirm('¿Estás seguro de que deseas eliminar esta propiedad?')) {
-      this.propertyService.deleteProperty(id).subscribe({
-        next: () => {
-          this.loadProperties(); // Refresh the list
-        },
-        error: (error) => {
-          console.error('Error deleting property', error);
-          this.error = 'Error al eliminar la propiedad';
-        }
-      });
-    }
-  }
-
-  addProperty(): void {
-    // Will be implemented later
-    console.log('Add new property');
+    this.stats[1].value = properties.filter((p) => p.status === "sale").length;
+    this.stats[2].value = properties.filter((p) => p.status === "rent").length;
+    this.stats[3].value = properties.filter(
+      (p) => p.status === "sold" || p.status === "rented"
+    ).length;
   }
 }

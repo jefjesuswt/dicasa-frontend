@@ -11,14 +11,14 @@
           Descubre hermosas casas, apartamentos y terrenos en venta o alquiler en las mejores ubicaciones.
         </p>
         <div class="mt-5 sm:mt-8 sm:flex sm:justify-center lg:justify-start space-y-3 sm:space-y-0 sm:space-x-4">
-          <a 
-            routerLink="/properties" 
+          <a
+            routerLink="/properties"
             class="w-full sm:w-auto flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-sky-700 bg-white hover:bg-sky-50 md:py-4 md:text-lg md:px-10"
           >
             Ver Propiedades
           </a>
-          <a 
-            routerLink="/contact" 
+          <a
+            routerLink="/contact"
             class="w-full sm:w-auto flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-white bg-sky-600 hover:bg-sky-700 md:py-4 md:text-lg md:px-10"
           >
             Contáctanos
@@ -28,9 +28,9 @@
     </div>
   </div>
   <div class="hidden lg:block lg:absolute lg:inset-y-0 lg:right-0 lg:w-1/2">
-    <img 
-      class="w-full h-full object-cover" 
-      src="https://images.unsplash.com/photo-1512917774080-9991f1c4c750?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2940&q=80" 
+    <img
+      class="w-full h-full object-cover"
+      src="https://images.unsplash.com/photo-1512917774080-9991f1c4c750?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2940&q=80"
       alt="Beautiful home"
       loading="lazy"
     >
@@ -45,22 +45,22 @@
 <!-- Featured Properties -->
 <div class="py-6 bg-white">
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-    <shared-section-header 
+    <shared-section-header
       title="Propiedades Destacadas"
       description="Explora nuestra selección de propiedades premium en las mejores ubicaciones"
     ></shared-section-header>
 
     <div class="mt-10">
       <div class="grid grid-cols-1 gap-y-10 gap-x-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 xl:gap-x-8">
-        <shared-property-card 
-          *ngFor="let property of featuredProperties" 
+        <shared-property-card
+          *ngFor="let property of featuredProperties"
           [property]="property"
         ></shared-property-card>
       </div>
     </div>
 
     <div class="mt-10 text-center">
-      <shared-button 
+      <shared-button
         [routerLink]="['/properties']"
         variant="primary"
         size="lg"
@@ -75,7 +75,7 @@
 <!-- Why Choose Us -->
 <div class="bg-gray-50 py-16">
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-    <shared-section-header 
+    <shared-section-header
       title="¿Por qué elegirnos?"
       description="Ofrecemos el mejor servicio y las mejores opciones de propiedades para ti"
     ></shared-section-header>

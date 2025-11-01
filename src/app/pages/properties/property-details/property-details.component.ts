@@ -1,88 +1,113 @@
-import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
-import { PropertyService } from '../../../services/property.service';
-import { Property } from '../../../models/property.model';
-import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { Component, inject, OnInit } from "@angular/core";
+import { trigger, transition, style, animate } from "@angular/animations";
+import { ActivatedRoute, Router } from "@angular/router";
+import { CommonModule } from "@angular/common";
+import { FormsModule } from "@angular/forms";
+import { finalize } from "rxjs";
+import { NgMagnizoomModule } from "ng-magnizoom";
 
-// Define a type for the property state
+import { PropertyService } from "../../../services/property.service";
+import { Property } from "../../../interfaces/properties/property.interface";
+import { AppointmentFormComponent } from "../../../shared/appointment-form/appointment-form.component";
+
 type PropertyState = {
   property: Property | null;
   loading: boolean;
   error: string | null;
   activeImageIndex: number;
+  isImageLoading: boolean;
 };
 
 const initialState: PropertyState = {
   property: null,
   loading: true,
   error: null,
-  activeImageIndex: 0
+  activeImageIndex: 0,
+  isImageLoading: false,
 };
 
 @Component({
-  selector: 'properties-property-details',
+  selector: "properties-property-details",
   standalone: true,
-  imports: [CommonModule, FormsModule],
-  templateUrl: './property-details.component.html',
+  imports: [
+    CommonModule,
+    FormsModule,
+    NgMagnizoomModule,
+    AppointmentFormComponent,
+  ],
+  templateUrl: "./property-details.component.html",
+  animations: [
+    trigger("slideUpDown", [
+      transition(":increment", [
+        style({ opacity: 0, transform: "translateY(5%)" }),
+        animate(
+          "300ms ease-out",
+          style({ opacity: 1, transform: "translateY(0%)" })
+        ),
+      ]),
+
+      transition(":decrement", [
+        style({ opacity: 0, transform: "translateY(-5%)" }),
+        animate(
+          "300ms ease-out",
+          style({ opacity: 1, transform: "translateY(0%)" })
+        ),
+      ]),
+    ]),
+  ],
 })
 export class PropertyDetailsComponent implements OnInit {
   state: PropertyState = { ...initialState };
-
-  
-  constructor(
-    private route: ActivatedRoute,
-    private router: Router,
-    private propertyService: PropertyService
-  ) {}
+  private route = inject(ActivatedRoute);
+  private router = inject(Router);
+  private propertyService = inject(PropertyService);
 
   ngOnInit(): void {
-    this.route.paramMap.subscribe(params => {
-      const id = params.get('id');
+    this.route.paramMap.subscribe((params) => {
+      const id = params.get("id");
       if (id) {
         this.loadProperty(id);
       } else {
-        this.setError('No property ID provided');
+        this.setError("No property ID provided");
       }
     });
   }
 
   private loadProperty(id: string): void {
     this.setLoading(true);
-    
-    try {
-      const property = this.propertyService.getPropertyById(id);
-      
-      if (property) {
-        // Ensure images array exists and has at least one image
-        const propertyWithImages = {
-          ...property,
-          images: property.images?.length ? property.images : ['/assets/images/placeholder-property.jpg']
-        };
-        
-        this.setState({
-          property: propertyWithImages,
-          loading: false,
-          error: null
-        });
-      } else {
-        this.setError('Property not found');
-      }
-    } catch (error) {
-      console.error('Error loading property:', error);
-      this.setError('Error loading property details');
-    }
+
+    this.propertyService
+      .getProperty(id)
+      .pipe(finalize(() => this.setLoading(false)))
+      .subscribe({
+        next: (property) => {
+          const propertyWithImages = {
+            ...property,
+            images: property.images?.length
+              ? property.images
+              : ["/assets/images/placeholder-property.jpg"],
+          };
+
+          this.setState({
+            property: propertyWithImages,
+            error: null,
+          });
+        },
+        error: (errorMessage) => {
+          console.error("Error loading property:", errorMessage);
+          this.setError(errorMessage);
+        },
+      });
   }
 
-  // State management helpers
   private setLoading(loading: boolean): void {
     this.setState({ loading });
   }
 
   private setError(error: string | null): void {
-    this.setState({ 
+    this.setState({
       error,
-      loading: false 
+      loading: false,
     });
   }
 
@@ -90,16 +115,25 @@ export class PropertyDetailsComponent implements OnInit {
     this.state = { ...this.state, ...partialState };
   }
 
-  // Public methods for template
   setActiveImage(index: number): void {
     if (!this.state.property?.images?.length) return;
-    
-    const maxIndex = this.state.property.images.length - 1;
-    this.setState({
-      activeImageIndex: Math.max(0, Math.min(index, maxIndex))
-    });
-  }
 
+    const maxIndex = this.state.property.images.length - 1;
+    const newIndex = Math.max(0, Math.min(index, maxIndex));
+
+    if (newIndex === this.state.activeImageIndex) {
+      return;
+    }
+
+    this.setState({ isImageLoading: true });
+
+    setTimeout(() => {
+      this.setState({
+        activeImageIndex: newIndex,
+        isImageLoading: false,
+      });
+    }, 0);
+  }
   previousImage(): void {
     if (!this.state.property?.images?.length) return;
     this.setActiveImage(this.state.activeImageIndex - 1);
@@ -111,29 +145,27 @@ export class PropertyDetailsComponent implements OnInit {
   }
 
   goBack(): void {
-    this.router.navigate(['/properties']);
+    this.router.navigate(["/properties"]);
   }
 
   onContactSubmit(event: Event): void {
     event.preventDefault();
     const form = event.target as HTMLFormElement;
     const formData = new FormData(form);
-    
+
     const contactData = {
-      name: formData.get('name') as string,
-      email: formData.get('email') as string,
-      phone: formData.get('phone') as string,
-      message: formData.get('message') as string
+      name: formData.get("name") as string,
+      email: formData.get("email") as string,
+      phone: formData.get("phone") as string,
+      message: formData.get("message") as string,
     };
 
-    console.log('Contact form submitted:', contactData);
-    // Here you would typically send the data to your backend
-    // For now, we'll just show a success message
-    alert('¡Gracias por tu mensaje! Nos pondremos en contacto contigo pronto.');
+    console.log("Contact form submitted:", contactData);
+
+    alert("¡Gracias por tu mensaje! Nos pondremos en contacto contigo pronto.");
     form.reset();
   }
 
-  // Getters for template
   get property(): Property | null {
     return this.state.property;
   }
@@ -148,5 +180,16 @@ export class PropertyDetailsComponent implements OnInit {
 
   get activeImageIndex(): number {
     return this.state.activeImageIndex;
+  }
+
+  get isImageLoading(): boolean {
+    return this.state.isImageLoading;
+  }
+
+  onImageError(event: Event) {
+    const element = event.target as HTMLImageElement;
+    if (element) {
+      element.src = "/assets/images/placeholder-property.png";
+    }
   }
 }

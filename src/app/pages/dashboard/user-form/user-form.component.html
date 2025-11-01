@@ -1,0 +1,167 @@
+<div class="container mx-auto px-4 py-8">
+  <div class="max-w-xl mx-auto">
+    <h1 class="text-2xl font-bold text-gray-900 mb-6">{{ pageTitle }}</h1>
+
+    @if (initialLoading) {
+      <div class="flex justify-center items-center py-16">
+        <i class="pi pi-spin pi-spinner text-sky-600" style="font-size: 2rem"></i>
+        <span class="ml-3 text-gray-700">Cargando datos del usuario...</span>
+      </div>
+    }
+
+    @if (!initialLoading) {
+      <form
+        [formGroup]="userForm"
+        (ngSubmit)="onSubmit()"
+        class="bg-white p-6 md:p-8 rounded-lg shadow-md space-y-6"
+        [class.opacity-50]="isSaving"
+        [class.pointer-events-none]="isSaving"
+      >
+        <div>
+          <label for="name" class="block text-sm font-medium text-gray-700 mb-1">Nombre Completo</label>
+          <input id="name" type="text" formControlName="name"
+                 class="block w-full rounded-md border-gray-300 shadow-sm focus:border-sky-500 focus:ring-sky-500 sm:text-sm py-2 px-3">
+          @if (userForm.get('name')?.invalid && userForm.get('name')?.touched) {
+            <p class="mt-1 text-sm text-red-600">El nombre es requerido (mín. 3 caracteres).</p>
+          }
+        </div>
+
+        <div>
+          <label for="email" class="block text-sm font-medium text-gray-700 mb-1">Correo Electrónico</label>
+          <input id="email" type="email" formControlName="email"
+                 class="block w-full rounded-md border-gray-300 shadow-sm focus:border-sky-500 focus:ring-sky-500 sm:text-sm py-2 px-3">
+          @if (userForm.get('email')?.invalid && userForm.get('email')?.touched) {
+            @if (userForm.get('email')?.hasError('required')) {
+              <p class="mt-1 text-sm text-red-600">El correo es requerido.</p>
+            }
+            @if (userForm.get('email')?.hasError('email')) {
+              <p class="mt-1 text-sm text-red-600">Formato de correo inválido.</p>
+            }
+          }
+        </div>
+
+        <div>
+          <label for="phoneNumber" class="block text-sm font-medium text-gray-700 mb-1">Número de Teléfono</label>
+          <ngx-intl-tel-input
+              [preferredCountries]="preferredCountries"
+              [enableAutoCountrySelect]="true"
+              [enablePlaceholder]="true"
+              [selectFirstCountry]="false"
+              [selectedCountryISO]="CountryISO.Venezuela"
+              [phoneValidation]="true"
+              [separateDialCode]="true"
+              [numberFormat]="phoneFormat"
+              name="phoneNumber"
+              formControlName="phoneNumber"
+              id="phoneNumber">
+          </ngx-intl-tel-input>
+          @if (phoneNumber?.invalid && phoneNumber?.touched) {
+            <p class="mt-1 text-sm text-red-600">
+              @if (phoneNumber?.errors?.['required']) {
+                <span>El número de teléfono es requerido.</span>
+              }
+              @else if (phoneNumber?.errors?.['validatePhoneNumber']) {
+                <span>Número inválido para el país seleccionado.</span>
+              }
+              @else if (phoneNumber?.errors?.['invalidNumberFormat']) {
+                 <span>Número de teléfono inválido o incompleto.</span>
+              }
+            </p>
+          }
+        </div>
+
+        <div>
+          <div formGroupName="rolesGroup">
+            <label class="block text-sm font-medium text-gray-700 mb-2">Roles</label>
+            <div class="space-y-2">
+              <div class="flex items-center opacity-70">
+                <input id="isSuperAdmin" type="checkbox" formControlName="isSuperAdmin"
+                       class="h-4 w-4 text-red-400 border-gray-300 rounded cursor-not-allowed"
+                       > <label for="isSuperAdmin" class="ml-2 block text-sm text-gray-500">
+                  Super Admin <span class="text-xs">(No editable)</span>
+                </label>
+              </div>
+              <div class="flex items-center">
+                <input id="isAdmin" type="checkbox" formControlName="isAdmin"
+                       class="h-4 w-4 text-sky-600 border-gray-300 rounded focus:ring-sky-500">
+                <label for="isAdmin" class="ml-2 block text-sm text-gray-900">
+                  Admin <span class="text-xs text-gray-500">(También tendrá rol de Usuario)</span>
+                </label>
+              </div>
+              <div class="flex items-center opacity-70">
+                 <input id="isUser" type="checkbox" checked disabled
+                        class="h-4 w-4 text-gray-400 border-gray-300 rounded cursor-not-allowed">
+                 <label for="isUser" class="ml-2 block text-sm text-gray-500">
+                   Usuario <span class="text-xs">(Rol base, siempre incluido)</span>
+                 </label>
+              </div>
+
+            </div>
+            <p class="text-xs text-gray-500 mt-2">El rol SUPERADMIN no se puede asignar desde aquí.</p>
+          </div>
+        </div>
+
+        @if (!isEditMode) {
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <label for="password" class="block text-sm font-medium text-gray-700 mb-1">Contraseña</label>
+              <input id="password" type="password" formControlName="password" autocomplete="new-password"
+                     class="block w-full rounded-md border-gray-300 shadow-sm focus:border-sky-500 focus:ring-sky-500 sm:text-sm py-2 px-3">
+              @if (userForm.get('password')?.invalid && userForm.get('password')?.touched) {
+                 @if (userForm.get('password')?.hasError('required')) {
+                   <p class="mt-1 text-sm text-red-600">La contraseña es requerida.</p>
+                 }
+                 @if (userForm.get('password')?.hasError('minlength')) {
+                   <p class="mt-1 text-sm text-red-600">Mínimo 6 caracteres.</p>
+                 }
+              }
+            </div>
+            <div>
+              <label for="confirmPassword" class="block text-sm font-medium text-gray-700 mb-1">Confirmar Contraseña</label>
+              <input id="confirmPassword" type="password" formControlName="confirmPassword" autocomplete="new-password"
+                     class="block w-full rounded-md border-gray-300 shadow-sm focus:border-sky-500 focus:ring-sky-500 sm:text-sm py-2 px-3">
+              @if (userForm.get('confirmPassword')?.invalid && userForm.get('confirmPassword')?.touched) {
+                 @if (userForm.get('confirmPassword')?.hasError('required')) {
+                   <p class="mt-1 text-sm text-red-600">Confirma la contraseña.</p>
+                 }
+                 @if (userForm.get('confirmPassword')?.hasError('mismatch')) {
+                   <p class="mt-1 text-sm text-red-600">Las contraseñas no coinciden.</p>
+                 }
+              }
+            </div>
+          </div>
+          <p class="text-xs text-gray-500">La contraseña es requerida solo al crear un nuevo usuario.</p>
+        } @else {
+          <p class="text-sm text-gray-500">La contraseña solo puede ser cambiada por el propio usuario desde su perfil.</p>
+        }
+
+        <div class="pt-6 border-t border-gray-200">
+          <div class="flex justify-end space-x-3">
+            <button
+              type="button"
+              (click)="cancel()"
+              [disabled]="isSaving"
+              class="bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-sky-500 disabled:opacity-50"
+            >
+              Cancelar
+            </button>
+            <button
+              type="submit"
+              [disabled]="userForm.invalid || isSaving || userForm.pristine"
+              class="inline-flex justify-center items-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-sky-600 hover:bg-sky-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-sky-500 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              @if (isSaving) {
+                <span class="inline-flex items-center">
+                  <i class="pi pi-spin pi-spinner mr-2"></i>
+                  <span>Guardando...</span>
+                </span>
+              } @else {
+                <span>{{ isEditMode ? 'Guardar Cambios' : 'Crear Usuario' }}</span>
+              }
+            </button>
+          </div>
+        </div>
+      </form>
+    }
+  </div>
+</div>

@@ -1,7 +1,5 @@
 <div class="bg-gray-50 min-h-screen">
-  <!-- Back button -->
-  <!-- <div class="container mx-auto px-4 py-6"> <button (click)="goBack()" class="flex items-center text-sky-600 hover:text-sky-800 mb-6"> <i class="pi pi-arrow-left mr-2"></i> Volver </button> </div> -->
-  <!-- Loading State -->
+
   @if (loading) {
   <div class="flex justify-center items-center h-64">
     <div
@@ -22,7 +20,7 @@
   </div>
   }
   <!-- Property Details -->
-  @if (!loading && !error && property) {
+  @if (!loading && !error && property; as prop) {
   <div class="container mx-auto px-4 py-8">
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
       <!-- Left Column - Image Gallery and Property Info -->
@@ -33,14 +31,14 @@
             class="relative flex flex-col md:flex-row h-[350px] md:h-[500px]"
           >
             <!-- Thumbnails Sidebar -->
-            @if ((property.images?.length ?? 0) > 1) {
+            @if (prop.images.length > 1) {
             <div
               class="w-full md:w-20 lg:w-24 bg-gray-50 border-r border-gray-200 overflow-y-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]"
             >
               <div
                 class="flex md:flex-col space-x-2 md:space-x-0 md:space-y-2 p-2"
               >
-                @for (img of property!.images!; track i; let i = $index) {
+                @for (img of prop.images!; track i; let i = $index) {
                 <button
                   (click)="setActiveImage(i)"
                   [class.ring-2]="i === activeImageIndex"
@@ -54,6 +52,7 @@
                     [class.opacity-75]="i !== activeImageIndex"
                     [class.border-2]="i === activeImageIndex"
                     [class.border-sky-500]="i === activeImageIndex"
+                    (error)="onImageError($event)"
                   />
                 </button>
                 }
@@ -61,13 +60,15 @@
             </div>
             }
             <!-- Main Image Container -->
-            <div class="relative flex-1 flex items-center justify-center p-4">
-              @if ((property.images?.length ?? 0) > 0) {
-              <img
-                [src]="property!.images![activeImageIndex]"
-                [alt]="property.title || 'Property image'"
-                class="rounded-lg shadow-sm max-h-full w-auto object-contain"
-              />
+            <div class="relative flex-1 flex items-center justify-center p-4 overflow-hidden">
+              @if (prop.images.length > 0) {
+              <div class="w-full h-full" [@slideUpDown]="activeImageIndex">
+                <ng-magnizoom
+                  [imageSrc]="prop.images[activeImageIndex]"
+                  [imageClass]="'rounded-lg shadow-sm max-h-full w-auto object-contain justify-self-center'"
+                >
+                </ng-magnizoom>
+              </div>
               } @else {
               <div class="w-full h-full flex items-center justify-center">
                 <span class="text-gray-400">No images available</span>
@@ -83,19 +84,19 @@
           >
             <div>
               <h1 class="text-2xl font-bold text-gray-900">
-                {{ property!.title }}
+                {{ prop.title }}
               </h1>
               <div class="flex items-center text-gray-600 mt-1">
                 <i class="pi pi-map-marker text-sky-500 mr-2"></i>
-                <span>{{ property!.location }}</span>
+                <span>{{ prop.address.city }}, {{ prop.address.state }}</span>
               </div>
             </div>
             <div class="mt-4 sm:mt-0">
               <span class="text-2xl font-bold text-sky-600">
                 {{
-                  property!.status === "sale"
-                    ? "$" + (property!.price | number)
-                    : "$" + (property!.price | number) + "/mes"
+                  prop.status === "sale"
+                  ? "$" + (prop.price | number)
+                  : "$" + (prop.price | number) + "/mes"
                 }}
               </span>
             </div>
@@ -103,16 +104,16 @@
           <!-- Status Badge -->
           <span
             [ngClass]="{
-              'bg-green-100 text-green-800': property!.status === 'sale',
-              'bg-blue-100 text-blue-800': property!.status === 'rent',
-              'bg-gray-100 text-gray-800': property!.status === 'sold'
+              'bg-green-100 text-green-800': prop.status === 'sale',
+              'bg-blue-100 text-blue-800': prop.status === 'rent',
+              'bg-gray-100 text-gray-800': prop.status === 'sold'
             }"
             class="inline-block px-3 py-1 rounded-full text-sm font-medium"
           >
             {{
-              property!.status === "sale"
+              prop.status === "sale"
                 ? "En Venta"
-                : property!.status === "rent"
+                : prop.status === "rent"
                 ? "En Alquiler"
                 : "Vendido"
             }}
@@ -126,20 +127,20 @@
       <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
         <div class="flex items-center space-x-2 p-3 bg-gray-50 rounded-lg">
           <i class="pi pi-home text-sky-500"></i>
-          <span class="text-gray-700 font-medium">{{ property!.bedrooms }}</span>
+          <span class="text-gray-700 font-medium">{{ prop.bedrooms }}</span>
           <span class="text-gray-500">Hab.</span>
         </div>
         <div class="flex items-center space-x-2 p-3 bg-gray-50 rounded-lg">
           <i class="pi pi-th-large text-sky-500"></i>
-          <span class="text-gray-700 font-medium">{{ property!.area }}</span>
+          <span class="text-gray-700 font-medium">{{ prop.area }}</span>
           <span class="text-gray-500">m²</span>
         </div>
         <div class="flex items-center space-x-2 p-3 bg-gray-50 rounded-lg">
           <i class="pi pi-user text-sky-500"></i>
-          <span class="text-gray-700 font-medium">{{ property!.bathrooms }}</span>
+          <span class="text-gray-700 font-medium">{{ prop.bathrooms }}</span>
           <span class="text-gray-500">Baños</span>
         </div>
-        @if (property!.features?.hasParking) {
+        @if (prop.features.hasParking) {
         <div class="flex items-center space-x-2 p-3 bg-gray-50 rounded-lg">
           <i class="pi pi-car text-sky-500"></i>
           <span class="text-gray-700">Estacionamiento</span>
@@ -147,7 +148,7 @@
         }
         </div>
     </div>
-        
+
       </div>
       <!-- Right Column - Contact Form and Info -->
       <div class=" lg:top-6 lg:self-start">
@@ -157,69 +158,7 @@
             <h2 class="text-xl font-semibold text-gray-900 mb-4">
               Solicitar Información
             </h2>
-            <form (ngSubmit)="onContactSubmit($event)" class="space-y-4">
-              <div>
-                <label
-                  for="name"
-                  class="block text-sm font-medium text-gray-700 mb-1"
-                  >Nombre</label
-                >
-                <input
-                  type="text"
-                  id="name"
-                  name="name"
-                  required
-                  class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-sky-500"
-                />
-              </div>
-              <div>
-                <label
-                  for="email"
-                  class="block text-sm font-medium text-gray-700 mb-1"
-                  >Email</label
-                >
-                <input
-                  type="email"
-                  id="email"
-                  name="email"
-                  required
-                  class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-sky-500"
-                />
-              </div>
-              <div>
-                <label
-                  for="phone"
-                  class="block text-sm font-medium text-gray-700 mb-1"
-                  >Teléfono</label
-                >
-                <input
-                  type="tel"
-                  id="phone"
-                  name="phone"
-                  class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-sky-500"
-                />
-              </div>
-              <div>
-                <label
-                  for="message"
-                  class="block text-sm font-medium text-gray-700 mb-1"
-                  >Mensaje</label
-                >
-                <textarea
-                  id="message"
-                  name="message"
-                  rows="8"
-                  required
-                  class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-sky-500"
-                ></textarea>
-              </div>
-              <button
-                type="submit"
-                class="w-full bg-sky-600 text-white py-2 px-4 rounded-md hover:bg-sky-700 transition-colors"
-              >
-                Enviar Mensaje
-              </button>
-            </form>
+            <shared-appointment-form [propertyId]="property._id"></shared-appointment-form>
           </div>
           <!-- Contact Info -->
           <div class="bg-white rounded-xl shadow-sm p-6">
@@ -232,33 +171,33 @@
                   <i class="pi pi-user text-sky-600"></i>
                 </div>
                 <div class="ml-3">
-                  <h4 class="text-sm font-medium text-gray-900">Juan Pérez</h4>
+                  <h4 class="text-sm font-medium text-gray-900">{{ prop.agent.name}}</h4>
                   <p class="text-sm text-gray-500">Agente Inmobiliario</p>
                 </div>
               </div>
               <div class="flex items-center text-gray-600">
                 <i class="pi pi-phone text-sky-500 w-5 mr-3"></i>
-                <span>+1 (555) 123-4567</span>
+                <span>{{ prop.agent.phoneNumber }}</span>
               </div>
               <div class="flex items-center text-gray-600">
                 <i class="pi pi-envelope text-sky-500 w-5 mr-3"></i>
-                <span>contacto&#64;dicasagroup.com</span>
+                <span>{{ prop.agent.email }}</span>
               </div>
             </div>
           </div>
         </div>
-        
+
       </div>
-      
+
     </div>
     <!-- Description -->
     <div class="bg-white rounded-xl shadow-sm p-6 px-4 py-8 space-y-8 mb-6 mt-6">
         <h2 class="text-xl font-semibold text-gray-900 mb-4">Descripción</h2>
         <p class="text-gray-700 leading-relaxed">
-          {{ property!.description || "No hay descripción disponible." }}
+          {{ prop.description || "No hay descripción disponible." }}
         </p>
     </div>
   </div>
-  
+
   }
 </div>
