@@ -8,14 +8,13 @@ import { HotToastService } from "@ngxpert/hot-toast";
 import { DialogComponent } from "../../../shared/dialog/dialog.component";
 import { QueryPropertiesParams } from "../../../interfaces/properties/query-property.interface";
 import { PaginatedProperties } from "../../../interfaces/properties/paginated-properties.interface";
-import { SearchBarComponent } from "../../../shared/search-bar/search-bar.component";
+import {
+  DropdownOption,
+  SearchBarComponent,
+  SearchParams,
+} from "../../../shared/search-bar/search-bar.component";
 import { PropertyStatus } from "../../../interfaces/properties/property-status.enum";
 import { DashboardPropertyCardComponent } from "../../../components/dashboard/dashboard-property-card/dashboard-property-card.component";
-
-interface SearchParams {
-  query: string;
-  type: string;
-}
 
 @Component({
   selector: "dashboard-property-list",
@@ -43,6 +42,14 @@ export class PropertyListComponent implements OnInit {
   selectedType: string = "all";
   currentStatus: string = "all";
   statusList: PropertyStatus[] = ["sale", "rent", "sold", "rented"];
+
+  public propertyTypeOptions: DropdownOption[] = [
+    { value: "apartment", label: "Apartamento" },
+    { value: "house", label: "Casa" },
+    { value: "villa", label: "Villa" },
+    { value: "land", label: "Terreno" },
+    { value: "commercial", label: "Comercial" },
+  ];
 
   // dialogs
   public isDeleteDialogOpen = false;
@@ -88,7 +95,7 @@ export class PropertyListComponent implements OnInit {
 
   onSearch(params: SearchParams): void {
     this.searchQuery = params.query;
-    this.selectedType = params.type || "all";
+    this.selectedType = params.selectedValue;
     this.currentPage = 1;
     this.loadProperties();
   }

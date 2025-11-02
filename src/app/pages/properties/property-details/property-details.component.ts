@@ -9,6 +9,7 @@ import { NgMagnizoomModule } from "ng-magnizoom";
 import { PropertyService } from "../../../services/property.service";
 import { Property } from "../../../interfaces/properties/property.interface";
 import { AppointmentFormComponent } from "../../../shared/appointment-form/appointment-form.component";
+import { AvatarComponent } from "../../../shared/avatar/avatar.component";
 
 type PropertyState = {
   property: Property | null;
@@ -34,6 +35,7 @@ const initialState: PropertyState = {
     FormsModule,
     NgMagnizoomModule,
     AppointmentFormComponent,
+    AvatarComponent,
   ],
   templateUrl: "./property-details.component.html",
   animations: [
@@ -61,6 +63,38 @@ export class PropertyDetailsComponent implements OnInit {
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private propertyService = inject(PropertyService);
+
+  private statusLabels: Record<string, string> = {
+    sale: "En Venta",
+    rent: "En Alquiler",
+    sold: "Vendida",
+    rented: "Alquilada",
+  };
+  private statusClasses: Record<string, string> = {
+    sale: "bg-green-100 text-green-800",
+    rent: "bg-blue-100 text-blue-800",
+    sold: "bg-gray-100 text-gray-800",
+    rented: "bg-yellow-100 text-yellow-800",
+  };
+  private typeLabels: Record<string, string> = {
+    apartment: "Apartamento",
+    house: "Casa",
+    villa: "Villa",
+    land: "Terreno",
+    commercial: "Comercial",
+  };
+
+  getStatusLabel(status: string): string {
+    return this.statusLabels[status] || "No disponible";
+  }
+
+  getStatusClass(status: string): string {
+    return this.statusClasses[status] || "bg-gray-100 text-gray-800";
+  }
+
+  getTypeLabel(type: string): string {
+    return this.typeLabels[type] || "No especificado";
+  }
 
   ngOnInit(): void {
     this.route.paramMap.subscribe((params) => {

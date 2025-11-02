@@ -1,8 +1,7 @@
 import { Injectable } from "@angular/core";
-import { HttpClient } from "@angular/common/http";
+import { HttpClient, HttpParams } from "@angular/common/http";
 import { catchError, Observable } from "rxjs";
 
-// Importa las interfaces desde tu estructura de archivos
 import {
   CreateAppointmentDto,
   ReassignAgentDto,
@@ -11,6 +10,8 @@ import {
 import { Appointment } from "../interfaces/appointments/appointment.interface";
 import { environment } from "../../environments/environment";
 import { handleApiError } from "./utils/api-error-handler";
+import { QueryAppointmentParams } from "../interfaces/appointments/query-appointment.interface";
+import { PaginatedAppointmentResponse } from "../interfaces/appointments/paginated-appointment-response.interface";
 
 @Injectable({
   providedIn: "root",
@@ -23,6 +24,21 @@ export class AppointmentsService {
   create(dto: CreateAppointmentDto): Observable<Appointment> {
     return this.http
       .post<Appointment>(this.apiUrl, dto)
+      .pipe(catchError(handleApiError));
+  }
+
+  getAppointments(
+    query: QueryAppointmentParams = {}
+  ): Observable<PaginatedAppointmentResponse> {
+    let params = new HttpParams();
+
+    if (query.page) params = params.set("page", query.page.toString());
+    if (query.limit) params = params.set("limit", query.limit.toString());
+    if (query.search) params = params.set("search", query.search);
+    if (query.status) params = params.set("status", query.status);
+
+    return this.http
+      .get<PaginatedAppointmentResponse>(this.apiUrl, { params })
       .pipe(catchError(handleApiError));
   }
 

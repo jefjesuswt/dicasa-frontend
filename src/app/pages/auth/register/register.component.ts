@@ -6,7 +6,6 @@ import {
   FormGroup,
   Validators,
   ReactiveFormsModule,
-  FormControl,
   ValidationErrors,
 } from "@angular/forms";
 import { Router, RouterModule } from "@angular/router";
@@ -71,7 +70,6 @@ export class RegisterComponent {
   onSubmit() {
     if (this.registerForm.invalid) {
       this.registerForm.markAllAsTouched();
-      // Un solo toast genérico para validación de cliente
       this.toast.error("Por favor, completa todos los campos correctamente.");
       return;
     }

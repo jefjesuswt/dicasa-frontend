@@ -2,7 +2,6 @@ import { Component, inject, OnInit } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { RouterModule } from "@angular/router";
 import { PropertyCardComponent } from "../../shared/property-card/property-card.component";
-import { SearchBarComponent } from "../../shared/search-bar/search-bar.component";
 import { SectionHeaderComponent } from "../../shared/section-header/section-header.component";
 import { ButtonComponent } from "../../shared/button/button.component";
 import { PropertyService } from "../../services/property.service";
@@ -15,7 +14,6 @@ import { Property } from "../../interfaces/properties/property.interface";
     CommonModule,
     RouterModule,
     PropertyCardComponent,
-    SearchBarComponent,
     SectionHeaderComponent,
     ButtonComponent,
   ],

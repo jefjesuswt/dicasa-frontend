@@ -3,18 +3,17 @@ import { CommonModule } from "@angular/common";
 import { RouterModule } from "@angular/router";
 import { PropertyService } from "../../../services/property.service";
 import { PropertyCardComponent } from "../../../shared/property-card/property-card.component";
-import { SearchBarComponent } from "../../../shared/search-bar/search-bar.component";
+import {
+  DropdownOption,
+  SearchBarComponent,
+  SearchParams,
+} from "../../../shared/search-bar/search-bar.component";
 import { FormsModule } from "@angular/forms";
 import { Property } from "../../../interfaces/properties/property.interface";
 import { finalize } from "rxjs";
 import { PaginatedProperties } from "../../../interfaces/properties/paginated-properties.interface";
 import { QueryPropertiesParams } from "../../../interfaces/properties/query-property.interface";
 import { PropertyStatus } from "../../../interfaces/properties/property-status.enum";
-
-interface SearchParams {
-  query: string;
-  type: string;
-}
 
 @Component({
   selector: "properties-properties",
@@ -39,6 +38,14 @@ export class PropertiesComponent implements OnInit {
   selectedType: string = "all";
   currentStatus: string = "all";
   statusList: PropertyStatus[] = ["sale", "rent", "sold", "rented"];
+
+  public propertyTypeOptions: DropdownOption[] = [
+    { value: "apartment", label: "Apartamento" },
+    { value: "house", label: "Casa" },
+    { value: "villa", label: "Villa" },
+    { value: "land", label: "Terreno" },
+    { value: "commercial", label: "Comercial" },
+  ];
 
   // paging
   public totalProperties = 0;
@@ -84,7 +91,7 @@ export class PropertiesComponent implements OnInit {
 
   onSearch(params: SearchParams): void {
     this.searchQuery = params.query;
-    this.selectedType = params.type || "all";
+    this.selectedType = params.selectedValue;
     this.currentPage = 1;
     this.loadProperties();
   }

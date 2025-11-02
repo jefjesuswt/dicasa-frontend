@@ -3,10 +3,10 @@
     <div class="flex items-center w-full">
       <a routerLink="/" class="text-2xl font-bold text-sky-600 flex-shrink-0">
         <img
-            class="h-10 md:h-12 w-auto pl-2"
-            src="assets/images/dicasa-800x260.png"
-            alt="Dicasa Group Logo"
-          >
+          class="h-10 md:h-12 w-auto pl-2"
+          src="assets/images/dicasa-800x260.png"
+          alt="Dicasa Group Logo"
+        />
       </a>
 
       <div class="flex-grow"></div>
@@ -29,7 +29,11 @@
             type="button"
             class="flex items-center space-x-2 bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-2 rounded-full transition-colors"
           >
-            <shared-avatar class="w-6 h-6" [src]="user()?.profileImageUrl" [id]="user()?._id"></shared-avatar>
+            <shared-avatar
+              class="w-6 h-6"
+              [src]="user()?.profileImageUrl"
+              [id]="user()?._id"
+            ></shared-avatar>
 
             <span class="font-medium text-sm">{{ user()?.name }}</span>
             <i
@@ -74,13 +78,6 @@
                 >
                   <i class="pi pi-user-edit mr-2"></i> Mi Perfil
                 </a>
-                <a
-                  (click)="closeMenusAndNavigate('/properties/new')"
-                  class="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer"
-                  role="menuitem"
-                >
-                  <i class="pi pi-megaphone mr-2"></i> Publica
-                </a>
               </div>
               <div class="py-1 border-t border-gray-200">
                 <button
@@ -97,15 +94,9 @@
         } @else {
         <a
           routerLink="/auth/login"
-          class="text-gray-700 hover:text-sky-600 transition-colors whitespace-nowrap"
-        >
-          Iniciar Sesión
-        </a>
-        <a
-          routerLink="/properties"
           class="bg-sky-600 text-white px-4 py-2 rounded-lg hover:bg-sky-700 transition-colors ml-4"
         >
-          Publica con Nosotros
+          Iniciar Sesión
         </a>
         }
       </div>
@@ -150,7 +141,7 @@
           <a
             (click)="closeMenusAndNavigate('/auth/login')"
             routerLinkActive="text-sky-600 font-medium bg-sky-50"
-            class="flex items-center py-2 px-4 text-gray-700 hover:bg-gray-100 rounded-lg transition-colors cursor-pointer"
+            class="w-full bg-sky-600 text-white px-4 py-2.5 rounded-lg hover:bg-sky-700 transition-colors mt-3 flex items-center justify-center text-center cursor-pointer"
           >
             <i class="pi pi-{{ getIconForRoute('/auth/login') }} mr-3"></i>
             Iniciar sesión
@@ -173,20 +164,12 @@
           </a>
           <a
             (click)="logout()"
-            class="flex items-center py-2 px-4 text-red-600 hover:bg-gray-100 rounded-lg transition-colors cursor-pointer"
+            class="w-full bg-sky-600 text-white px-4 py-2.5 rounded-lg hover:bg-sky-700 transition-colors mt-3 flex items-center justify-center text-center cursor-pointer"
           >
             <i class="pi pi-{{ getIconForRoute('logout') }} mr-3"></i>
             Cerrar sesión
           </a>
           }
-
-          <a
-            (click)="closeMenusAndNavigate('/properties')"
-            class="w-full bg-sky-600 text-white px-4 py-2.5 rounded-lg hover:bg-sky-700 transition-colors mt-3 flex items-center justify-center text-center cursor-pointer"
-          >
-            <i class="pi pi-megaphone mr-2"></i>
-            Publica con Nosotros
-          </a>
         </div>
       </div>
     </div>

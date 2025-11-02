@@ -46,6 +46,22 @@ export class PropertyService {
       .pipe(catchError(handleApiError));
   }
 
+  getMyProperties(
+    queryParams: QueryPropertiesParams = {}
+  ): Observable<PaginatedProperties> {
+    let params = new HttpParams();
+    Object.entries(queryParams).forEach(([key, value]) => {
+      if (value !== undefined && value !== null) {
+        params = params.set(key, value.toString());
+      }
+    });
+
+    const url = `${this.apiUrl}/agent/my-properties`;
+    return this.http
+      .get<PaginatedProperties>(url, { params })
+      .pipe(catchError(handleApiError));
+  }
+
   getProperty(id: string): Observable<Property> {
     const url = `${this.apiUrl}/${id}`;
     return this.http.get<Property>(url).pipe(catchError(handleApiError));

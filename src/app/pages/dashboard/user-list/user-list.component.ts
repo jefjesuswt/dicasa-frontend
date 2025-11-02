@@ -9,22 +9,19 @@ import { User } from "../../../interfaces/users";
 import { DialogComponent } from "../../../shared/dialog/dialog.component";
 import { UserRole } from "../../../interfaces/users/roles.enum";
 import { AvatarComponent } from "../../../shared/avatar/avatar.component";
-import {
-  SearchUserParams,
-  UserSearchBarComponent,
-} from "../../../components/dashboard/user-search-bar/user-search-bar.component";
+
 import { QueryUserParams } from "../../../interfaces/users/query-user.interface";
 import { PaginatedUserResponse } from "../../../interfaces/users/paginated-user.response.interface";
+import {
+  DropdownOption,
+  SearchBarComponent,
+  SearchParams,
+} from "../../../shared/search-bar/search-bar.component";
 
 @Component({
   selector: "dashboard-user-list",
   standalone: true,
-  imports: [
-    CommonModule,
-    DialogComponent,
-    AvatarComponent,
-    UserSearchBarComponent,
-  ],
+  imports: [CommonModule, DialogComponent, AvatarComponent, SearchBarComponent],
   templateUrl: "./user-list.component.html",
 })
 export class UserListComponent implements OnInit {
@@ -47,6 +44,12 @@ export class UserListComponent implements OnInit {
   public currentPage = 1;
   public rowsPerPage = 10;
   public currentQueryParams: QueryUserParams = {};
+
+  public userRoleOptions: DropdownOption[] = [
+    { value: UserRole.SUPERADMIN, label: "Super Admin" },
+    { value: UserRole.ADMIN, label: "Admin" },
+    { value: UserRole.USER, label: "Usuario" },
+  ];
 
   ngOnInit(): void {
     this.loadUsers();
@@ -76,10 +79,13 @@ export class UserListComponent implements OnInit {
       });
   }
 
-  onUserSearch(params: SearchUserParams) {
+  onUserSearch(params: SearchParams) {
     this.currentQueryParams = {
       search: params.query,
-      role: params.role === "all" ? undefined : (params.role as UserRole),
+      role:
+        params.selectedValue === "all"
+          ? undefined
+          : (params.selectedValue as UserRole),
     };
     this.currentPage = 1;
     this.loadUsers();
@@ -100,8 +106,8 @@ export class UserListComponent implements OnInit {
       : roles.includes(UserRole.ADMIN)
       ? UserRole.ADMIN
       : roles.length > 0
-      ? roles[0] // Muestra el primero si no es Admin/SuperAdmin
-      : "USER"; // Default a USER si el array está vacío (no debería pasar)
+      ? roles[0]
+      : "USER";
 
     const roleClasses: Record<string, string> = {
       USER: "bg-gray-100 text-gray-800",
@@ -128,17 +134,14 @@ export class UserListComponent implements OnInit {
     return roleLabels[role] || role;
   }
 
-  // --- Acciones ---
   addUser(): void {
     this.router.navigate(["/dashboard/users/new"]);
   }
 
   editUser(user: User): void {
-    // Asumiendo que tu interfaz User tiene _id
     this.router.navigate(["/dashboard/users/edit", user._id]);
   }
 
-  // --- Lógica del Dialog de Borrado ---
   openDeleteDialog(user: User): void {
     this.userToDelete = user;
     this.isDeleteDialogOpen = true;
@@ -155,18 +158,17 @@ export class UserListComponent implements OnInit {
 
     this.isDeleting = true;
     this.usersService
-      .deleteUser(this.userToDelete._id) // <-- NECESITAS ESTE MÉTODO EN TU SERVICIO
+      .deleteUser(this.userToDelete._id)
       .pipe(finalize(() => (this.isDeleting = false)))
       .subscribe({
         next: () => {
           this.toast.success("Usuario eliminado con éxito.");
           this.closeDeleteDialog();
-          this.loadUsers(); // Recarga la lista
+          this.loadUsers();
         },
         error: (errMessage) => {
           this.toast.error(`Error al eliminar usuario: ${errMessage}`);
           console.error("Error deleting user:", errMessage);
-          // Mantenemos el dialog abierto pero paramos spinner
           this.isDeleting = false;
         },
       });

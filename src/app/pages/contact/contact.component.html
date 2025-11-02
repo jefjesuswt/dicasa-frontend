@@ -1,0 +1,210 @@
+<div class="bg-sky-700 text-white py-16">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="text-center">
+      <h1
+        class="text-4xl font-extrabold tracking-tight sm:text-5xl lg:text-6xl"
+      >
+        Contáctanos
+      </h1>
+      <p class="mt-6 max-w-2xl mx-auto text-xl text-sky-100">
+        ¿Tienes preguntas? Estamos aquí para ayudarte. Envíanos un mensaje o
+        visítanos en nuestra oficina.
+      </p>
+    </div>
+  </div>
+</div>
+
+<div class="bg-white py-16 sm:py-24">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-16">
+      <div class="flex flex-col justify-center">
+        <div class="mb-8 flex items-center gap-2 self-start">
+          <img
+            src="assets/images/dicasa-500x500.png"
+            alt="Logo Dicasa Group"
+            class="h-20 w-auto object-contain"
+          />
+          <img
+            src="assets/images/dicasa-800x260.png"
+            alt="Dicasa Group C.A."
+            class="h-10 w-auto"
+          />
+        </div>
+
+        <h2 class="text-3xl font-bold text-gray-900 mb-6">Nuestra Oficina</h2>
+
+        <div class="space-y-4 text-lg text-gray-600">
+          <div class="flex items-start gap-4">
+            <i class="pi pi-map-marker text-sky-600 text-xl mt-1"></i>
+            <span
+              >Av. Daniel Camejo Octavio, C.C. Plaza Mayor, Edif 6, P1, Of.
+              6b-121, Lechería, Estado Anzoátegui.</span
+            >
+          </div>
+          <div class="flex items-center gap-4">
+            <i class="pi pi-phone text-sky-600 text-xl"></i>
+            <span>(0424) 8577931</span>
+          </div>
+          <div class="flex items-center gap-4">
+            <i class="pi pi-envelope text-sky-600 text-xl"></i>
+            <span>dicasagroup&#64;hotmail.com</span>
+          </div>
+        </div>
+
+        <h3 class="text-2xl font-bold text-gray-900 mt-12 mb-4">
+          Nuestra Misión
+        </h3>
+        <blockquote class="border-l-4 border-sky-500 pl-4 italic text-gray-600">
+          "Brindar un servicio integral y de calidad a nuestros clientes,
+          ofreciendo asesoramiento especializado en las áreas legal,
+          inmobiliaria y financiera en el mercado venezolano..."
+        </blockquote>
+      </div>
+
+      <div
+        class="bg-gray-50 p-8 lg:p-10 rounded-lg shadow-lg border border-gray-200"
+      >
+        <h2 class="text-3xl font-bold text-gray-900 mb-6">
+          Envíanos un Mensaje
+        </h2>
+        <form
+          [formGroup]="contactForm"
+          (ngSubmit)="onSubmit()"
+          class="space-y-6"
+        >
+          <div>
+            <label for="name" class="block text-sm font-medium text-gray-700"
+              >Nombre Completo</label
+            >
+            <input
+              type="text"
+              formControlName="name"
+              id="name"
+              class="mt-1 p-3 block w-full rounded-md border-gray-300 shadow-sm focus:border-sky-500 focus:ring-sky-500 sm:text-sm"
+            />
+            @if (name?.invalid && (name?.dirty || name?.touched)) {
+            <p class="mt-1 text-sm text-red-600">El nombre es requerido.</p>
+            }
+          </div>
+
+          <div>
+            <label for="email" class="block text-sm font-medium text-gray-700"
+              >Email</label
+            >
+            <input
+              type="email"
+              formControlName="email"
+              id="email"
+              class="mt-1 p-3 block w-full rounded-md border-gray-300 shadow-sm focus:border-sky-500 focus:ring-sky-500 sm:text-sm"
+            />
+            @if (email?.invalid && (email?.dirty || email?.touched)) {
+            <p class="mt-1 text-sm text-red-600">
+              @if (email?.errors?.['required']) {
+              <span>El email es requerido.</span> } @if
+              (email?.errors?.['email']) {
+              <span>Por favor, ingresa un email válido.</span> }
+            </p>
+            }
+          </div>
+
+          <div>
+            <label
+              for="phoneNumber"
+              class="block text-sm font-medium text-gray-700"
+              >Teléfono</label
+            >
+            <ngx-intl-tel-input
+              [cssClass]="'custom'"
+              [preferredCountries]="preferredCountries"
+              [enableAutoCountrySelect]="true"
+              [enablePlaceholder]="true"
+              [selectedCountryISO]="CountryISO.Venezuela"
+              [phoneValidation]="true"
+              [separateDialCode]="true"
+              [numberFormat]="phoneFormat"
+              name="phoneNumber"
+              formControlName="phoneNumber"
+              id="phoneNumber"
+            >
+            </ngx-intl-tel-input>
+            @if (phoneNumber?.invalid && phoneNumber?.touched) {
+            <p class="mt-1 text-sm text-red-600">
+              @if (phoneNumber?.errors?.['validatePhoneNumber']) {
+              <span
+                >Ingresa un número de teléfono válido para el país
+                seleccionado.</span
+              >
+              } @else if (phoneNumber?.errors?.['required']) {
+              <span>El número de teléfono es requerido.</span>
+              } @else if (phoneNumber?.errors?.['invalidNumber']) {
+              <span>Número de teléfono inválido.</span>
+              }
+            </p>
+            }
+          </div>
+
+          <div>
+            <label for="message" class="block text-sm font-medium text-gray-700"
+              >Mensaje</label
+            >
+            <textarea
+              formControlName="message"
+              id="message"
+              rows="5"
+              class="mt-1 p-3 block w-full rounded-md border-gray-300 shadow-sm focus:border-sky-500 focus:ring-sky-500 sm:text-sm"
+            ></textarea>
+            @if (message?.invalid && (message?.dirty || message?.touched)) {
+            <p class="mt-1 text-sm text-red-600">
+              @if (message?.errors?.['required']) {
+              <span>El mensaje es requerido.</span> } @if
+              (message?.errors?.['minlength']) {
+              <span>El mensaje debe tener al menos 10 caracteres.</span> }
+            </p>
+            }
+          </div>
+
+          <div>
+            <button
+              type="submit"
+              [disabled]="contactForm.invalid || isSending"
+              class="w-full flex justify-center items-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-white bg-sky-600 hover:bg-sky-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-sky-500 disabled:opacity-50 disabled:cursor-wait"
+            >
+              @if (isSending) {
+              <span class="inline-flex items-center">
+                <i class="pi pi-spin pi-spinner mr-2"></i>
+                <span>Enviando...</span>
+              </span>
+              } @else {
+              <span>Enviar Mensaje</span>
+              }
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="bg-gray-100 py-16 sm:py-24">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <shared-section-header
+      title="Nuestra Ubicación"
+      description="Ven a visitarnos en el C.C. Plaza Mayor."
+    ></shared-section-header>
+
+    <div
+      class="mt-10 h-96 rounded-lg shadow-xl overflow-hidden border border-gray-200"
+    >
+      <iframe
+        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3926.9928134640368!2d-64.6850949249664!3d10.181238389933569!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8c2d7361f707996f%3A0x8ce084f00e6e8956!2sDicasa%20Group.!5e0!3m2!1ses!2sve!4v1762098459782!5m2!1ses!2sve"
+        width="100%"
+        height="100%"
+        style="border: 0"
+        allowfullscreen=""
+        loading="lazy"
+        referrerpolicy="no-referrer-when-downgrade"
+      >
+      </iframe>
+    </div>
+  </div>
+</div>

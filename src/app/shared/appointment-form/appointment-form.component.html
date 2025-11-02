@@ -1,63 +1,135 @@
-<form [formGroup]="appointmentForm" (ngSubmit)="onAppointmentSubmit()" class="space-y-4">
+<form
+  [formGroup]="appointmentForm"
+  (ngSubmit)="onAppointmentSubmit()"
+  class="space-y-4"
+>
   <div>
-    <label for="name" class="block text-sm font-medium text-gray-700 mb-1">Nombre</label>
-    <input type="text" id="name" formControlName="name" required
-           class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-sky-500"
-           [class.border-red-500]="appointmentForm.get('name')?.invalid && appointmentForm.get('name')?.touched" />
+    <label for="name" class="block text-sm font-medium text-gray-700 mb-1"
+      >Nombre</label
+    >
+    <input
+      type="text"
+      id="name"
+      formControlName="name"
+      required
+      class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-sky-500"
+      [class.border-red-500]="
+        appointmentForm.get('name')?.invalid &&
+        appointmentForm.get('name')?.touched
+      "
+    />
   </div>
   <div>
-    <label for="email" class="block text-sm font-medium text-gray-700 mb-1">Email</label>
-    <input type="email" id="email" formControlName="email" required
-           class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-sky-500"
-           [class.border-red-500]="appointmentForm.get('email')?.invalid && appointmentForm.get('email')?.touched" />
+    <label for="email" class="block text-sm font-medium text-gray-700 mb-1"
+      >Email</label
+    >
+    <input
+      type="email"
+      id="email"
+      formControlName="email"
+      required
+      class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-sky-500"
+      [class.border-red-500]="
+        appointmentForm.get('email')?.invalid &&
+        appointmentForm.get('email')?.touched
+      "
+    />
   </div>
   <div>
-    <label for="phone" class="block text-sm font-medium text-gray-700 mb-1">Teléfono</label>
-    <input type="tel" id="phone" formControlName="phoneNumber"
-           class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-sky-500"
-           [class.border-red-500]="appointmentForm.get('phoneNumber')?.invalid && appointmentForm.get('phoneNumber')?.touched" />
-  </div>
+    <label for="phone" class="block text-sm font-medium text-gray-700 mb-1"
+      >Teléfono</label
+    >
+    <ngx-intl-tel-input
+      [cssClass]="'custom'"
+      [preferredCountries]="preferredCountries"
+      [enableAutoCountrySelect]="true"
+      [enablePlaceholder]="true"
+      [selectedCountryISO]="CountryISO.Venezuela"
+      [phoneValidation]="true"
+      [separateDialCode]="true"
+      [numberFormat]="phoneFormat"
+      name="phoneNumber"
+      formControlName="phoneNumber"
+      id="phoneNumber"
+    >
+    </ngx-intl-tel-input>
 
-  <div>
-      <label for="appointmentDate" class="block text-sm font-medium text-gray-700 mb-1">
-        Fecha y Hora de la Cita
-      </label>
-      <small class="block text-xs text-gray-500 mb-2">
-        Horario disponible: Lunes a Viernes, de 8:00 AM a 6:00 PM.
-      </small>
-      <p-datepicker formControlName="appointmentDate"
-        [showTime]="true"
-        [hourFormat]="'12'"
-        [showIcon]="true"
-        placeholder="Selecciona fecha y hora"
-        styleClass="w-full"
-        inputStyleClass="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-sky-500"
-        [minDate]="today"
-        [disabledDays]="[0, 6]"
-        [stepMinute]="60"
-        [defaultDate]="defaultPickerDate">
-      </p-datepicker>
-
-      @if (dateError) {
-        <p class="text-red-500 text-sm mt-1">{{ dateError }}</p>
+    <!-- Mensajes de error -->
+    <!-- CAMBIO AQUÍ: Eliminado '|| submitted' y reemplazado por 'phoneNumber?.touched' -->
+    @if (phoneNumber?.invalid && phoneNumber?.touched) {
+    <p class="mt-1 text-sm text-red-600">
+      @if (phoneNumber?.errors?.['validatePhoneNumber']) {
+      <span
+        >Ingresa un número de teléfono válido para el país seleccionado.</span
+      >
+      } @else if (phoneNumber?.errors?.['required']) {
+      <span>El número de teléfono es requerido.</span>
+      } @else if (phoneNumber?.errors?.['invalidNumber']) {
+      <span>Número de teléfono inválido.</span>
       }
-    </div>
-
-  <div>
-    <label for="message" class="block text-sm font-medium text-gray-700 mb-1">Mensaje</label>
-    <textarea id="message" formControlName="message" rows="5" required
-              class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-sky-500"
-              [class.border-red-500]="appointmentForm.get('message')?.invalid && appointmentForm.get('message')?.touched"></textarea>
+    </p>
+    }
   </div>
 
-  <button type="submit"
-          [disabled]="isSubmitting() || appointmentForm.invalid"
-          class="w-full bg-sky-600 text-white py-2 px-4 rounded-md hover:bg-sky-700 transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed">
+  <div>
+    <label
+      for="appointmentDate"
+      class="block text-sm font-medium text-gray-700 mb-1"
+    >
+      Fecha y Hora de la Cita
+    </label>
+    <small class="block text-xs text-gray-500 mb-2">
+      Horario disponible: Lunes a Viernes, de 8:00 AM a 6:00 PM.
+    </small>
+    <p-datepicker
+      formControlName="appointmentDate"
+      [showTime]="true"
+      [hourFormat]="'12'"
+      [showIcon]="true"
+      placeholder="Selecciona fecha y hora"
+      styleClass="w-full"
+      inputStyleClass="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-sky-500"
+      [minDate]="today"
+      [disabledDays]="[0, 6]"
+      [stepMinute]="60"
+      [defaultDate]="defaultPickerDate"
+    >
+    </p-datepicker>
+
+    @if (dateError) {
+    <p class="text-red-500 text-sm mt-1">{{ dateError }}</p>
+    }
+  </div>
+
+  <div>
+    <label for="message" class="block text-sm font-medium text-gray-700 mb-1"
+      >Mensaje</label
+    >
+    <textarea
+      id="message"
+      formControlName="message"
+      rows="5"
+      required
+      class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-sky-500"
+      [class.border-red-500]="
+        appointmentForm.get('message')?.invalid &&
+        appointmentForm.get('message')?.touched
+      "
+    ></textarea>
+  </div>
+
+  <button
+    type="submit"
+    [disabled]="isSubmitting() || appointmentForm.invalid"
+    class="w-full bg-sky-600 text-white py-2 px-4 rounded-md hover:bg-sky-700 transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed"
+  >
     @if (isSubmitting()) {
-      <span class="animate-spin h-5 w-5 border-t-2 border-b-2 border-white rounded-full inline-block"></span>
-      <span class="ml-2">Enviando...</span>
+    <span
+      class="animate-spin h-5 w-5 border-t-2 border-b-2 border-white rounded-full inline-block"
+    ></span>
+    <span class="ml-2">Enviando...</span>
     } @else {
-      <span>Solicitar Cita</span>
+    <span>Solicitar Cita</span>
     }
   </button>
 </form>

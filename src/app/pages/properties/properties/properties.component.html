@@ -15,7 +15,14 @@
 
   <!-- Search -->
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-    <shared-search-bar (search)="onSearch($event)"></shared-search-bar>
+    <shared-search-bar
+        (search)="onSearch($event)"
+        [dropdownOptions]="propertyTypeOptions"
+        placeholder="Ingresa una ubicación..."
+        label="Ubicación"
+        dropdownLabel="Tipo de Propiedad"
+        buttonText="Buscar">
+      </shared-search-bar>
   </div>
 
 

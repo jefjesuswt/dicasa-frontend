@@ -12,11 +12,14 @@ import { FormsModule } from "@angular/forms";
 import { debounceTime, distinctUntilChanged, Subject } from "rxjs";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 
-type PropertyType = "apartment" | "house" | "villa" | "land" | "commercial";
-
-interface SearchParams {
+export interface SearchParams {
   query: string;
-  type: string;
+  selectedValue: string;
+}
+
+export interface DropdownOption {
+  value: string;
+  label: string;
 }
 
 @Component({
@@ -29,7 +32,7 @@ interface SearchParams {
         <!-- Location Input -->
         <div class="w-full md:flex-1 md:min-w-[200px]">
           <label class="block text-xs font-medium text-gray-600 mb-1">
-            {{ label || "Ubicación" }}
+            {{ label || "Buscar" }}
           </label>
           <div class="relative">
             <input
@@ -37,7 +40,7 @@ interface SearchParams {
               [(ngModel)]="searchQuery"
               (ngModelChange)="onQueryChange($event)"
               (keyup.enter)="onSearch()"
-              [placeholder]="placeholder || 'Ingresa una ubicación...'"
+              [placeholder]="placeholder || 'Ingresa un término...'"
               class="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-transparent h-[38px]"
             />
             <div
@@ -48,24 +51,26 @@ interface SearchParams {
           </div>
         </div>
 
-        <!-- Property Type Dropdown -->
-        <div class="w-full md:w-48" *ngIf="showTypeFilter">
+        <div class="w-full md:w-48" *ngIf="showDropdown">
           <label
             for="property-type"
             class="block text-xs font-medium text-gray-600 mb-1"
           >
-            {{ typeLabel || "Tipo de Propiedad" }}
+            {{ dropdownLabel || "Filtro" }}
           </label>
           <div class="relative">
             <select
-              id="property-type"
-              [(ngModel)]="selectedType"
+              id="generic-dropdown"
+              [(ngModel)]="selectedValue"
               (ngModelChange)="onSearch()"
               class="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-transparent h-[38px] appearance-none bg-white"
             >
               <option [value]="''">Todos los tipos</option>
-              <option *ngFor="let type of propertyTypes" [value]="type">
-                {{ getTypeTranslation(type) }}
+              <option
+                *ngFor="let option of dropdownOptions"
+                [value]="option.value"
+              >
+                {{ option.label }}
               </option>
             </select>
             <div
@@ -92,22 +97,18 @@ export class SearchBarComponent implements OnInit {
   @Input() label?: string;
   @Input() placeholder?: string;
   @Input() buttonText?: string;
-  @Input() typeLabel?: string;
-  @Input() showTypeFilter: boolean = true;
+
+  @Input() dropdownLabel?: string;
+  @Input() showDropdown: boolean = true;
+  @Input() dropdownOptions: DropdownOption[] = [];
+
   @Output() search = new EventEmitter<SearchParams>();
 
   private destroyRef = inject(DestroyRef);
   private searchSubject = new Subject<string>();
 
   searchQuery: string = "";
-  selectedType: string = "";
-  propertyTypes: PropertyType[] = [
-    "apartment",
-    "house",
-    "villa",
-    "land",
-    "commercial",
-  ];
+  selectedValue: string = "all";
 
   ngOnInit(): void {
     this.searchSubject
@@ -116,30 +117,17 @@ export class SearchBarComponent implements OnInit {
         distinctUntilChanged(),
         takeUntilDestroyed(this.destroyRef)
       )
-      .subscribe(() => {
-        this.onSearch();
-      });
+      .subscribe(() => this.onSearch());
   }
 
   onQueryChange(query: string): void {
     this.searchSubject.next(query);
   }
 
-  getTypeTranslation(type: string): string {
-    const translations: { [key: string]: string } = {
-      apartment: "Apartamento",
-      house: "Casa",
-      villa: "Villa",
-      land: "Terreno",
-      commercial: "Comercial",
-    };
-    return translations[type] || type;
-  }
-
   onSearch(): void {
     this.search.emit({
       query: this.searchQuery,
-      type: this.selectedType,
+      selectedValue: this.selectedValue,
     });
   }
 }

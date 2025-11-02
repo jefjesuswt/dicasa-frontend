@@ -1,0 +1,217 @@
+<div
+  class="px-4 md:px-6 py-4 border-b border-gray-200 flex items-center justify-between"
+>
+  <h2 class="text-lg font-medium text-gray-900">Gestión de Citas</h2>
+</div>
+
+<div class="p-4 md:p-6">
+  <shared-search-bar
+    (search)="onAppointmentSearch($event)"
+    [dropdownOptions]="statusOptions"
+    placeholder="Buscar..."
+    label="Buscar Cita"
+    dropdownLabel="Estado"
+    buttonText="Buscar"
+  >
+  </shared-search-bar>
+</div>
+
+@if (loading) {
+<div class="flex justify-center items-center py-16">
+  <i class="pi pi-spin pi-spinner text-sky-600" style="font-size: 2rem"></i>
+  <span class="ml-3 text-gray-700">Cargando citas...</span>
+</div>
+} @if (error && !loading) {
+<div class="m-4 p-4 bg-red-50 text-red-700 rounded-lg">
+  <p>{{ error }}</p>
+  <button
+    (click)="loadAppointments()"
+    class="mt-2 text-sm text-sky-700 hover:underline"
+  >
+    Reintentar
+  </button>
+</div>
+} @if (!loading && !error && appointments.length > 0) {
+<div class="hidden md:block overflow-x-auto">
+  <table class="min-w-full divide-y divide-gray-200">
+    <thead class="bg-gray-50">
+      <tr>
+        <th
+          scope="col"
+          class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+        >
+          Cliente
+        </th>
+        <th
+          scope="col"
+          class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+        >
+          Propiedad
+        </th>
+        <th
+          scope="col"
+          class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+        >
+          Agente
+        </th>
+        <th
+          scope="col"
+          class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+        >
+          Fecha de Cita
+        </th>
+        <th
+          scope="col"
+          class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+        >
+          Estado
+        </th>
+        <th
+          scope="col"
+          class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider"
+        >
+          Acciones
+        </th>
+      </tr>
+    </thead>
+    <tbody class="bg-white divide-y divide-gray-200">
+      @for (app of appointments; track app._id) {
+      <tr class="hover:bg-gray-50">
+        <td class="px-6 py-4 whitespace-nowrap">
+          <div class="text-sm font-medium text-gray-900">{{ app.name }}</div>
+          <div class="text-sm text-gray-500">{{ app.email }}</div>
+        </td>
+        <td class="px-6 py-4 whitespace-nowrap">
+          <a
+            [routerLink]="['/properties', app.property._id]"
+            class="text-sm text-sky-600 hover:underline"
+            title="{{ app.property.title }}"
+          >
+            {{ app.property.title }}
+          </a>
+        </td>
+        <td class="px-6 py-4 whitespace-nowrap">
+          <div class="text-sm text-gray-900">{{ app.agent.name }}</div>
+        </td>
+        <td class="px-6 py-4 whitespace-nowrap">
+          <div class="text-sm text-gray-900">
+            {{ app.appointmentDate | date : "dd/MM/yyyy" }}
+          </div>
+          <div class="text-sm text-gray-500">
+            {{ app.appointmentDate | date : "shortTime" }}
+          </div>
+        </td>
+        <td class="px-6 py-4 whitespace-nowrap">
+          <span
+            class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full"
+            [ngClass]="getStatusBadgeClass(app.status)"
+          >
+            {{ getStatusLabel(app.status) }}
+          </span>
+        </td>
+        <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+          <div class="flex justify-end space-x-2">
+            <button
+              (click)="editAppointment(app)"
+              class="p-1 text-yellow-600 hover:text-yellow-900 rounded-full hover:bg-yellow-50"
+              title="Editar estado"
+            >
+              <i class="pi pi-pencil"></i>
+            </button>
+            <button
+              (click)="openDeleteDialog(app)"
+              class="p-1 text-red-600 hover:text-red-900 rounded-full hover:bg-red-50"
+              title="Eliminar cita"
+            >
+              <i class="pi pi-trash"></i>
+            </button>
+          </div>
+        </td>
+      </tr>
+      }
+    </tbody>
+  </table>
+</div>
+}
+
+<div class="block md:hidden">
+  @if (!loading && !error && appointments.length > 0) {
+  <div class="px-4 py-4 space-y-4 bg-gray-50 rounded-md">
+    @for (app of appointments; track app._id) {
+    <dashboard-appointment-card
+      [appointment]="app"
+      [statusLabel]="getStatusLabel(app.status)"
+      [statusClass]="getStatusBadgeClass(app.status)"
+      (edit)="editAppointment($event)"
+      (delete)="openDeleteDialog($event)"
+    />
+    }
+  </div>
+  }
+</div>
+
+@if (!loading && !error && appointments.length === 0) {
+<div class="text-center py-16 text-gray-500">
+  <i class="pi pi-calendar-times text-4xl mb-3"></i>
+  <p>No se encontraron citas.</p>
+</div>
+} @if (totalAppointments > 0 && !loading) {
+<div
+  class="flex justify-between items-center px-6 py-3 border-t border-gray-200"
+>
+  <button
+    (click)="onPageChange(currentPage - 1)"
+    [disabled]="currentPage === 1"
+    class="px-4 py-2 bg-gray-200 rounded-md disabled:opacity-50"
+  >
+    Anterior
+  </button>
+  <span class="text-sm text-gray-700">
+    Página {{ currentPage }} de
+    {{ Math.ceil(totalAppointments / rowsPerPage) }} a ({{ totalAppointments }}
+    citas)
+  </span>
+  <button
+    (click)="onPageChange(currentPage + 1)"
+    [disabled]="currentPage * rowsPerPage >= totalAppointments"
+    class="px-4 py-2 bg-gray-200 rounded-md disabled:opacity-50"
+  >
+    Siguiente
+  </button>
+</div>
+}
+
+<shared-dialog
+  [isOpen]="isDeleteDialogOpen"
+  title="Confirmar Eliminación"
+  (close)="closeDeleteDialog()"
+>
+  <div class="space-y-6">
+    <p class="text-sm text-gray-600">
+      ¿Estás seguro de que deseas eliminar la cita de
+      <strong>"{{ appointmentToCancel?.name || "este cliente" }}"</strong>?
+      <br />
+      Esta acción no se puede deshacer.
+    </p>
+    <div class="flex justify-end space-x-3">
+      <button
+        type="button"
+        (click)="closeDeleteDialog()"
+        [disabled]="isDeleting"
+        class="bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50"
+      >
+        Cancelar
+      </button>
+      <button
+        type="button"
+        (click)="confirmDelete()"
+        [disabled]="isDeleting"
+        class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-red-600 hover:bg-red-700 disabled:opacity-50"
+      >
+        @if (isDeleting) {
+        <i class="pi pi-spin pi-spinner mr-2"></i>
+        <span>Eliminando...</span> } @else { <span>Eliminar</span> }
+      </button>
+    </div>
+  </div>
+</shared-dialog>

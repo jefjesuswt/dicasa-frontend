@@ -55,7 +55,30 @@ export const DASHBOARD_ROUTES: Routes = [
           ),
         canActivate: [superAdminGuard],
       },
-      // { path: 'schedule', loadComponent: () => import('./dashboard/schedule/schedule.component').then(m => m.ScheduleComponent) },
+      {
+        path: "appointments",
+        loadComponent: () =>
+          import(
+            "./admin-appointment-list/admin-appointment-list.component"
+          ).then((m) => m.AdminAppointmentListComponent),
+        canActivate: [superAdminGuard],
+      },
+      {
+        path: "appointments/new",
+        loadComponent: () =>
+          import(
+            "./admin-appointment-form/admin-appointment-form.component"
+          ).then((m) => m.AdminAppointmentFormComponent),
+        canActivate: [superAdminGuard],
+      },
+      {
+        path: "appointments/edit/:id",
+        loadComponent: () =>
+          import(
+            "./admin-appointment-form/admin-appointment-form.component"
+          ).then((m) => m.AdminAppointmentFormComponent),
+        canActivate: [superAdminGuard],
+      },
     ],
   },
   {

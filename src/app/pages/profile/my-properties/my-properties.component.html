@@ -1,0 +1,81 @@
+<div class="container mx-auto px-4 py-8">
+  <h2 class="text-3xl font-bold text-gray-900 mb-6">
+    Mis Propiedades Asignadas
+  </h2>
+
+  @switch (loadState()) { @case ('loading') {
+  <div class="flex justify-center items-center h-64">
+    <div
+      class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-sky-500"
+    ></div>
+  </div>
+  } @case ('error') {
+  <div class="bg-red-50 text-red-700 p-4 rounded-lg">
+    <p>
+      Error al cargar tus propiedades. Por favor, intenta de nuevo más tarde.
+    </p>
+  </div>
+  } @case ('loaded') { @if (properties().length > 0; as props) {
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+    @for (property of properties(); track property._id) {
+    <p-card>
+      <ng-template pTemplate="header">
+        <img
+          [src]="
+            property.images[0] || '/assets/images/placeholder-property.png'
+          "
+          alt="{{ property.title }}"
+          class="w-full h-56 object-cover rounded-lg"
+          (error)="onImageError($event)"
+        />
+      </ng-template>
+
+      <ng-template pTemplate="title">
+        <a
+          [routerLink]="['/properties', property._id]"
+          class="text-xl font-semibold text-gray-900 hover:text-sky-600 transition-colors"
+          target="_blank"
+          title="Ver propiedad en pestaña nueva"
+        >
+          {{ property.title }}
+        </a>
+      </ng-template>
+
+      <ng-template pTemplate="subtitle">
+        <!-- Usamos el DecimalPipe para formatear el precio -->
+        <p class="text-gray-700 font-medium text-lg">
+          {{ property.price }} USD
+        </p>
+        <p class_name="text-sm text-gray-500">
+          {{ property.address.city }}, {{ property.address.state }}
+        </p>
+      </ng-template>
+
+      <ng-template pTemplate="footer">
+        <div class="flex items-center justify-between gap-4">
+          <p-tag
+            [value]="getStatusLabel(property.status)"
+            [severity]="getStatusSeverity(property.status)"
+            [rounded]="true"
+          >
+          </p-tag>
+          <button
+            pButton
+            label="Editar"
+            icon="pi pi-pencil"
+            (click)="editProperty(property._id)"
+            class="p-button-sm p-button-outlined"
+          ></button>
+        </div>
+      </ng-template>
+    </p-card>
+    }
+  </div>
+  } @else {
+  <div class="bg-blue-50 text-blue-700 p-4 rounded-lg">
+    <p>
+      Aún no tienes propiedades asignadas. Puedes crear una desde el dashboard.
+    </p>
+  </div>
+  } } }
+</div>

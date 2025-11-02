@@ -1,5 +1,6 @@
 import { Routes } from "@angular/router";
 import { ProfileComponent } from "./profile/profile.component";
+import { adminOrSuperAdminGuard } from "../../guards/auth.guards";
 
 export const PROFILE_ROUTES: Routes = [
   {
@@ -17,6 +18,14 @@ export const PROFILE_ROUTES: Routes = [
           import("./my-appointments/my-appointments.component").then(
             (m) => m.MyAppointmentsComponent
           ),
+      },
+      {
+        path: "my-properties",
+        loadComponent: () =>
+          import("./my-properties/my-properties.component").then(
+            (m) => m.MyPropertiesComponent
+          ),
+        canActivate: [adminOrSuperAdminGuard],
       },
       {
         path: "",

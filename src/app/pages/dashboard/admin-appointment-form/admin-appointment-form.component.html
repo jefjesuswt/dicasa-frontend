@@ -1,0 +1,163 @@
+<div class="container mx-auto px-4 py-8">
+  <div class="max-w-3xl mx-auto">
+    <h1 class="text-2xl font-bold text-gray-900 mb-6">{{ pageTitle }}</h1>
+
+    @if (initialLoading) {
+    <div class="flex justify-center items-center py-16">
+      <i class="pi pi-spin pi-spinner text-sky-600" style="font-size: 2rem"></i>
+      <span class="ml-3 text-gray-700">Cargando cita...</span>
+    </div>
+    } @if (!initialLoading && appointmentData) {
+    <form
+      [formGroup]="appointmentForm"
+      (ngSubmit)="onSubmit()"
+      class="bg-white p-6 md:p-8 rounded-lg shadow-md space-y-8"
+      [class.opacity-50]="isSaving"
+      [class.pointer-events-none]="isSaving"
+    >
+      <section class="space-y-4">
+        <h2 class="text-lg font-semibold text-gray-800 border-b pb-2 mb-4">
+          Resumen de la Cita
+        </h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
+          <div>
+            <label class="block text-sm font-medium text-gray-500"
+              >Cliente</label
+            >
+            <p class="text-gray-900 font-medium">{{ appointmentData.name }}</p>
+            <p class="text-sm text-gray-700">{{ appointmentData.email }}</p>
+            <p class="text-sm text-gray-700">
+              {{ appointmentData.phoneNumber }}
+            </p>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-500"
+              >Propiedad</label
+            >
+            <a
+              [routerLink]="['/properties', appointmentData.property._id]"
+              class="text-sky-600 hover:underline font-medium"
+              target="_blank"
+              title="Ver propiedad en una nueva pestaña"
+            >
+              {{ appointmentData.property.title }}
+              <i class="pi pi-external-link text-xs ml-1"></i>
+            </a>
+          </div>
+          <div class="md:col-span-2">
+            <label class="block text-sm font-medium text-gray-500"
+              >Mensaje del Cliente</label
+            >
+            <p
+              class="text-sm text-gray-800 bg-gray-50 p-3 rounded-md border border-gray-200 whitespace-pre-wrap"
+            >
+              {{ appointmentData.message }}
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section class="space-y-4">
+        <h2 class="text-lg font-semibold text-gray-800 border-b pb-2 mb-4">
+          Actualizar Cita
+        </h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div>
+            <label
+              for="agentId"
+              class="block text-sm font-medium text-gray-700 mb-1"
+              >Reasignar Agente</label
+            >
+            <select
+              id="agentId"
+              formControlName="agentId"
+              class="block w-full rounded-md border-gray-300 shadow-sm focus:border-sky-500 focus:ring-sky-500 sm:text-sm py-2 px-3 disabled:bg-gray-100 disabled:cursor-not-allowed"
+              [disabled]="agents.length === 0"
+            >
+              @for (agent of agents; track agent._id) {
+              <option [ngValue]="agent._id">{{ agent.name }}</option>
+              }
+            </select>
+            <p class="mt-1 text-xs text-gray-500">
+              Cambiar esto verificará el horario del nuevo agente.
+            </p>
+          </div>
+
+          <div>
+            <label
+              for="status"
+              class="block text-sm font-medium text-gray-700 mb-1"
+              >Estado</label
+            >
+            <select
+              id="status"
+              formControlName="status"
+              class="block w-full rounded-md border-gray-300 shadow-sm focus:border-sky-500 focus:ring-sky-500 sm:text-sm py-2 px-3"
+            >
+              @for (opt of statusOptions; track opt.value) {
+              <option [value]="opt.value">{{ opt.label }}</option>
+              }
+            </select>
+          </div>
+
+          <div class="md:col-span-2">
+            <label
+              for="appointmentDate"
+              class="block text-sm font-medium text-gray-700 mb-1"
+              >Fecha y Hora de la Cita</label
+            >
+            <p-datepicker
+              id="appointmentDate"
+              formControlName="appointmentDate"
+              [showTime]="true"
+              [hourFormat]="'12'"
+              [showIcon]="true"
+              placeholder="Selecciona fecha y hora"
+              styleClass="w-full"
+              inputStyleClass="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-sky-500 sm:text-sm"
+              [minDate]="minDate"
+              [disabledDays]="[0, 6]"
+              [stepMinute]="60"
+              [defaultDate]="defaultPickerDate"
+            >
+            </p-datepicker>
+            @if (appointmentForm.get('appointmentDate')?.invalid &&
+            appointmentForm.get('appointmentDate')?.touched) {
+            <p class="mt-1 text-sm text-red-600">La fecha es requerida.</p>
+            }
+          </div>
+        </div>
+      </section>
+
+      <div class="pt-6 border-t border-gray-200">
+        <div class="flex justify-end space-x-3">
+          <button
+            type="button"
+            (click)="cancel()"
+            [disabled]="isSaving"
+            class="bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-sky-500 disabled:opacity-50"
+          >
+            Cancelar
+          </button>
+          <button
+            type="submit"
+            [disabled]="
+              appointmentForm.invalid || isSaving || appointmentForm.pristine
+            "
+            class="inline-flex justify-center items-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-sky-600 hover:bg-sky-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-sky-500 disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            @if (isSaving) {
+            <span class="inline-flex items-center">
+              <i class="pi pi-spin pi-spinner mr-2"></i>
+              <span>Guardando...</span>
+            </span>
+            } @else {
+            <span> Guardar Cambios </span>
+            }
+          </button>
+        </div>
+      </div>
+    </form>
+    }
+  </div>
+</div>

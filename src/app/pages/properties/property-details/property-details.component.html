@@ -1,5 +1,4 @@
 <div class="bg-gray-50 min-h-screen">
-
   @if (loading) {
   <div class="flex justify-center items-center h-64">
     <div
@@ -60,12 +59,16 @@
             </div>
             }
             <!-- Main Image Container -->
-            <div class="relative flex-1 flex items-center justify-center p-4 overflow-hidden">
+            <div
+              class="relative flex-1 flex items-center justify-center p-4 overflow-hidden"
+            >
               @if (prop.images.length > 0) {
               <div class="w-full h-full" [@slideUpDown]="activeImageIndex">
                 <ng-magnizoom
                   [imageSrc]="prop.images[activeImageIndex]"
-                  [imageClass]="'rounded-lg shadow-sm max-h-full w-auto object-contain justify-self-center'"
+                  [imageClass]="
+                    'rounded-lg shadow-sm max-h-full w-auto object-contain justify-self-center'
+                  "
                 >
                 </ng-magnizoom>
               </div>
@@ -78,87 +81,146 @@
           </div>
         </div>
         <!-- Property Info -->
-        <div class="bg-white rounded-xl shadow-sm p-6">
-          <div
-            class="flex flex-col sm:flex-row sm:items-center justify-between mb-4"
-          >
-            <div>
-              <h1 class="text-2xl font-bold text-gray-900">
-                {{ prop.title }}
-              </h1>
-              <div class="flex items-center text-gray-600 mt-1">
-                <i class="pi pi-map-marker text-sky-500 mr-2"></i>
-                <span>{{ prop.address.city }}, {{ prop.address.state }}</span>
-              </div>
-            </div>
-            <div class="mt-4 sm:mt-0">
-              <span class="text-2xl font-bold text-sky-600">
-                {{
-                  prop.status === "sale"
-                  ? "$" + (prop.price | number)
-                  : "$" + (prop.price | number) + "/mes"
-                }}
-              </span>
+        <div class="bg-white rounded-xl shadow-sm p-6 lg:p-8">
+          <!-- Badges de Estado y Destacado -->
+          <div class="flex items-center justify-between mb-4">
+            <span
+              [ngClass]="getStatusClass(prop.status)"
+              class="inline-block px-3 py-1 rounded-full text-sm font-semibold capitalize"
+            >
+              {{ getStatusLabel(prop.status) }}
+            </span>
+            @if (prop.featured) {
+            <span
+              class="inline-flex items-center gap-1 bg-yellow-100 text-yellow-800 px-3 py-1 rounded-full text-sm font-semibold"
+            >
+              <i class="pi pi-star-fill text-xs"></i>
+              Destacada
+            </span>
+            }
+          </div>
+
+          <!-- Título y Dirección -->
+          <div>
+            <h1 class="text-3xl font-bold text-gray-900">
+              {{ prop.title }}
+            </h1>
+            <div class="flex items-center text-gray-600 mt-2">
+              <i class="pi pi-map-marker text-sky-500 mr-2"></i>
+              <!-- Dirección más explícita -->
+              <span
+                >{{ prop.address.address }}, {{ prop.address.city }},
+                {{ prop.address.state }}</span
+              >
             </div>
           </div>
-          <!-- Status Badge -->
-          <span
-            [ngClass]="{
-              'bg-green-100 text-green-800': prop.status === 'sale',
-              'bg-blue-100 text-blue-800': prop.status === 'rent',
-              'bg-gray-100 text-gray-800': prop.status === 'sold'
-            }"
-            class="inline-block px-3 py-1 rounded-full text-sm font-medium"
-          >
-            {{
-              prop.status === "sale"
-                ? "En Venta"
-                : prop.status === "rent"
-                ? "En Alquiler"
-                : "Vendido"
-            }}
-          </span>
+
+          <!-- Precio -->
+          <div class="mt-4">
+            <span class="text-4xl font-extrabold text-sky-600">
+              {{ prop.price | number : "1.0-0" }} USD
+            </span>
+            @if (prop.status === 'rent') {
+            <span class="text-xl font-medium text-gray-500">/mes</span>
+            }
+          </div>
         </div>
         <!-- Features -->
-    <div class="bg-white rounded-xl shadow-sm p-6">
-      <h2 class="text-xl font-semibold text-gray-900 mb-6">
-        Características
-      </h2>
-      <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <div class="flex items-center space-x-2 p-3 bg-gray-50 rounded-lg">
-          <i class="pi pi-home text-sky-500"></i>
-          <span class="text-gray-700 font-medium">{{ prop.bedrooms }}</span>
-          <span class="text-gray-500">Hab.</span>
-        </div>
-        <div class="flex items-center space-x-2 p-3 bg-gray-50 rounded-lg">
-          <i class="pi pi-th-large text-sky-500"></i>
-          <span class="text-gray-700 font-medium">{{ prop.area }}</span>
-          <span class="text-gray-500">m²</span>
-        </div>
-        <div class="flex items-center space-x-2 p-3 bg-gray-50 rounded-lg">
-          <i class="pi pi-user text-sky-500"></i>
-          <span class="text-gray-700 font-medium">{{ prop.bathrooms }}</span>
-          <span class="text-gray-500">Baños</span>
-        </div>
-        @if (prop.features.hasParking) {
-        <div class="flex items-center space-x-2 p-3 bg-gray-50 rounded-lg">
-          <i class="pi pi-car text-sky-500"></i>
-          <span class="text-gray-700">Estacionamiento</span>
-        </div>
-        }
-        </div>
-    </div>
+        <div class="bg-white rounded-xl shadow-sm p-6 lg:p-8">
+          <!-- Detalles Principales -->
+          <h2 class="text-xl font-semibold text-gray-900 mb-6">
+            Detalles Principales
+          </h2>
+          <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+            <!-- Tipo -->
+            <div
+              class="flex flex-col items-center p-3 bg-gray-50 rounded-lg text-center"
+            >
+              <i class="pi pi-building text-2xl text-sky-500 mb-2"></i>
+              <span class="text-sm text-gray-500">Tipo</span>
+              <span class="text-gray-900 font-bold">{{
+                getTypeLabel(prop.type)
+              }}</span>
+            </div>
+            <!-- Área -->
+            <div
+              class="flex flex-col items-center p-3 bg-gray-50 rounded-lg text-center"
+            >
+              <i class="pi pi-th-large text-2xl text-sky-500 mb-2"></i>
+              <span class="text-sm text-gray-500">Área</span>
+              <span class="text-gray-900 font-bold"
+                >{{ prop.area | number }} m²</span
+              >
+            </div>
+            <!-- Habitaciones -->
+            <div
+              class="flex flex-col items-center p-3 bg-gray-50 rounded-lg text-center"
+            >
+              <i class="pi pi-bed text-2xl text-sky-500 mb-2"></i>
+              <span class="text-sm text-gray-500">Habitaciones</span>
+              <span class="text-gray-900 font-bold">{{ prop.bedrooms }}</span>
+            </div>
+            <!-- Baños -->
+            <div
+              class="flex flex-col items-center p-3 bg-gray-50 rounded-lg text-center"
+            >
+              <i class="pi pi-bath text-2xl text-sky-500 mb-2"></i>
+              <span class="text-sm text-gray-500">Baños</span>
+              <span class="text-gray-900 font-bold">{{ prop.bathrooms }}</span>
+            </div>
+          </div>
 
+          <!-- Características Adicionales (Booleanos) -->
+          <h2 class="text-xl font-semibold text-gray-900 mb-6">
+            Características Adicionales
+          </h2>
+          @if (prop.features) {
+          <ul class="grid grid-cols-1 sm:grid-cols-2 gap-y-3 gap-x-6">
+            @if (prop.features.hasParking) {
+            <li class="flex items-center text-gray-700">
+              <i class="pi pi-check-circle text-green-500 mr-3"></i>
+              <span>Estacionamiento</span>
+            </li>
+            } @if (prop.features.hasFurniture) {
+            <li class="flex items-center text-gray-700">
+              <i class="pi pi-check-circle text-green-500 mr-3"></i>
+              <span>Amoblado</span>
+            </li>
+            } @if (prop.features.hasPool) {
+            <li class="flex items-center text-gray-700">
+              <i class="pi pi-check-circle text-green-500 mr-3"></i>
+              <span>Piscina</span>
+            </li>
+            } @if (prop.features.hasGarden) {
+            <li class="flex items-center text-gray-700">
+              <i class="pi pi-check-circle text-green-500 mr-3"></i>
+              <span>Jardín</span>
+            </li>
+            } @if (prop.features.isPetFriendly) {
+            <li class="flex items-center text-gray-700">
+              <i class="pi pi-check-circle text-green-500 mr-3"></i>
+              <span>Acepta Mascotas</span>
+            </li>
+            }
+          </ul>
+          } @else {
+          <p class="text-gray-500">
+            No hay características adicionales especificadas.
+          </p>
+          }
+        </div>
       </div>
       <!-- Right Column - Contact Form and Info -->
-      <div class=" lg:top-6 lg:self-start">
+      <div class="lg:top-6 lg:self-start">
         <div class="space-y-6 w-full max-w-md">
           <!-- Contact Form -->
           <div class="bg-white rounded-xl shadow-sm p-6">
             <h2 class="text-xl font-semibold text-gray-900 mb-4">
               Solicitar Información
             </h2>
-            <shared-appointment-form [propertyId]="property._id"></shared-appointment-form>
+            <shared-appointment-form
+              [propertyId]="property._id"
+            ></shared-appointment-form>
           </div>
           <!-- Contact Info -->
           <div class="bg-white rounded-xl shadow-sm p-6">
@@ -166,12 +228,18 @@
             <div class="space-y-4">
               <div class="flex items-start">
                 <div
-                  class="flex-shrink-0 h-10 w-10 rounded-full bg-sky-100 flex items-center justify-center"
+                  class="flex-shrink-0 h-10 w-10 rounded-full bg-gray-100 flex items-center justify-center"
                 >
-                  <i class="pi pi-user text-sky-600"></i>
+                  <shared-avatar
+                    class="w-6 h-6"
+                    [src]="prop.agent.profileImageUrl"
+                    [id]="prop.agent._id"
+                  ></shared-avatar>
                 </div>
                 <div class="ml-3">
-                  <h4 class="text-sm font-medium text-gray-900">{{ prop.agent.name}}</h4>
+                  <h4 class="text-sm font-medium text-gray-900">
+                    {{ prop.agent.name }}
+                  </h4>
                   <p class="text-sm text-gray-500">Agente Inmobiliario</p>
                 </div>
               </div>
@@ -186,16 +254,62 @@
             </div>
           </div>
         </div>
-
       </div>
-
     </div>
     <!-- Description -->
-    <div class="bg-white rounded-xl shadow-sm p-6 px-4 py-8 space-y-8 mb-6 mt-6">
+    <div class="bg-white rounded-xl shadow-sm p-6 lg:p-8 space-y-8 mb-6 mt-8">
+      <!-- Descripción -->
+      <div>
         <h2 class="text-xl font-semibold text-gray-900 mb-4">Descripción</h2>
-        <p class="text-gray-700 leading-relaxed">
+        <!-- 'whitespace-pre-wrap' respeta los saltos de línea del textarea -->
+        <p class="text-gray-700 leading-relaxed whitespace-pre-wrap">
           {{ prop.description || "No hay descripción disponible." }}
         </p>
+      </div>
+
+      <hr class="border-gray-200" />
+
+      <!-- Detalles de Ubicación -->
+      <div>
+        <h2 class="text-xl font-semibold text-gray-900 mb-4">
+          Ubicación y Detalles
+        </h2>
+        <ul class="space-y-2 text-gray-700">
+          <li class="flex flex-col sm:flex-row">
+            <span class="font-medium w-40 shrink-0">Dirección Completa:</span>
+            <span>{{ prop.address.address }}</span>
+          </li>
+          <li class="flex flex-col sm:flex-row">
+            <span class="font-medium w-40 shrink-0">Ciudad:</span>
+            <span>{{ prop.address.city }}</span>
+          </li>
+          <li class="flex flex-col sm:flex-row">
+            <span class="font-medium w-40 shrink-0">Estado:</span>
+            <span>{{ prop.address.state }}</span>
+          </li>
+          <li class="flex flex-col sm:flex-row">
+            <span class="font-medium w-40 shrink-0">País:</span>
+            <span>{{ prop.address.country }}</span>
+          </li>
+        </ul>
+      </div>
+
+      <hr class="border-gray-200" />
+
+      <!-- Detalles Adicionales (ID y Fecha) -->
+      <div>
+        <ul class="space-y-2 text-gray-500 text-sm">
+          <li class="flex flex-col sm:flex-row">
+            <span class="font-medium w-40 shrink-0">Código de Propiedad:</span>
+            <span>{{ prop._id }}</span>
+          </li>
+          <li class="flex flex-col sm:flex-row">
+            <span class="font-medium w-40 shrink-0">Publicado el:</span>
+            <!-- Usamos DatePipe de CommonModule -->
+            <span>{{ prop.createdAt | date : "d MMMM, y" }}</span>
+          </li>
+        </ul>
+      </div>
     </div>
   </div>
 

@@ -1,5 +1,12 @@
 <div class="p-4 md:p-6">
-  <shared-user-search-bar (search)="onUserSearch($event)"></shared-user-search-bar>
+  <shared-search-bar
+    (search)="onUserSearch($event)"
+    [dropdownOptions]="userRoleOptions"
+    placeholder="Buscar por nombre, email o teléfono..."
+    label="Buscar Usuario"
+    dropdownLabel="Rol"
+    buttonText="Buscar">
+  </shared-search-bar>
 </div>
 
 <div class="px-4 md:px-6 py-4 border-b border-gray-200 flex items-center justify-between">

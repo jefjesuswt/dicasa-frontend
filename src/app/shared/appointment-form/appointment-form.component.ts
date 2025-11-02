@@ -17,6 +17,14 @@ import { AppointmentsService } from "../../services/appointment.service";
 import { AuthService } from "../../services/auth.service";
 import { CreateAppointmentDto } from "../../interfaces/appointments";
 import { HotToastService } from "@ngxpert/hot-toast";
+import {
+  CountryISO,
+  NgxIntlTelInputComponent,
+  NgxIntlTelInputModule,
+  PhoneNumberFormat,
+  SearchCountryField,
+} from "ngx-intl-tel-input";
+import parsePhoneNumberFromString from "libphonenumber-js/max";
 
 function timeRangeValidator(control: AbstractControl): ValidationErrors | null {
   const date = control.value as Date;
@@ -42,7 +50,12 @@ function timeRangeValidator(control: AbstractControl): ValidationErrors | null {
 @Component({
   selector: "shared-appointment-form",
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, DatePicker],
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    DatePicker,
+    NgxIntlTelInputModule,
+  ],
   templateUrl: "./appointment-form.component.html",
 })
 export class AppointmentFormComponent implements OnInit {
@@ -52,6 +65,16 @@ export class AppointmentFormComponent implements OnInit {
   private appointmentsService = inject(AppointmentsService);
   private authService = inject(AuthService);
   private toast = inject(HotToastService);
+
+  searchCountryField = [SearchCountryField.Iso2, SearchCountryField.Name];
+  preferredCountries: CountryISO[] = [
+    CountryISO.Venezuela,
+    CountryISO.UnitedStates,
+  ];
+  phoneFormat = PhoneNumberFormat.International;
+  CountryISO = CountryISO;
+
+  loading = false;
 
   isSubmitting = signal(false);
   submitMessage = signal<{ type: "success" | "error"; text: string } | null>(
@@ -67,6 +90,24 @@ export class AppointmentFormComponent implements OnInit {
   ngOnInit(): void {
     const user = this.currentUser();
 
+    if (!user) return;
+    let numberToPatch = user.phoneNumber;
+
+    if (numberToPatch) {
+      try {
+        const fullCleanNumber = user.phoneNumber.replace(/[\s-]/g, "");
+
+        const phoneNumber = parsePhoneNumberFromString(fullCleanNumber);
+
+        if (phoneNumber && phoneNumber.nationalNumber) {
+          numberToPatch = phoneNumber.nationalNumber;
+        }
+      } catch (error) {
+        console.error("Error al parsear el número en UserForm:", error);
+        numberToPatch = user.phoneNumber;
+      }
+    }
+
     const nextHour = new Date();
     nextHour.setHours(nextHour.getHours() + 1);
     nextHour.setMinutes(0, 0, 0);
@@ -75,7 +116,7 @@ export class AppointmentFormComponent implements OnInit {
     this.appointmentForm = this.fb.group({
       name: [user?.name || "", Validators.required],
       email: [user?.email || "", [Validators.required, Validators.email]],
-      phoneNumber: [user?.phoneNumber || "", Validators.required],
+      phoneNumber: [numberToPatch || "", Validators.required],
       appointmentDate: [null, [Validators.required, timeRangeValidator]],
       message: [
         "Hola, estoy interesado/a en esta propiedad y me gustaría agendar una visita.",
@@ -90,11 +131,22 @@ export class AppointmentFormComponent implements OnInit {
       return;
     }
 
+    const phoneValue = this.appointmentForm.value.phoneNumber;
+    const internationalPhoneNumber = phoneValue?.internationalNumber;
+
+    if (!internationalPhoneNumber) {
+      this.loading = false;
+      this.toast.error("Número de teléfono inválido.");
+      this.phoneNumber?.setErrors({ invalidNumber: true });
+      return;
+    }
+
     this.isSubmitting.set(true);
     this.submitMessage.set(null);
 
     const dto: CreateAppointmentDto = {
       ...this.appointmentForm.value,
+      phoneNumber: internationalPhoneNumber,
       propertyId: this.propertyId,
     };
 
@@ -145,5 +197,16 @@ export class AppointmentFormComponent implements OnInit {
       }
     }
     return null;
+  }
+
+  get name() {
+    return this.appointmentForm.get("name");
+  }
+  get email() {
+    return this.appointmentForm.get("email");
+  }
+
+  get phoneNumber() {
+    return this.appointmentForm.get("phoneNumber");
   }
 }

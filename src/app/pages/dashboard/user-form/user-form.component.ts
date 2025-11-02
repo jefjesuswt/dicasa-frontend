@@ -17,6 +17,8 @@ import {
   PhoneNumberFormat,
 } from "ngx-intl-tel-input";
 
+import { parsePhoneNumberFromString } from "libphonenumber-js/max";
+
 import {
   CreateUserPayload,
   UpdateUserPayload,
@@ -139,10 +141,27 @@ export class UserFormComponent implements OnInit {
   }
 
   private patchForm(user: User): void {
+    let numberToPatch = user.phoneNumber;
+
+    if (numberToPatch) {
+      try {
+        const fullCleanNumber = user.phoneNumber.replace(/[\s-]/g, "");
+
+        const phoneNumber = parsePhoneNumberFromString(fullCleanNumber);
+
+        if (phoneNumber && phoneNumber.nationalNumber) {
+          numberToPatch = phoneNumber.nationalNumber;
+        }
+      } catch (error) {
+        console.error("Error al parsear el número en UserForm:", error);
+        numberToPatch = user.phoneNumber;
+      }
+    }
+
     this.userForm.patchValue({
       name: user.name,
       email: user.email,
-      phoneNumber: user.phoneNumber,
+      phoneNumber: numberToPatch,
       rolesGroup: {
         isAdmin: user.roles.includes(UserRole.ADMIN),
         isSuperAdmin: user.roles.includes(UserRole.SUPERADMIN),
@@ -161,7 +180,7 @@ export class UserFormComponent implements OnInit {
       return;
     }
 
-    const phoneValueObject = this.phoneNumber?.value;
+    const phoneValueObject = this.userForm.value.phoneNumber;
     const internationalPhoneNumber = phoneValueObject?.internationalNumber;
 
     if (!internationalPhoneNumber) {

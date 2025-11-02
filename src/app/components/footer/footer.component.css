@@ -1,0 +1,6 @@
+.logo-footer {
+  /* brightness(0) -> Convierte todo lo que no es transparente en negro.
+    invert(1)   -> Invierte los colores (negro se vuelve blanco).
+  */
+  filter: brightness(0) invert(1);
+}
