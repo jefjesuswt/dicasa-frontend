@@ -88,35 +88,31 @@ export class AppointmentFormComponent implements OnInit {
   currentUser = this.authService.currentUser;
 
   ngOnInit(): void {
-    const user = this.currentUser();
-
-    if (!user) return;
-    let numberToPatch = user.phoneNumber;
-
-    if (numberToPatch) {
-      try {
-        const fullCleanNumber = user.phoneNumber.replace(/[\s-]/g, "");
-
-        const phoneNumber = parsePhoneNumberFromString(fullCleanNumber);
-
-        if (phoneNumber && phoneNumber.nationalNumber) {
-          numberToPatch = phoneNumber.nationalNumber;
-        }
-      } catch (error) {
-        console.error("Error al parsear el número en UserForm:", error);
-        numberToPatch = user.phoneNumber;
-      }
-    }
-
     const nextHour = new Date();
     nextHour.setHours(nextHour.getHours() + 1);
     nextHour.setMinutes(0, 0, 0);
     this.defaultPickerDate = nextHour;
 
+    const user = this.currentUser();
+    let numberToPatch: string | null = null;
+
+    if (user && user.phoneNumber) {
+      try {
+        const fullCleanNumber = user.phoneNumber.replace(/[\s-]/g, "");
+        const phoneNumber = parsePhoneNumberFromString(fullCleanNumber);
+        if (phoneNumber && phoneNumber.nationalNumber) {
+          numberToPatch = phoneNumber.nationalNumber;
+        }
+      } catch (error) {
+        console.error("Error al parsear el número en AppointmentForm:", error);
+        numberToPatch = user.phoneNumber; // Fallback
+      }
+    }
+
     this.appointmentForm = this.fb.group({
       name: [user?.name || "", Validators.required],
       email: [user?.email || "", [Validators.required, Validators.email]],
-      phoneNumber: [numberToPatch || "", Validators.required],
+      phoneNumber: [numberToPatch || null, Validators.required],
       appointmentDate: [null, [Validators.required, timeRangeValidator]],
       message: [
         "Hola, estoy interesado/a en esta propiedad y me gustaría agendar una visita.",
@@ -128,18 +124,22 @@ export class AppointmentFormComponent implements OnInit {
   onAppointmentSubmit(): void {
     if (this.appointmentForm.invalid) {
       this.appointmentForm.markAllAsTouched();
+      this.toast.error("Por favor, revisa todos los campos.");
       return;
     }
 
+    // Verificación del número de teléfono
     const phoneValue = this.appointmentForm.value.phoneNumber;
-    const internationalPhoneNumber = phoneValue?.internationalNumber;
 
-    if (!internationalPhoneNumber) {
-      this.loading = false;
-      this.toast.error("Número de teléfono inválido.");
+    // 'phoneValue' es un objeto si es válido, o un string si está mal escrito
+    if (typeof phoneValue !== "object" || !phoneValue?.internationalNumber) {
+      this.toast.error("El número de teléfono es inválido.");
       this.phoneNumber?.setErrors({ invalidNumber: true });
+      this.phoneNumber?.markAsTouched();
       return;
     }
+
+    const internationalPhoneNumber = phoneValue.internationalNumber;
 
     this.isSubmitting.set(true);
     this.submitMessage.set(null);
@@ -155,15 +155,14 @@ export class AppointmentFormComponent implements OnInit {
       .pipe(
         catchError((err: HttpErrorResponse) => {
           this.isSubmitting.set(false);
+          const errMessage = err?.error?.message || "Error desconocido";
 
-          if (err.status === 409) {
+          if (err.status === 409 || errMessage.includes("cita programada")) {
             this.toast.error(
               "El agente ya tiene una cita en ese horario. Por favor, elija otra hora."
             );
           } else {
-            this.toast.error(
-              "No se pudo enviar tu solicitud. Intenta más tarde."
-            );
+            this.toast.error(`No se pudo enviar tu solicitud: ${errMessage}`);
           }
           return EMPTY;
         })
@@ -173,17 +172,36 @@ export class AppointmentFormComponent implements OnInit {
         this.toast.success(
           "¡Solicitud Enviada! Un agente se pondrá en contacto contigo pronto."
         );
-        this.appointmentForm.reset();
 
-        const user = this.currentUser();
-        this.appointmentForm.patchValue({
-          name: user?.name || "",
-          email: user?.email || "",
-          phoneNumber: user?.phoneNumber || "",
-          message:
-            "Hola, estoy interesado/a en esta propiedad y me gustaría agendar una visita.",
-        });
+        // Usar el nuevo método de reseteo
+        this.resetAndFillForm();
       });
+  }
+
+  private resetAndFillForm(): void {
+    this.appointmentForm.reset();
+    const user = this.currentUser();
+    let numberToPatch: string | null = null;
+
+    if (user && user.phoneNumber) {
+      try {
+        const fullCleanNumber = user.phoneNumber.replace(/[\s-]/g, "");
+        const phoneNumber = parsePhoneNumberFromString(fullCleanNumber);
+        if (phoneNumber && phoneNumber.nationalNumber) {
+          numberToPatch = phoneNumber.nationalNumber;
+        }
+      } catch (error) {
+        // No es necesario loguear esto de nuevo
+      }
+    }
+
+    this.appointmentForm.patchValue({
+      name: user?.name || "",
+      email: user?.email || "",
+      phoneNumber: numberToPatch,
+      message:
+        "Hola, estoy interesado/a en esta propiedad y me gustaría agendar una visita.",
+    });
   }
 
   get dateError(): string | null {
