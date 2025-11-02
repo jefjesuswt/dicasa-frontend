@@ -1,106 +1,123 @@
-# Resumen del Frontend
+# Frontend Summary
 
-Este documento proporciona un resumen de los servicios, componentes, guards e interceptores de la aplicación frontend de Dicasa.
+This document provides a summary of the services, components, guards, and interceptors of the Dicasa frontend application.
 
-## Servicios
+## Services
 
 ### AuthService (`src/app/services/auth.service.ts`)
-- **Propósito:** Gestiona la autenticación de usuarios, el registro y el estado de la sesión. Interactúa con los endpoints `/auth` del backend.
-- **Métodos:**
-  - `login(email, password)`: Autentica a un usuario.
-  - `register(data)`: Registra un nuevo usuario.
-  - `forgotPassword(email)`: Inicia el proceso de restablecimiento de contraseña.
-  - `verifyResetCode(email, code)`: Verifica el código de restablecimiento de contraseña.
-  - `resetPassword(email, newPassword, code)`: Restablece la contraseña del usuario.
-  - `checkAuthStatus()`: Comprueba si el usuario está autenticado verificando el token JWT.
-  - `confirmEmail(token)`: Confirma la dirección de correo electrónico de un usuario.
-  - `logout()`: Cierra la sesión del usuario y limpia los datos de la sesión.
-- **Dependencias:** `HttpClient`, `Router`.
+- **Purpose:** Manages user authentication, registration, and session status. Interacts with the `/auth` endpoints of the backend.
+- **Methods:**
+  - `login(email, password)`: Authenticates a user.
+  - `register(data)`: Registers a new user.
+  - `forgotPassword(email)`: Initiates the password reset process.
+  - `verifyResetCode(email, code)`: Verifies the password reset code.
+  - `resetPassword(email, newPassword, code)`: Resets the user's password.
+  - `checkAuthStatus()`: Checks if the user is authenticated by verifying the JWT token.
+  - `confirmEmail(token)`: Confirms a user's email address.
+  - `logout()`: Logs out the user and clears session data.
+- **Dependencies:** `HttpClient`, `Router`.
 
 ### LocationService (`src/app/services/location.service.ts`)
-- **Propósito:** Obtiene datos de ubicación (estados y ciudades) del backend.
-- **Métodos:**
-  - `getStates()`: Recupera una lista de estados.
-  - `getCities(stateName)`: Recupera una lista de ciudades para un estado determinado.
-- **Dependencias:** `HttpClient`.
+- **Purpose:** Obtains location data (states and cities) from the backend.
+- **Methods:**
+  - `getStates()`: Retrieves a list of states.
+  - `getCities(stateName)`: Retrieves a list of cities for a given state.
+- **Dependencies:** `HttpClient`.
 
 ### PropertyService (`src/app/services/property.service.ts`)
-- **Propósito:** Maneja todas las operaciones relacionadas con las propiedades, incluida la obtención, creación, actualización y eliminación de propiedades.
-- **Métodos:**
-  - `getProperties(params)`: Obtiene una lista paginada de propiedades con filtros opcionales.
-  - `getProperty(id)`: Obtiene una única propiedad por su ID.
-  - `uploadPropertyImages(files)`: Sube imágenes de propiedades al backend.
-  - `createProperty(payload)`: Crea una nueva propiedad.
-  - `updateProperty(id, payload)`: Actualiza una propiedad existente.
-  - `deleteProperty(id)`: Elimina una propiedad.
-  - `getFeaturedProperties()`: Obtiene las propiedades marcadas como destacadas.
-- **Dependencias:** `HttpClient`.
+- **Purpose:** Handles all operations related to properties, including obtaining, creating, updating, and deleting properties.
+- **Methods:**
+  - `getProperties(params)`: Gets a paginated list of properties with optional filters.
+  - `getProperty(id)`: Gets a single property by its ID.
+  - `uploadPropertyImages(files)`: Uploads property images to the backend.
+  - `createProperty(payload)`: Creates a new property.
+  - `updateProperty(id, payload)`: Updates an existing property.
+  - `deleteProperty(id)`: Deletes a property.
+  - `getFeaturedProperties()`: Gets properties marked as featured.
+- **Dependencies:** `HttpClient`.
 
 ### UsersService (`src/app/services/users.service.ts`)
-- **Propósito:** Gestiona los datos de los usuarios, incluida la obtención de listas de usuarios y la actualización de la información de los usuarios.
-- **Métodos:**
-  - `getUsers()`: Obtiene una lista de todos los usuarios.
-  - `getAgents()`: Obtiene usuarios con roles de 'ADMIN' o 'SUPERADMIN'.
-  - `getUserById(id)`: Obtiene un único usuario por su ID.
-  - `createUser(payload)`: Crea un nuevo usuario.
-  - `updateUser(id, payload)`: Actualiza la información de un usuario.
-  - `deleteUser(id)`: Elimina un usuario.
-  - `updateProfilePicture(file)`: Actualiza la foto de perfil del usuario actual.
-  - `updateMyInfo(data)`: Actualiza la información personal del usuario actual.
-  - `changePassword(oldPassword, newPassword)`: Cambia la contraseña del usuario actual.
-- **Dependencias:** `HttpClient`.
+- **Purpose:** Manages user data, including obtaining user lists and updating user information.
+- **Methods:**
+  - `getUsers()`: Gets a list of all users.
+  - `getAgents()`: Gets users with 'ADMIN' or 'SUPERADMIN' roles.
+  - `getUserById(id)`: Gets a single user by their ID.
+  - `createUser(payload)`: Creates a new user.
+  - `updateUser(id, payload)`: Updates a user's information.
+  - `deleteUser(id)`: Deletes a user.
+  - `updateProfilePicture(file)`: Updates the current user's profile picture.
+  - `updateMyInfo(data)`: Updates the current user's personal information.
+  - `changePassword(oldPassword, newPassword)`: Changes the current user's password.
+- **Dependencies:** `HttpClient`.
+
+### AppointmentsService (`src/app/services/appointment.service.ts`)
+- **Purpose:** Manages all operations related to appointments, including creation, retrieval, updating, and deletion.
+- **Methods:**
+  - `create(dto)`: Creates a new appointment.
+  - `getAppointments(query)`: Retrieves a paginated list of appointments with optional filters.
+  - `findAll()`: Retrieves all appointments.
+  - `findMyAppointments()`: Retrieves all appointments for the current user.
+  - `findOne(id)`: Retrieves a single appointment by its ID.
+  - `update(id, dto)`: Updates an existing appointment.
+  - `reassignAgent(id, dto)`: Reassigns an agent to an appointment.
+  - `remove(id)`: Deletes an appointment.
+- **Dependencies:** `HttpClient`.
 
 ### ScrollTopService (`src/app/services/scroll-top.service.ts`)
-- **Propósito:** Se desplaza a la parte superior de la página en la navegación, excluyendo las rutas del dashboard.
-- **Métodos:**
-  - `enable()`: Activa la funcionalidad de desplazamiento a la parte superior.
-- **Dependencias:** `Router`.
+- **Purpose:** Scrolls to the top of the page on navigation, excluding dashboard routes.
+- **Methods:**
+  - `enable()`: Activates the scroll-to-top functionality.
+- **Dependencies:** `Router`.
 
 ### PreloadStrategyService (`src/app/services/preload-strategy.service.ts`)
-- **Propósito:** Implementa una estrategia de precarga personalizada para las rutas de Angular. Precarga todos los módulos por defecto a menos que se establezca `data: { preload: false }` en la ruta.
-- **Métodos:**
-  - `preload(route, load)`: Determina si se debe precargar una ruta.
-- **Dependencias:** Ninguna.
+- **Purpose:** Implements a custom preloading strategy for Angular routes. Preloads all modules by default unless `data: { preload: false }` is set on the route.
+- **Methods:**
+  - `preload(route, load)`: Determines whether to preload a route.
+- **Dependencies:** None.
 
 ## Guards
 
 ### Auth Guards (`src/app/guards/auth.guards.ts`)
-- **Propósito:** Protege las rutas en función del estado de autenticación y los roles del usuario.
+- **Purpose:** Protects routes based on authentication status and user roles.
 - **Guards:**
-  - `authGuard`: Permite el acceso solo a usuarios autenticados.
-  - `unauthGuard`: Permite el acceso solo a usuarios no autenticados.
-  - `flowGuard`: Asegura que el usuario se encuentre en un flujo de autenticación específico (por ejemplo, restablecimiento de contraseña).
-  - `adminOrSuperAdminGuard`: Permite el acceso solo a usuarios con roles de 'ADMIN' o 'SUPERADMIN'.
-  - `superAdminGuard`: Permite el acceso solo a usuarios con el rol de 'SUPERADMIN'.
-- **Dependencias:** `AuthService`, `Router`.
+  - `authGuard`: Allows access only to authenticated users.
+  - `unauthGuard`: Allows access only to unauthenticated users.
+  - `flowGuard`: Ensures the user is in a specific authentication flow (e.g., password reset).
+  - `adminOrSuperAdminGuard`: Allows access only to users with 'ADMIN' or 'SUPERADMIN' roles.
+  - `superAdminGuard`: Allows access only to users with the 'SUPERADMIN' role.
+- **Dependencies:** `AuthService`, `Router`.
 
 ## Interceptors
 
 ### AuthInterceptor (`src/app/interceptors/auth.interceptor.ts`)
-- **Propósito:** Adjunta el `accessToken` JWT al encabezado `Authorization` de las solicitudes salientes a la API del backend.
-- **Dependencias:** Ninguna.
+- **Purpose:** Attaches the JWT `accessToken` to the `Authorization` header of outgoing requests to the backend API.
+- **Dependencies:** None.
 
-## Componentes
+## Components
 
-Un breve resumen de los componentes principales:
+A brief summary of the main components:
 
-### Componentes Principales
-- **`AppComponent`**: El componente raíz de la aplicación. Muestra el diseño principal, incluido el encabezado, el pie de página y el `router-outlet`. También muestra un cargador global durante las comprobaciones de autenticación.
-- **`HeaderComponent`**: El encabezado de navegación principal. Muestra los enlaces de navegación, la información del perfil del usuario y un botón de cierre de sesión.
-- **`FooterComponent`**: El pie de página de la aplicación.
+### Main Components
+- **`AppComponent`**: The root component of the application. Displays the main layout, including the header, footer, and `router-outlet`. It also shows a global loader during authentication checks.
+- **`HeaderComponent`**: The main navigation header. Displays navigation links, user profile information, and a logout button.
+- **`FooterComponent`**: The application's footer.
 
-### Páginas
-- **`HomeComponent`**: La página de inicio, que muestra las propiedades destacadas y una barra de búsqueda.
-- **`PropertiesComponent`**: La página principal de listado de propiedades. Permite a los usuarios buscar, filtrar y ver propiedades.
-- **`PropertyDetailsComponent`**: Muestra la información detallada de una sola propiedad.
-- **Páginas de Autenticación (`/auth`)**: Un conjunto de páginas para la autenticación de usuarios, que incluye `LoginComponent`, `RegisterComponent`, `ForgotPasswordComponent`, etc.
-- **Páginas del Dashboard (`/dashboard`)**: Un área protegida para que los administradores gestionen propiedades y usuarios. Incluye `DashboardComponent`, `PropertyListComponent`, `PropertyFormComponent`, `UserListComponent` y `UserFormComponent`.
-- **Páginas de Perfil (`/profile`)**: Permite a los usuarios ver y actualizar su información personal y cambiar su contraseña.
+### Pages
+- **`HomeComponent`**: The home page, which displays featured properties and a search bar.
+- **`PropertiesComponent`**: The main property listing page. Allows users to search, filter, and view properties.
+- **`PropertyDetailsComponent`**: Displays detailed information for a single property.
+- **Authentication Pages (`/auth`)**: A set of pages for user authentication, including `LoginComponent`, `RegisterComponent`, `ForgotPasswordComponent`, etc.
+- **Dashboard Pages (`/dashboard`)**: A protected area for administrators to manage properties, users and appointments. Includes `DashboardComponent`, `PropertyListComponent`, `PropertyFormComponent`, `UserListComponent`, `UserFormComponent`, `AppointmentListComponent` and `AppointmentFormComponent`.
+- **Profile Pages (`/profile`)**: Allows users to view and update their personal information, change their password, view their properties and appointments.
 
-### Componentes Compartidos
-- **`PropertyCardComponent`**: Una tarjeta reutilizable para mostrar un resumen de una propiedad.
-- **`SearchBarComponent`**: Una barra de búsqueda para encontrar propiedades por ubicación y tipo.
-- **`ButtonComponent`**: Un componente de botón genérico y personalizable.
-- **`DialogComponent`**: Un componente de diálogo modal para confirmaciones y alertas.
-- **`AvatarComponent`**: Muestra el avatar de un usuario, con una imagen generada como alternativa.
-- **`ScreenLoaderComponent`**: Un cargador de pantalla completa para indicar actividad en segundo plano.
+### Shared Components
+- **`PropertyCardComponent`**: A reusable card for displaying a summary of a property.
+- **`SearchBarComponent`**: A search bar for finding properties by location and type.
+- **`ButtonComponent`**: A generic and customizable button component.
+- **`DialogComponent`**: A modal dialog component for confirmations and alerts.
+- **`AvatarComponent`**: Displays a user's avatar, with a generated image as a fallback.
+- **`ScreenLoaderComponent`**: A full-screen loader to indicate background activity.
+- **`DashboardAppointmentCardComponent`**: A card for displaying appointment information on the dashboard.
+- **`DashboardPropertyCardComponent`**: A card for displaying property information on the dashboard.
+- **`StatCardsComponent`**: A component for displaying statistics on the dashboard.
+- **`AppointmentFormComponent`**: A form for creating and editing appointments.

@@ -1,86 +1,97 @@
-# 🏠 Dicasa - Inmobiliaria
+# Dicasa - Real Estate
 
-Aplicación web moderna para la visualización de propiedades inmobiliarias, desarrollada con Angular y Tailwind CSS.
+![CI/CD](https://img.shields.io/badge/CI%2FCD-WIP-orange?style=for-the-badge)
+![Framework](https://img.shields.io/badge/Angular-DD0031?style=for-the-badge&logo=angular&logoColor=white)
+![Styling](https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)
+![UI Library](https://img.shields.io/badge/PrimeNG-2196F3?style=for-the-badge&logo=prime&logoColor=white)
+![License](https://img.shields.io/github/license/jefjesuswt/dicasa-frontend?style=for-the-badge)
 
-## ✨ Características
+Modern web application for real estate property visualization, developed with Angular and Tailwind CSS.
 
-- 📱 Diseño responsive que se adapta a cualquier dispositivo
-- 🖼️ Galería de imágenes interactiva
-- 🔍 Búsqueda y filtrado de propiedades
-- 📱 Navegación fluida entre páginas
-- 🎨 Interfaz de usuario moderna y atractiva
-- ⚡ Optimizada para un rendimiento óptimo
+## ✨ Features
 
-## 🚀 Empezando
+- 📱 Responsive design that adapts to any device
+- 🖼️ Interactive image gallery
+- 🔍 Property search and filtering
+- ⚡ Optimized for optimal performance
+- 🎨 Modern and attractive user interface
+- 🔐 Role-based access control (RBAC) for protected routes
+- 👤 User authentication and profile management
+- 📅 Appointment scheduling and management
+- 🏠 Property management (CRUD operations)
+- 👨‍💼 Agent and user management
 
-### Requisitos previos
+## 🚀 Getting Started
 
-- Node.js (v16 o superior)
-- npm (v8 o superior) o Bun (recomendado)
-- Angular CLI (opcional, se puede usar Bun)
+### Prerequisites
 
-### Instalación
+- Node.js (v18 or higher)
+- Bun (v1 or higher)
+- Angular CLI (optional, you can use Bun)
 
-1. Clona el repositorio:
+### Installation
+
+1. Clone the repository:
    ```bash
-   git clone https://github.com/tu-usuario/dicasa-frontend.git
+   git clone https://github.com/jefjesuswt/dicasa-frontend.git
    cd dicasa-frontend
    ```
 
-2. Instala las dependencias:
+2. Install the dependencies:
    ```bash
-   # Usando Bun (recomendado)
+   # Using Bun (recommended)
    bun install
-   
-   # O usando npm
-   npm install
    ```
 
-3. Inicia el servidor de desarrollo:
+3. Set up environment variables:
+   Create a `.env` file in the root of the project with the following content:
+   ```
+   API_URL=http://localhost:3000/api
+   ```
+
+4. Start the development server:
    ```bash
-   # Usando Bun
+   # Using Bun
    bun start
-   
-   # O usando Angular CLI
-   ng serve
    ```
 
-4. Abre tu navegador y navega a `http://localhost:4200/`
+5. Open your browser and navigate to `http://localhost:4200/`
 
-## 🛠️ Comandos útiles
+## 🛠️ Useful Commands
 
-- **Iniciar servidor de desarrollo**: `bun start` o `ng serve`
-- **Compilar para producción**: `bun build` o `ng build`
-- **Ejecutar pruebas unitarias**: `bun test` o `ng test`
-- **Lint del código**: `bun lint` o `ng lint`
-- **Formatear código**: `bun format`
+- **Start development server**: `bun start`
+- **Build for production**: `bun build`
+- **Run unit tests**: `bun test`
+- **Lint the code**: `bun lint`
 
-## 🏗️ Estructura del proyecto
+## 🏗️ Project Structure
 
 ```
 src/
 ├── app/
-│   ├── components/     # Componentes reutilizables
-│   ├── pages/          # Páginas de la aplicación
-│   ├── services/       # Servicios para manejo de datos
-│   └── models/         # Interfaces y tipos de TypeScript
-├── assets/            # Recursos estáticos (imágenes, fuentes, etc.)
-└── styles/            # Estilos globales
+│   ├── components/     # Reusable components
+│   ├── pages/          # Application pages
+│   ├── services/       # Services for data handling
+│   ├── guards/         # Route guards
+│   ├── interceptors/   # HTTP interceptors
+│   ├── interfaces/     # TypeScript interfaces and types
+│   └── enums/          # TypeScript enums
+├── assets/             # Static resources (images, fonts, etc.)
+└── environments/       # Environment configuration
 ```
 
-## 🎨 Tecnologías utilizadas
+## 🎨 Technologies Used
 
-- [Angular](https://angular.io/) - Framework de aplicaciones web
-- [Tailwind CSS](https://tailwindcss.com/) - Framework CSS utilitario
-- [PrimeNG](https://primeng.org/) - Biblioteca de componentes UI
-- [TypeScript](https://www.typescriptlang.org/) - Lenguaje tipado que se compila a JavaScript
-- [RxJS](https://rxjs.dev/) - Biblioteca para programación reactiva
+- [Angular](https://angular.io/) - Web application framework
+- [Tailwind CSS](https://tailwindcss.com/) - Utility-first CSS framework
+- [PrimeNG](https://primeng.org/) - UI component library
+- [TypeScript](https://www.typescriptlang.org/) - Typed language that compiles to JavaScript
+- [RxJS](https://rxjs.dev/) - Library for reactive programming
 
+## 📄 License
 
-## 📄 Licencia
-
-Este proyecto está bajo la Licencia MIT - ver el archivo [LICENSE](LICENSE) para más detalles.
+This project is under the MIT License - see the [LICENSE](LICENSE) file for more details.
 
 ---
 
-Desarrollado con ❤️ por [Jeffrey Jesús Jimenez Malave](https://github.com/jefjesuswt)
+Developed with ❤️ by [Jeffrey Jesús Jimenez Malave](https://github.com/jefjesuswt)
