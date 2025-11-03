@@ -2,13 +2,23 @@
   <div class="p-4">
     <div class="flex justify-between items-start mb-3">
       <div class="flex items-center">
-        <shared-avatar class="w-10 h-10" [src]="appointment.agent.profileImageUrl"></shared-avatar>
+        @if (appointment.agent) {
+        <shared-avatar
+          class="w-10 h-10"
+          [src]="appointment.agent.profileImageUrl"
+        ></shared-avatar>
+        }
         <div class="ml-3">
-          <div class="text-sm font-medium text-gray-900">{{ appointment.name }}</div>
+          <div class="text-sm font-medium text-gray-900">
+            {{ appointment.name }}
+          </div>
           <div class="text-sm text-gray-500">{{ appointment.email }}</div>
         </div>
       </div>
-      <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full" [ngClass]="statusClass">
+      <span
+        class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full"
+        [ngClass]="statusClass"
+      >
         {{ statusLabel }}
       </span>
     </div>
@@ -16,26 +26,43 @@
     <div class="space-y-2 text-sm text-gray-800">
       <div>
         <span class="text-gray-500">Propiedad: </span>
-        <a [routerLink]="['/properties', appointment.property._id]" class="font-medium text-sky-600 hover:underline">
+        <a
+          [routerLink]="['/properties', appointment.property._id]"
+          class="font-medium text-sky-600 hover:underline"
+        >
           {{ appointment.property.title }}
         </a>
       </div>
       <div>
         <span class="text-gray-500">Agente: </span>
+        @if (appointment.agent) {
         <span class="font-medium">{{ appointment.agent.name }}</span>
+        } @else {
+        <span class="italic text-red-500">(Agente Eliminado)</span>
+        }
       </div>
       <div class="flex items-center pt-1">
         <i class="pi pi-calendar mr-2 text-gray-500"></i>
-        <span class="font-medium">{{ appointment.appointmentDate | date: 'dd/MM/yyyy, shortTime' }}</span>
+        <span class="font-medium">{{
+          appointment.appointmentDate | date : "dd/MM/yyyy, shortTime"
+        }}</span>
       </div>
     </div>
   </div>
 
   <div class="bg-gray-50 px-4 py-3 flex justify-end space-x-2">
-    <button (click)="onEdit()" class="p-1 text-yellow-600 hover:text-yellow-900 rounded-full hover:bg-yellow-50" title="Editar estado">
+    <button
+      (click)="onEdit()"
+      class="p-1 text-yellow-600 hover:text-yellow-900 rounded-full hover:bg-yellow-50"
+      title="Editar estado"
+    >
       <i class="pi pi-pencil"></i>
     </button>
-    <button (click)="onDelete()" class="p-1 text-red-600 hover:text-red-900 rounded-full hover:bg-red-50" title="Eliminar cita">
+    <button
+      (click)="onDelete()"
+      class="p-1 text-red-600 hover:text-red-900 rounded-full hover:bg-red-50"
+      title="Eliminar cita"
+    >
       <i class="pi pi-trash"></i>
     </button>
   </div>

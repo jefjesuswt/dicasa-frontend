@@ -5,4 +5,5 @@ export interface QueryUserParams {
   limit?: number;
   search?: string;
   role?: UserRole;
+  isActive?: boolean;
 }

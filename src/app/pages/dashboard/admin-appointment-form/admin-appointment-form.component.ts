@@ -131,14 +131,10 @@ export class AdminAppointmentFormComponent implements OnInit {
     this.appointmentForm.patchValue({
       status: appointment.status,
       appointmentDate: new Date(appointment.appointmentDate),
-      agentId: appointment.agent._id,
+      agentId: appointment.agent ? appointment.agent._id : null,
     });
   }
 
-  /**
-   * ESTE ES EL MÉTODO 'onSubmit' CORREGIDO
-   * Solo contiene la lógica de comprobación manual.
-   */
   onSubmit(): void {
     if (
       this.appointmentForm.invalid ||
@@ -155,54 +151,29 @@ export class AdminAppointmentFormComponent implements OnInit {
     const formValue = this.appointmentForm.value;
     const saveActions$: Observable<any>[] = [];
 
-    // --- INICIO DE LA DEPURACIÓN ---
+    const statusDirty = this.appointmentForm.controls["status"].dirty;
+    const dateDirty = this.appointmentForm.controls["appointmentDate"].dirty;
 
-    // 1. Comprobar ESTADO
-    const originalStatus = this.appointmentData.status;
-    const newStatus = formValue.status;
-    const statusChanged = originalStatus !== newStatus;
-    console.log("--- Chequeo de Estado ---");
-    console.log(
-      `Original: '${originalStatus}' (Tipo: ${typeof originalStatus})`
-    );
-    console.log(`Nuevo:    '${newStatus}' (Tipo: ${typeof newStatus})`);
-    console.log(`¿Cambió?  ${statusChanged}`);
-
-    // 2. Comprobar FECHA
-    const originalDate = new Date(
-      this.appointmentData.appointmentDate
-    ).toISOString();
-    const newDate = (formValue.appointmentDate as Date).toISOString();
-    const dateChanged = originalDate !== newDate;
-    console.log("--- Chequeo de Fecha ---");
-    console.log(`Original: '${originalDate}' (Tipo: ${typeof originalDate})`);
-    console.log(`Nuevo:    '${newDate}' (Tipo: ${typeof newDate})`);
-    console.log(`¿Cambió?  ${dateChanged}`);
-
-    // 3. Comprobar AGENTE
-    const originalAgentId = this.appointmentData.agent._id;
-    const newAgentId = formValue.agentId;
-    const agentChanged = originalAgentId !== newAgentId;
-    console.log("--- Chequeo de Agente ---");
-    console.log(
-      `Original: '${originalAgentId}' (Tipo: ${typeof originalAgentId})`
-    );
-    console.log(`Nuevo:    '${newAgentId}' (Tipo: ${typeof newAgentId})`);
-    console.log(`¿Cambió?  ${agentChanged}`);
-
-    // --- FIN DE LA DEPURACIÓN ---
-
-    if (statusChanged || dateChanged) {
+    if (statusDirty || dateDirty) {
+      console.log("--- Detectado cambio en Estado o Fecha ---");
       const updateDto: UpdateAppointmentDto = {
-        ...(statusChanged && { status: formValue.status }),
-        ...(dateChanged && { appointmentDate: newDate }),
+        ...(statusDirty && { status: formValue.status }),
+        ...(dateDirty && {
+          appointmentDate: (formValue.appointmentDate as Date).toISOString(),
+        }),
       };
       saveActions$.push(
         this.appointmentsService.update(this.appointmentId, updateDto)
       );
     }
 
-    if (agentChanged) {
+    const agentDirty = this.appointmentForm.controls["agentId"].dirty;
+    const originalAgentId = this.appointmentData.agent
+      ? this.appointmentData.agent._id
+      : null;
+
+    if (agentDirty && formValue.agentId !== originalAgentId) {
+      console.log("--- Detectado cambio de Agente ---");
       const reassignDto: ReassignAgentDto = {
         newAgentId: formValue.agentId,
       };
@@ -212,18 +183,12 @@ export class AdminAppointmentFormComponent implements OnInit {
     }
 
     if (saveActions$.length === 0) {
-      console.log(
-        "--- RESULTADO: No se detectaron cambios. 'saveActions' está vacío. ---"
-      );
-      this.toast.info("No se detectaron cambios."); // <-- ¿Es este el toast que ves?
+      this.toast.info("No se detectaron cambios.");
       this.isSaving = false;
       this.appointmentForm.markAsPristine();
       return;
     }
 
-    console.log(
-      `--- RESULTADO: Ejecutando ${saveActions$.length} acciones... ---`
-    );
     concat(...saveActions$)
       .pipe(finalize(() => (this.isSaving = false)))
       .subscribe({

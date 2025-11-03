@@ -18,10 +18,20 @@ import {
   SearchParams,
 } from "../../../shared/search-bar/search-bar.component";
 
+import { ToggleSwitch } from "primeng/toggleswitch";
+import { FormsModule } from "@angular/forms";
+
 @Component({
   selector: "dashboard-user-list",
   standalone: true,
-  imports: [CommonModule, DialogComponent, AvatarComponent, SearchBarComponent],
+  imports: [
+    CommonModule,
+    DialogComponent,
+    AvatarComponent,
+    SearchBarComponent,
+    FormsModule,
+    ToggleSwitch,
+  ],
   templateUrl: "./user-list.component.html",
 })
 export class UserListComponent implements OnInit {
@@ -30,11 +40,11 @@ export class UserListComponent implements OnInit {
   private toast = inject(HotToastService);
 
   public users: User[] = [];
+  public showInactive = false;
   public loading = true;
   public error: string | null = null;
   public Math = Math;
 
-  // --- Estado del Dialog ---
   public isDeleteDialogOpen = false;
   public userToDelete: User | null = null;
   public isDeleting = false;
@@ -51,6 +61,11 @@ export class UserListComponent implements OnInit {
     { value: UserRole.USER, label: "Usuario" },
   ];
 
+  public statusBadgeClass: Record<string, string> = {
+    true: "bg-green-100 text-green-800", // activo
+    false: "bg-gray-100 text-gray-800", // inactivo
+  };
+
   ngOnInit(): void {
     this.loadUsers();
   }
@@ -60,8 +75,8 @@ export class UserListComponent implements OnInit {
       ...this.currentQueryParams,
       page: this.currentPage,
       limit: this.rowsPerPage,
+      isActive: this.showInactive ? undefined : true,
     };
-
     this.loading = true;
     this.error = null;
     this.usersService
@@ -140,6 +155,11 @@ export class UserListComponent implements OnInit {
 
   editUser(user: User): void {
     this.router.navigate(["/dashboard/users/edit", user._id]);
+  }
+
+  onInactiveToggleChange(): void {
+    this.currentPage = 1;
+    this.loadUsers();
   }
 
   openDeleteDialog(user: User): void {

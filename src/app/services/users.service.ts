@@ -33,6 +33,9 @@ export class UsersService {
     if (query.limit) params = params.set("limit", query.limit.toString());
     if (query.search) params = params.set("search", query.search);
     if (query.role) params = params.set("role", query.role);
+    if (query.isActive !== undefined) {
+      params = params.set("isActive", query.isActive.toString());
+    }
 
     return this.http
       .get<PaginatedUserResponse>(this.apiUrl, { params })
@@ -40,14 +43,13 @@ export class UsersService {
   }
 
   getAgents(): Observable<User[]> {
-    const params = new HttpParams().set("page", "1").set("limit", "500");
-
-    return this.http.get<PaginatedUserResponse>(this.apiUrl, { params }).pipe(
+    return this.http.get<PaginatedUserResponse>(this.apiUrl).pipe(
       map((response) =>
         response.data.filter(
           (user) =>
-            user.roles.includes(UserRole.ADMIN) ||
-            user.roles.includes(UserRole.SUPERADMIN)
+            user.isActive &&
+            (user.roles.includes(UserRole.ADMIN) ||
+              user.roles.includes(UserRole.SUPERADMIN))
         )
       ),
       catchError(handleApiError)

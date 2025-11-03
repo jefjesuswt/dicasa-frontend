@@ -9,6 +9,9 @@ import { AvatarComponent } from "../../../shared/avatar/avatar.component";
   standalone: true,
   imports: [CommonModule, RouterModule, AvatarComponent],
   templateUrl: "./dashboard-appointment-card.component.html",
+  host: {
+    class: "block",
+  },
 })
 export class DashboardAppointmentCardComponent {
   @Input({ required: true }) appointment!: Appointment;
