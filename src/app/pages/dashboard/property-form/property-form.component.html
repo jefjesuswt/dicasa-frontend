@@ -9,12 +9,13 @@
     >
       @if (initialLoading) {
       <div class="flex justify-center items-center py-16">
-        <i class="pi pi-spin pi-spinner text-sky-600" style="font-size: 2rem"></i>
+        <i
+          class="pi pi-spin pi-spinner text-sky-600"
+          style="font-size: 2rem"
+        ></i>
         <span class="ml-3 text-gray-700">Cargando propiedad...</span>
       </div>
-      }
-
-      @if (!initialLoading) {
+      } @if (!initialLoading) {
       <form
         [formGroup]="propertyForm"
         (ngSubmit)="onSubmit()"
@@ -27,28 +28,34 @@
             Información Básica
           </h2>
           <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-
             <div class="md:col-span-2">
               <label
                 for="agent"
                 class="block text-sm font-medium text-gray-700 mb-1"
-              >Agente Asignado</label>
+                >Agente Asignado</label
+              >
               <select
                 id="agent"
                 formControlName="agent"
-                class="block w-full rounded-md border-gray-300 shadow-sm focus:border-sky-500 focus:ring-sky-500 sm:text-sm py-2 px-3
-                       disabled:bg-gray-100 disabled:cursor-not-allowed"
+                class="block w-full rounded-md border-gray-300 shadow-sm focus:border-sky-500 focus:ring-sky-500 sm:text-sm py-2 px-3 disabled:bg-gray-100 disabled:cursor-not-allowed"
                 [disabled]="agents.length === 0"
               >
                 <option [ngValue]="null" disabled>
-                  {{ agents.length > 0 ? 'Seleccione un agente...' : 'No hay agentes disponibles...' }}
+                  {{
+                    agents.length > 0
+                      ? "Seleccione un agente..."
+                      : "No hay agentes disponibles..."
+                  }}
                 </option>
                 @for (agent of agents; track agent._id) {
-                  <option [ngValue]="agent._id">{{ agent.name }}</option>
+                <option [ngValue]="agent._id">{{ agent.name }}</option>
                 }
               </select>
-              @if (propertyForm.get('agent')?.invalid && propertyForm.get('agent')?.touched) {
-                <p class="mt-1 text-sm text-red-600">Debe seleccionar un agente.</p>
+              @if (propertyForm.get('agent')?.invalid &&
+              propertyForm.get('agent')?.touched) {
+              <p class="mt-1 text-sm text-red-600">
+                Debe seleccionar un agente.
+              </p>
               }
             </div>
 
@@ -156,6 +163,7 @@
             Detalles
           </h2>
           <div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
+            @if (isResidentialType) {
             <div>
               <label
                 for="bedrooms"
@@ -184,6 +192,9 @@
                 class="block w-full rounded-md border-gray-300 shadow-sm focus:border-sky-500 focus:ring-sky-500 sm:text-sm py-2 px-3"
               />
             </div>
+            } @else {
+            <div class="hidden sm:block sm:col-span-2"></div>
+            }
             <div>
               <label
                 for="area"
@@ -230,14 +241,14 @@
                 formControlName="state"
                 class="block w-full rounded-md border-gray-300 shadow-sm focus:border-sky-500 focus:ring-sky-500 sm:text-sm py-2 px-3"
               >
-              <option value="" disabled>Seleccione un estado...</option>
-              @for (state of states; track state.state) {
+                <option value="" disabled>Seleccione un estado...</option>
+                @for (state of states; track state.state) {
                 <option [value]="state.state">{{ state.state }}</option>
-              }
+                }
               </select>
               @if (propertyForm.get('address.state')?.invalid &&
               propertyForm.get('address.state')?.touched) {
-                <p class="mt-1 text-sm text-red-600">El estado es requerido.</p>
+              <p class="mt-1 text-sm text-red-600">El estado es requerido.</p>
               }
             </div>
             <div>
@@ -250,11 +261,12 @@
                 id="address-city"
                 formControlName="city"
                 [disabled]="isLoadingCities || cities.length === 0"
-                class="block w-full rounded-md border-gray-300 shadow-sm focus:border-sky-500 focus:ring-sky-500 sm:text-sm py-2 px-3
-                       disabled:bg-gray-100 disabled:cursor-not-allowed"
+                class="block w-full rounded-md border-gray-300 shadow-sm focus:border-sky-500 focus:ring-sky-500 sm:text-sm py-2 px-3 disabled:bg-gray-100 disabled:cursor-not-allowed"
               >
                 <option value="" disabled>
-                  {{ isLoadingCities ? 'Cargando...' : 'Seleccione una ciudad...' }}
+                  {{
+                    isLoadingCities ? "Cargando..." : "Seleccione una ciudad..."
+                  }}
                 </option>
                 @for (city of cities; track city) {
                 <option [value]="city">{{ city }}</option>
@@ -351,7 +363,6 @@
                 class="ml-2 block text-sm text-gray-900"
                 >Admite Mascotas
               </label>
-
             </div>
           </div>
         </section>
@@ -467,7 +478,9 @@
             formControlName="featured"
             class="h-4 w-4 text-sky-600 border-gray-300 rounded focus:ring-sky-500"
           />
-          <label for="featured" class="ml-2 block text-sm text-gray-900 font-medium"
+          <label
+            for="featured"
+            class="ml-2 block text-sm text-gray-900 font-medium"
             >Marcar como Destacado</label
           >
         </div>
@@ -484,7 +497,9 @@
             </button>
             <button
               type="submit"
-              [disabled]="propertyForm.invalid || isSaving || propertyForm.pristine"
+              [disabled]="
+                propertyForm.invalid || isSaving || propertyForm.pristine
+              "
               class="inline-flex justify-center items-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-sky-600 hover:bg-sky-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-sky-500 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               @if (isSaving) {
@@ -502,6 +517,6 @@
         </div>
       </form>
       }
-      </div>
+    </div>
   </div>
 </div>

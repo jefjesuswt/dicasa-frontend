@@ -1,32 +1,68 @@
 <div class="bg-white rounded-lg shadow overflow-hidden border border-gray-200">
-
   <div class="flex items-center p-4">
     <img
-      [src]="property.images && property.images.length ? property.images[0] : 'assets/images/placeholder-property.png'"
+      [src]="
+        property.images && property.images.length
+          ? property.images[0]
+          : 'assets/images/placeholder-property.png'
+      "
       [alt]="property.title"
       class="w-16 h-16 rounded-md object-cover mr-4 flex-shrink-0"
       onerror="this.onerror=null; this.src='assets/images/placeholder-property.png'"
-    >
+    />
     <div class="flex-1 min-w-0">
-      <p class="text-sm font-medium text-gray-900 truncate">{{ property.title }}</p>
-      <p class="text-sm text-gray-500 truncate">{{ property.address.city || 'Sin ubicación' }}</p>
+      <p class="text-sm font-medium text-gray-900 truncate">
+        {{ property.title }}
+      </p>
+      <p class="text-sm text-gray-500 truncate">
+        {{ property.address.city || "Sin ubicación" }}
+      </p>
+
+      <!--
+        INICIO DE LA REFACTORIZACIÓN
+        Añadida la lógica condicional para m², hab, y baños, igual que en la tabla
+      -->
+      <div class="text-sm text-gray-500 mt-1">
+        @if (property.type === 'house' || property.type === 'apartment' ||
+        property.type === 'villa') {
+        <span
+          >{{ property.area || 0 }} m² • {{ property.bedrooms || 0 }} hab •
+          {{ property.bathrooms || 0 }} baños</span
+        >
+        } @else if (property.type === 'commercial') {
+        <span
+          >{{ property.area || 0 }} m² •
+          {{ property.bathrooms || 0 }} baños</span
+        >
+        } @else if (property.type === 'land') {
+        <span>{{ property.area || 0 }} m²</span>
+        }
+      </div>
+      <!-- FIN DE LA REFACTORIZACIÓN -->
     </div>
   </div>
 
-  <div class="grid grid-cols-3 gap-px bg-gray-50 border-t border-b border-gray-200">
+  <div
+    class="grid grid-cols-3 gap-px bg-gray-50 border-t border-b border-gray-200"
+  >
     <div class="px-2 py-3 text-center">
       <span class="text-xs font-medium text-gray-500 block">Precio</span>
-      <span class="text-sm font-semibold text-gray-900">{{ property.price | currency:'USD':'symbol':'1.0-0' }}</span>
+      <span class="text-sm font-semibold text-gray-900">{{
+        property.price | currency : "USD" : "symbol" : "1.0-0"
+      }}</span>
     </div>
     <div class="px-2 py-3 text-center">
       <span class="text-xs font-medium text-gray-500 block">Tipo</span>
-      <span class="text-sm font-semibold text-gray-900">{{ getTypeLabel(property.type) }}</span>
+      <span class="text-sm font-semibold text-gray-900">{{
+        getTypeLabel(property.type)
+      }}</span>
     </div>
     <div class="px-2 py-3 text-center">
       <span class="text-xs font-medium text-gray-500 block">Estado</span>
       <span
         class="px-2 py-0.5 inline-flex text-xs leading-5 font-semibold rounded-full"
-        [ngClass]="getStatusBadgeClass(property.status)">
+        [ngClass]="getStatusBadgeClass(property.status)"
+      >
         {{ getStatusLabel(property.status) }}
       </span>
     </div>
@@ -34,23 +70,25 @@
 
   <div class="p-3 flex justify-end space-x-2 bg-white">
     <button
-      (click)="onViewClick()" class="p-2 text-sky-600 hover:text-sky-900 rounded-full hover:bg-sky-50"
+      (click)="onViewClick()"
+      class="p-2 text-sky-600 hover:text-sky-900 rounded-full hover:bg-sky-50"
       title="Ver detalles"
     >
       <i class="pi pi-eye"></i>
     </button>
     <button
-      (click)="onEditClick()" class="p-2 text-yellow-600 hover:text-yellow-900 rounded-full hover:bg-yellow-50"
+      (click)="onEditClick()"
+      class="p-2 text-yellow-600 hover:text-yellow-900 rounded-full hover:bg-yellow-50"
       title="Editar propiedad"
     >
       <i class="pi pi-pencil"></i>
     </button>
     <button
-      (click)="onDeleteClick()" class="p-2 text-red-600 hover:text-red-900 rounded-full hover:bg-red-50"
+      (click)="onDeleteClick()"
+      class="p-2 text-red-600 hover:text-red-900 rounded-full hover:bg-red-50"
       title="Eliminar propiedad"
     >
-      <i class="pi pi-trash"></i>
+      <i classs="pi pi-trash"></i>
     </button>
   </div>
-
 </div>

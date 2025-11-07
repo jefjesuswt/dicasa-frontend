@@ -153,6 +153,8 @@
               >
             </div>
             <!-- Habitaciones -->
+            @if (prop.type === 'house' || prop.type === 'apartment' || prop.type
+            === 'villa') {
             <div
               class="flex flex-col items-center p-3 bg-gray-50 rounded-lg text-center"
             >
@@ -160,7 +162,7 @@
               <span class="text-sm text-gray-500">Habitaciones</span>
               <span class="text-gray-900 font-bold">{{ prop.bedrooms }}</span>
             </div>
-            <!-- Baños -->
+            } @if (prop.type !== 'land') {
             <div
               class="flex flex-col items-center p-3 bg-gray-50 rounded-lg text-center"
             >
@@ -168,6 +170,7 @@
               <span class="text-sm text-gray-500">Baños</span>
               <span class="text-gray-900 font-bold">{{ prop.bathrooms }}</span>
             </div>
+            }
           </div>
 
           <!-- Características Adicionales (Booleanos) -->

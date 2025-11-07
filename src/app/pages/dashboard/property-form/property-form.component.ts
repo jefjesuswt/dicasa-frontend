@@ -5,6 +5,7 @@ import {
   FormGroup,
   ReactiveFormsModule,
   Validators,
+  AbstractControl,
 } from "@angular/forms";
 import { ActivatedRoute, Router } from "@angular/router";
 import { HotToastService } from "@ngxpert/hot-toast";
@@ -114,8 +115,8 @@ export class PropertyFormComponent implements OnInit {
       title: ["", [Validators.required, Validators.minLength(5)]],
       description: ["", [Validators.required, Validators.minLength(20)]],
       price: [null, [Validators.required, Validators.min(1)]],
-      bedrooms: [null, [Validators.required, Validators.min(0)]],
-      bathrooms: [null, [Validators.required, Validators.min(0)]],
+      bedrooms: [0, [Validators.required, Validators.min(0)]],
+      bathrooms: [0, [Validators.required, Validators.min(0)]],
       area: [null, [Validators.required, Validators.min(1)]],
       type: ["house", Validators.required],
       status: ["sale", Validators.required],
@@ -138,6 +139,8 @@ export class PropertyFormComponent implements OnInit {
 
       agent: [null, Validators.required],
     });
+
+    this.setupConditionalValidators();
 
     this.propertyForm
       .get("address.state")
@@ -213,6 +216,12 @@ export class PropertyFormComponent implements OnInit {
     if (stateValue) {
       this.updateCities(stateValue, property.address.city);
     }
+
+    this.toggleResidentialFields(
+      property.type,
+      this.propertyForm.get("bedrooms")!,
+      this.propertyForm.get("bathrooms")!
+    );
   }
 
   onSubmit(): void {
@@ -324,5 +333,47 @@ export class PropertyFormComponent implements OnInit {
 
   get title() {
     return this.propertyForm.get("title");
+  }
+
+  get isResidentialType(): boolean {
+    const type = this.propertyForm.get("type")?.value;
+    return type === "house" || type === "apartment" || type === "villa";
+  }
+
+  private setupConditionalValidators(): void {
+    const typeControl = this.propertyForm.get("type");
+    const bedroomsControl = this.propertyForm.get("bedrooms");
+    const bathroomsControl = this.propertyForm.get("bathrooms");
+
+    if (!typeControl || !bedroomsControl || !bathroomsControl) return;
+
+    typeControl.valueChanges.subscribe((type) => {
+      this.toggleResidentialFields(type, bedroomsControl, bathroomsControl);
+    });
+  }
+
+  private toggleResidentialFields(
+    type: string,
+    bedrooms: AbstractControl,
+    bathrooms: AbstractControl
+  ): void {
+    const isResidential =
+      type === "house" || type === "apartment" || type === "villa";
+
+    if (isResidential) {
+      bedrooms.setValidators([Validators.required, Validators.min(0)]);
+      bathrooms.setValidators([Validators.required, Validators.min(0)]);
+      bedrooms.enable();
+      bathrooms.enable();
+    } else {
+      bedrooms.clearValidators();
+      bathrooms.clearValidators();
+      bedrooms.disable();
+      bathrooms.disable();
+      bedrooms.setValue(0);
+      bathrooms.setValue(0);
+    }
+    bedrooms.updateValueAndValidity();
+    bathrooms.updateValueAndValidity();
   }
 }
