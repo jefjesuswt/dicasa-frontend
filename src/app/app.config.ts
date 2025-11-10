@@ -21,7 +21,6 @@ import { primeNgTranslation } from "./primeNgTranslation";
 import { registerLocaleData } from "@angular/common";
 import localeEs from "@angular/common/locales/es";
 registerLocaleData(localeEs, "es");
-
 export const appConfig: ApplicationConfig = {
   providers: [
     provideZoneChangeDetection({ eventCoalescing: true }),

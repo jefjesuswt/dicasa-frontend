@@ -4,7 +4,7 @@
   "scripts": {
     "ng": "ng",
     "env": "bun scripts/set-envs.js",
-    "start": "bun run env && ng serve --host 192.168.0.182",
+    "start": "bun run env && ng serve",
     "build": "bun run env && ng build",
     "watch": "bun run env && ng build --watch --configuration development",
     "test": "bun run env && ng test"
@@ -23,6 +23,7 @@
     "@primeuix/themes": "^1.2.5",
     "@tailwindcss/postcss": "^4.1.13",
     "dotenv": "^17.2.3",
+    "fingerprinter-js": "^1.0.3",
     "google-libphonenumber": "^3.2.43",
     "intl-tel-input": "^19.5.7",
     "libphonenumber-js": "^1.12.25",
