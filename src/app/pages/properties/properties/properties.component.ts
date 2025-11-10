@@ -14,6 +14,9 @@ import { finalize } from "rxjs";
 import { PaginatedProperties } from "../../../interfaces/properties/paginated-properties.interface";
 import { QueryPropertiesParams } from "../../../interfaces/properties/query-property.interface";
 import { PropertyStatus } from "../../../interfaces/properties/property-status.enum";
+import Fingerprint from "fingerprinter-js";
+import { AnalyticsService } from "../../../services/analytics.service";
+import { v4 as uuidv4 } from "uuid";
 
 @Component({
   selector: "properties-properties",
@@ -53,11 +56,14 @@ export class PropertiesComponent implements OnInit {
   public itemsPerPage = 10;
 
   private propertyService = inject(PropertyService);
+  private analyticsService = inject(AnalyticsService);
 
   constructor() {}
 
-  ngOnInit(): void {
+  async ngOnInit(): Promise<void> {
     this.loadProperties();
+
+    this.initializeAnalytics();
   }
 
   loadProperties(): void {
@@ -137,5 +143,51 @@ export class PropertiesComponent implements OnInit {
       commercial: "Commercial",
     };
     return labels[type] || type;
+  }
+
+  private async getStableFingerprint(): Promise<string> {
+    const storageKey = "dicasa-fingerprint";
+    let fp = localStorage.getItem(storageKey);
+
+    if (fp) {
+      return fp;
+    }
+
+    const { fingerprint } = await Fingerprint.generate();
+    localStorage.setItem(storageKey, fingerprint);
+    return fingerprint;
+  }
+
+  private async initializeAnalytics(): Promise<void> {
+    try {
+      // 1. Obtener Fingerprint (ahora usa la nueva función)
+      const fingerprint = await this.getStableFingerprint(); // <- CAMBIO AQUÍ
+      const path = window.location.pathname;
+
+      // 2. Registrar la visita
+      this.analyticsService.logVisit({ fingerprint, path }).subscribe();
+
+      // 3. Manejar la Sesión (esto ya está bien)
+      let sessionId = sessionStorage.getItem("analyticsSessionId");
+
+      if (sessionId) {
+        this.analyticsService.startHeartbeatLoop(sessionId);
+      } else {
+        sessionId = uuidv4();
+        sessionStorage.setItem("analyticsSessionId", sessionId);
+
+        this.analyticsService
+          .startSession({ sessionId, fingerprint })
+          .subscribe({
+            next: () => {
+              if (!sessionId) return;
+              this.analyticsService.startHeartbeatLoop(sessionId);
+            },
+            error: (err) => console.error("Failed to create session", err),
+          });
+      }
+    } catch (error) {
+      console.error("Error during analytics initialization:", error);
+    }
   }
 }

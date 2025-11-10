@@ -7,6 +7,7 @@ require("dotenv").config();
 
 // 1. Lee la variable de entorno
 const API_URL = process.env.API_URL;
+const ANALYTICS_API_URL = process.env.ANALYTICS_API_URL;
 
 if (!API_URL) {
   console.warn(
@@ -20,7 +21,8 @@ if (!API_URL) {
 const devContent = `
 export const environment = {
   production: false,
-  API_URL: "${API_URL || "http://localhost:3000/api"}"
+  API_URL: "${API_URL || "http://localhost:3000/api"}",
+  ANALYTICS_API_URL: "${ANALYTICS_API_URL || "http://localhost:3000/api"}"
 };
 `;
 
@@ -29,7 +31,8 @@ export const environment = {
 const prodContent = `
 export const environment = {
   production: true,
-  API_URL: "${API_URL}"
+  API_URL: "${API_URL}",
+  ANALYTICS_API_URL: "${ANALYTICS_API_URL}"
 };
 `;
 
