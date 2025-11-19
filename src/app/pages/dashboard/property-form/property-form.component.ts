@@ -198,29 +198,25 @@ export class PropertyFormComponent implements OnInit {
         status: property.status,
         featured: property.featured,
         address: {
-          address: property.address.address, // city: property.address.city, // Esto está bien comentado
-          state: property.address.state,
-          country: property.address.country,
+          address: property.address?.address || "", // city: property.address.city,
+          state: property.address?.state || "",
+          country: property.address?.country || "Venezuela",
         },
         features: {
-          hasParking: property.features.hasParking,
-          hasFurniture: property.features.hasFurniture,
-          hasPool: property.features.hasPool,
-          hasGarden: property.features.hasGarden,
-          isPetFriendly: property.features.isPetFriendly,
+          hasParking: property.features?.hasParking ?? false,
+          hasFurniture: property.features?.hasFurniture ?? false,
+          hasPool: property.features?.hasPool ?? false,
+          hasGarden: property.features?.hasGarden ?? false,
+          isPetFriendly: property.features?.isPetFriendly ?? false,
         },
         agent: property.agent?._id || null,
       },
       { emitEvent: false }
-    ); // <--- ¡ESTA ES LA CLAVE!
-
-    // Al usar emitEvent: false, la suscripción de valueChanges NO se dispara.
-    // Por lo tanto, tu llamada manual a updateCities abajo es la única que se ejecuta,
-    // cargando las ciudades y seleccionando la correcta sin interrupciones.
+    );
 
     const stateValue = this.propertyForm.get("address.state")?.value;
     if (stateValue) {
-      this.updateCities(stateValue, property.address.city);
+      this.updateCities(stateValue, property.address?.city);
     }
 
     this.toggleResidentialFields(
