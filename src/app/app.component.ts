@@ -13,6 +13,7 @@ import { ScreenLoaderComponent } from "./shared/screen-loader/screen-loader.comp
 import { AuthService } from "./services/auth.service";
 import { AuthStatus } from "./enums/auth-status.enum";
 import { CommonModule } from "@angular/common";
+import { ToastComponent } from "./components/toast/toast.component";
 
 @Component({
   selector: "app-root",
@@ -23,20 +24,21 @@ import { CommonModule } from "@angular/common";
     HeaderComponent,
     FooterComponent,
     ScreenLoaderComponent,
+    ToastComponent,
   ],
   template: `
-    <!-- Condición simplificada para el loader -->
+    <app-toast />
+
     @if (authService.authStatus() === AuthStatus.checking) {
     <shared-screen-loader />
-    }
-
-    <!-- Muestra el contenido principal solo cuando la comprobación ha terminado -->
-    @if (authService.authStatus() !== AuthStatus.checking) {
-    <div class="min-h-screen flex flex-col">
+    } @if (authService.authStatus() !== AuthStatus.checking) {
+    <div class="min-h-screen flex flex-col bg-slate-950">
       <app-header></app-header>
-      <main class="flex-1">
+
+      <main class="flex-1 relative">
         <router-outlet></router-outlet>
       </main>
+
       <app-footer></app-footer>
     </div>
     }

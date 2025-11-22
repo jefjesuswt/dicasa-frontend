@@ -1,5 +1,14 @@
-import { Component, inject, OnInit } from "@angular/core";
-import { CommonModule } from "@angular/common";
+import {
+  Component,
+  inject,
+  OnInit,
+  AfterViewInit,
+  OnDestroy,
+  ElementRef,
+  ViewChildren,
+  QueryList,
+} from "@angular/core";
+import { CommonModule, DOCUMENT } from "@angular/common"; // Importar DOCUMENT
 import { RouterModule } from "@angular/router";
 import { PropertyService } from "../../../services/property.service";
 import { PropertyCardComponent } from "../../../shared/property-card/property-card.component";
@@ -30,8 +39,12 @@ import { v4 as uuidv4 } from "uuid";
   ],
   templateUrl: "./properties.component.html",
 })
-export class PropertiesComponent implements OnInit {
-  // status
+export class PropertiesComponent implements OnInit, AfterViewInit, OnDestroy {
+  // --- Lógica Visual (Observer) ---
+  private observer: IntersectionObserver | null = null;
+  private document = inject(DOCUMENT);
+
+  // --- Lógica de Negocio ---
   properties: Property[] = [];
   loading = true;
   error: string | null = null;
@@ -62,8 +75,40 @@ export class PropertiesComponent implements OnInit {
 
   async ngOnInit(): Promise<void> {
     this.loadProperties();
-
     this.initializeAnalytics();
+  }
+
+  ngAfterViewInit() {
+    this.initScrollObserver();
+  }
+
+  ngOnDestroy() {
+    this.observer?.disconnect();
+  }
+
+  private initScrollObserver() {
+    this.observer?.disconnect();
+
+    const options = {
+      root: null,
+      rootMargin: "0px",
+      threshold: 0.15,
+    };
+
+    this.observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add("is-visible");
+        } else {
+          entry.target.classList.remove("is-visible");
+        }
+      });
+    }, options);
+
+    setTimeout(() => {
+      const elements = this.document.querySelectorAll(".reveal-on-scroll");
+      elements.forEach((el) => this.observer?.observe(el));
+    }, 100);
   }
 
   loadProperties(): void {
@@ -88,6 +133,7 @@ export class PropertiesComponent implements OnInit {
         next: (response: PaginatedProperties) => {
           this.properties = response.data;
           this.totalProperties = response.total;
+          this.initScrollObserver();
         },
         error: (errMessage) => {
           this.error = errMessage;
@@ -131,7 +177,7 @@ export class PropertiesComponent implements OnInit {
     }
     this.currentPage = page;
     this.loadProperties();
-    window.scrollTo(0, 0);
+    window.scrollTo({ top: 0, behavior: "smooth" });
   }
 
   getTypeLabel(type: string): string {
@@ -160,14 +206,11 @@ export class PropertiesComponent implements OnInit {
 
   private async initializeAnalytics(): Promise<void> {
     try {
-      // 1. Obtener Fingerprint (ahora usa la nueva función)
-      const fingerprint = await this.getStableFingerprint(); // <- CAMBIO AQUÍ
+      const fingerprint = await this.getStableFingerprint();
       const path = window.location.pathname;
 
-      // 2. Registrar la visita
       this.analyticsService.logVisit({ fingerprint, path }).subscribe();
 
-      // 3. Manejar la Sesión (esto ya está bien)
       let sessionId = sessionStorage.getItem("analyticsSessionId");
 
       if (sessionId) {

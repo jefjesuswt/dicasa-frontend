@@ -4,10 +4,6 @@ import { Router, RouterModule } from "@angular/router";
 import { catchError } from "rxjs/operators";
 import { of } from "rxjs";
 
-import { CardModule } from "primeng/card";
-import { TagModule } from "primeng/tag";
-import { ButtonModule } from "primeng/button";
-
 import { AppointmentsService } from "../../../services/appointment.service";
 import {
   Appointment,
@@ -16,27 +12,11 @@ import {
 import { AvatarComponent } from "../../../shared/avatar/avatar.component";
 
 type LoadState = "loading" | "loaded" | "error";
-type TagSeverity =
-  | "success"
-  | "secondary"
-  | "info"
-  | "warn"
-  | "danger"
-  | "contrast"
-  | null
-  | undefined;
 
 @Component({
   selector: "app-my-schedules",
   standalone: true,
-  imports: [
-    CommonModule,
-    RouterModule,
-    AvatarComponent,
-    CardModule,
-    TagModule,
-    ButtonModule,
-  ],
+  imports: [CommonModule, RouterModule, AvatarComponent],
   templateUrl: "./my-appointments.component.html",
 })
 export class MyAppointmentsComponent implements OnInit {
@@ -46,18 +26,23 @@ export class MyAppointmentsComponent implements OnInit {
   appointments = signal<Appointment[]>([]);
   loadState = signal<LoadState>("loading");
 
-  statusSeverity: Record<AppointmentStatus, TagSeverity> = {
-    [AppointmentStatus.PENDING]: "warn",
-    [AppointmentStatus.CONTACTED]: "info",
-    [AppointmentStatus.CONFIRMED]: "success",
-    [AppointmentStatus.CANCELLED]: "danger",
-  };
-
   statusLabels: Record<AppointmentStatus, string> = {
     [AppointmentStatus.PENDING]: "Pendiente",
     [AppointmentStatus.CONTACTED]: "Contactado",
     [AppointmentStatus.CONFIRMED]: "Confirmada",
     [AppointmentStatus.CANCELLED]: "Cancelada",
+  };
+
+  // Clases CSS manuales para reemplazar p-tag
+  statusClasses: Record<AppointmentStatus, string> = {
+    [AppointmentStatus.PENDING]:
+      "text-yellow-500 border-yellow-500/30 bg-yellow-500/10",
+    [AppointmentStatus.CONTACTED]:
+      "text-sky-400 border-sky-500/30 bg-sky-500/10",
+    [AppointmentStatus.CONFIRMED]:
+      "text-emerald-400 border-emerald-500/30 bg-emerald-500/10",
+    [AppointmentStatus.CANCELLED]:
+      "text-red-500 border-red-500/30 bg-red-500/10",
   };
 
   ngOnInit(): void {
@@ -76,7 +61,13 @@ export class MyAppointmentsComponent implements OnInit {
         })
       )
       .subscribe((data) => {
-        this.appointments.set(data);
+        // Ordenamos por fecha descendente (la más reciente primero)
+        const sortedData = data.sort(
+          (a, b) =>
+            new Date(b.appointmentDate).getTime() -
+            new Date(a.appointmentDate).getTime()
+        );
+        this.appointments.set(sortedData);
         this.loadState.set("loaded");
       });
   }
@@ -85,13 +76,8 @@ export class MyAppointmentsComponent implements OnInit {
     return this.statusLabels[status] || status;
   }
 
-  getStatusSeverity(status: AppointmentStatus): TagSeverity {
-    return this.statusSeverity[status] || "secondary";
-  }
-
-  goToProperty(propertyId: string) {
-    if (!propertyId) return;
-    this.router.navigate(["/properties", propertyId]);
+  getStatusClass(status: AppointmentStatus): string {
+    return this.statusClasses[status] || "text-slate-400 border-slate-500/30";
   }
 
   onImageError(event: Event) {

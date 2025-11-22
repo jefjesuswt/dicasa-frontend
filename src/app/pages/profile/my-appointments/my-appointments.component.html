@@ -1,67 +1,187 @@
-<div class="container mx-auto px-4 py-8">
- <h2 class="text-3xl font-bold text-gray-900 mb-6">Mis Citas Programadas</h2>
-@switch (loadState()) {
- @case ('loading') {
- <div class="flex justify-center items-center h-64">
- <div class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-sky-500"></div>
- </div>
- }
- @case ('error') {
- <div class="bg-red-50 text-red-700 p-4 rounded-lg">
-<p>Error al cargar tus citas. Por favor, intenta de nuevo más tarde.</p>
- </div>
-}
- @case ('loaded') {
- @if (appointments().length > 0; as apps) {
-      <div class="space-y-4">
- @for (appointment of appointments(); track appointment._id) {
+<div class="animate-fade-in">
+  <!-- HEADER DE SECCIÓN -->
+  <div
+    class="flex flex-col md:flex-row justify-between items-end mb-8 border-b border-white/10 pb-6"
+  >
+    <div>
+      <h2
+        class="text-xl text-white font-light uppercase tracking-[0.15em] mb-2"
+      >
+        Agenda Personal
+      </h2>
+      <p class="text-slate-500 text-sm font-light">
+        Historial y próximos encuentros programados.
+      </p>
+    </div>
 
-           <p-card>
-              <ng-template pTemplate="header">
-                <img [src]="appointment.property.images[0] || '/assets/images/placeholder-property.png'"
-                  alt="{{ appointment.property.title }}"
-                  class="w-full h-48 object-cover"
-                  (error)="onImageError($event)">
-              </ng-template>
+    <!-- Contador estilo técnico -->
+    @if (loadState() === 'loaded') {
+    <div class="text-right hidden md:block">
+      <div class="text-[10px] font-bold text-sky-500 uppercase tracking-widest">
+        Total Registros
+      </div>
+      <div class="text-2xl font-mono text-white">
+        {{ appointments().length | number : "2.0" }}
+      </div>
+    </div>
+    }
+  </div>
 
-              <ng-template pTemplate="title">
-                <a [routerLink]="['/properties', appointment.property._id]"
-                   class="text-xl font-semibold text-gray-900 hover:text-sky-600 transition-colors">
-                  {{ appointment.property.title }}
-                </a>
-              </ng-template>
+  <!-- ESTADOS DE CARGA -->
+  @switch (loadState()) { @case ('loading') {
+  <div class="flex flex-col items-center justify-center py-24 opacity-50">
+    <div
+      class="w-12 h-12 border-2 border-white/10 border-t-sky-500 animate-spin mb-4"
+    ></div>
+    <span class="text-[10px] font-mono uppercase tracking-widest text-slate-400"
+      >Sincronizando Agenda...</span
+    >
+  </div>
+  } @case ('error') {
+  <div class="border border-red-500/20 bg-red-500/5 p-6 text-center">
+    <i class="pi pi-exclamation-circle text-red-500 text-2xl mb-2"></i>
+    <p class="text-red-400 font-mono text-xs uppercase">
+      Error de conexión al recuperar citas.
+    </p>
+  </div>
+  } @case ('loaded') { @if (appointments().length > 0; as apps) {
+  <div class="grid grid-cols-1 gap-4">
+    @for (app of appointments(); track app._id) {
+    <!-- TARJETA DE CITA -->
+    <div
+      class="group relative bg-white/5 border border-white/10 hover:border-sky-500/30 hover:bg-white/[0.07] transition-all duration-300 flex flex-col md:flex-row overflow-hidden"
+    >
+      <!-- 1. COLUMNA FECHA (Bloque Visual) -->
+      <div
+        class="hidden md:flex flex-col items-center justify-center w-24 border-r border-white/10 bg-slate-900/50 shrink-0"
+      >
+        <span
+          class="text-[10px] font-bold text-sky-500 uppercase tracking-widest mb-1"
+        >
+          {{ app.appointmentDate | date : "MMM" }}
+        </span>
+        <span class="text-3xl font-mono font-bold text-white">
+          {{ app.appointmentDate | date : "dd" }}
+        </span>
+        <span class="text-[10px] font-mono text-slate-500 mt-1">
+          {{ app.appointmentDate | date : "HH:mm" }}
+        </span>
+      </div>
 
-              <ng-template pTemplate="subtitle">
-                <p class="text-gray-600 font-medium text-lg">
-                  {{ appointment.appointmentDate | date: 'fullDate' }} a las {{ appointment.appointmentDate | date: 'shortTime' }}
-                </p>
-              </ng-template>
+      <!-- 2. IMAGEN PROPIEDAD (Thumbnail) -->
+      <div
+        class="h-48 md:h-auto md:w-48 relative overflow-hidden shrink-0 border-b md:border-b-0 md:border-r border-white/10 bg-black"
+      >
+        <img
+          [src]="
+            app.property.images[0] || '/assets/images/placeholder-property.png'
+          "
+          alt="Propiedad"
+          class="w-full h-full object-cover opacity-60 grayscale group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-500 transform group-hover:scale-105"
+          (error)="onImageError($event)"
+        />
 
-              <ng-template pTemplate="content">
-                <h4 class="text-sm font-medium text-gray-800 mb-2">Agente Asignado</h4>
-                <div class="flex items-center space-x-3">
-                  <shared-avatar class="w-6 h-6" [src]="appointment.agent.profileImageUrl" [id]="appointment.agent._id"></shared-avatar>
-                  <div>
-                    <p class="text-gray-900 font-medium">{{ appointment.agent.name }}</p>
-                    <p class="text-sm text-gray-500">{{ appointment.agent.email }}</p>
-                  </div>
-                </div>
-              </ng-template>
+        <!-- Status Badge (Flotante en Mobile, Oculto en Desktop para usar layout) -->
+        <div class="absolute top-3 left-3 md:hidden">
+          <span
+            class="px-2 py-1 border text-[10px] font-bold uppercase tracking-widest backdrop-blur-md shadow-lg"
+            [class]="getStatusClass(app.status)"
+          >
+            {{ getStatusLabel(app.status) }}
+          </span>
+        </div>
+      </div>
 
-              <ng-template pTemplate="footer">
-                <p-tag [value]="getStatusLabel(appointment.status)"
-                       [severity]="getStatusSeverity(appointment.status)"
-                       [rounded]="true">
-                </p-tag>
-              </ng-template>
-            </p-card>
-           }
- </div>
-} @else {
-<div class="bg-blue-50 text-blue-700 p-4 rounded-lg">
- <p>Aún no tienes citas programadas. ¡Explora nuestras propiedades!</p>
- </div>
- }
-}
- }
+      <!-- 3. DETALLES -->
+      <div class="flex-1 p-5 flex flex-col justify-between">
+        <div class="flex justify-between items-start mb-4">
+          <div>
+            <!-- Fecha en Mobile -->
+            <div
+              class="md:hidden flex items-center gap-2 text-[10px] font-mono text-sky-500 mb-2"
+            >
+              <i class="pi pi-calendar"></i>
+              {{ app.appointmentDate | date : "medium" }}
+            </div>
+
+            <h3
+              class="text-lg font-bold text-white uppercase tracking-tight mb-1 group-hover:text-sky-400 transition-colors"
+            >
+              <a
+                [routerLink]="['/properties', app.property._id]"
+                class="focus:outline-none"
+              >
+                <span class="absolute inset-0 md:static"></span>
+                <!-- Hitbox extendido -->
+                {{ app.property.title }}
+              </a>
+            </h3>
+          </div>
+
+          <!-- Status Badge (Desktop) -->
+          <div class="hidden md:block">
+            <span
+              class="px-3 py-1 border text-[10px] font-bold uppercase tracking-widest"
+              [class]="getStatusClass(app.status)"
+            >
+              {{ getStatusLabel(app.status) }}
+            </span>
+          </div>
+        </div>
+
+        <!-- AGENTE + ACCIONES (Footer interno) -->
+        <div
+          class="pt-4 border-t border-white/5 flex items-center justify-between mt-2"
+        >
+          <div class="flex items-center gap-3">
+            <shared-avatar
+              class="w-8 h-8 border border-white/10 grayscale group-hover:grayscale-0 transition-all"
+              [src]="app.agent.profileImageUrl"
+              [id]="app.agent._id"
+            ></shared-avatar>
+            <div class="flex flex-col">
+              <span class="text-[10px] font-bold text-slate-400 uppercase"
+                >Agente Asignado</span
+              >
+              <span class="text-xs text-white font-mono">{{
+                app.agent.name
+              }}</span>
+            </div>
+          </div>
+
+          <!-- Botón sutil -->
+          <div
+            class="text-sky-500 opacity-0 group-hover:opacity-100 -translate-x-4 group-hover:translate-x-0 transition-all duration-300 flex items-center gap-2 text-xs font-bold uppercase tracking-widest"
+          >
+            Ver Propiedad <i class="pi pi-arrow-right"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+    }
+  </div>
+  } @else {
+  <!-- EMPTY STATE -->
+  <div
+    class="border border-dashed border-white/10 bg-white/5 p-12 flex flex-col items-center justify-center text-center"
+  >
+    <div
+      class="w-16 h-16 rounded-full bg-slate-900 border border-white/10 flex items-center justify-center mb-4 text-slate-600"
+    >
+      <i class="pi pi-calendar-times text-2xl"></i>
+    </div>
+    <h3 class="text-white font-bold uppercase tracking-widest mb-2">
+      Agenda Vacía
+    </h3>
+    <p class="text-slate-500 text-sm font-light max-w-xs mb-6">
+      Aún no has programado visitas. Explora nuestro catálogo para comenzar.
+    </p>
+    <a
+      routerLink="/properties"
+      class="px-6 py-3 bg-sky-600 hover:bg-sky-500 text-white text-xs font-bold uppercase tracking-widest transition-colors"
+    >
+      Explorar Propiedades
+    </a>
+  </div>
+  } } }
 </div>

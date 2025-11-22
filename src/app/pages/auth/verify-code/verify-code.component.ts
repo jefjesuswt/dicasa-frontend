@@ -1,81 +1,94 @@
-import { Component, OnInit, inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { Router, RouterModule } from '@angular/router';
-import { ReactiveFormsModule, FormGroup, FormControl, Validators, FormBuilder } from '@angular/forms';
-import { AuthService } from '../../../services/auth.service';
-import { HotToastService } from '@ngxpert/hot-toast';
-import { finalize } from 'rxjs/operators';
+import { Component, OnInit, inject } from "@angular/core";
+import { CommonModule } from "@angular/common";
+import { Router, RouterModule } from "@angular/router";
+import {
+  ReactiveFormsModule,
+  FormGroup,
+  FormControl,
+  Validators,
+  FormBuilder,
+} from "@angular/forms";
+import { AuthService } from "../../../services/auth.service";
+import { finalize } from "rxjs/operators";
+import { ToastService } from "../../../services/toast.service";
 
 @Component({
-  selector: 'app-verify-code',
+  selector: "app-verify-code",
   standalone: true,
   imports: [CommonModule, RouterModule, ReactiveFormsModule],
-  templateUrl: './verify-code.component.html'
+  templateUrl: "./verify-code.component.html",
 })
 export class VerifyCodeComponent implements OnInit {
-  // --- Inyección de dependencias ---
   private router = inject(Router);
   private authService = inject(AuthService);
-  private toast = inject(HotToastService);
+  private toast = inject(ToastService);
   private fb = inject(FormBuilder);
 
-  // --- Estado del componente ---
   loading = false;
   resending = false;
   email: string | null = null;
-  
-  // Ocultamos parte del email para mostrarlo en la UI
-  public obfuscatedEmail = '';
+  public obfuscatedEmail = "";
 
   verifyForm: FormGroup = this.fb.group({
-    code: ['', [Validators.required, Validators.minLength(6), Validators.maxLength(6)]]
+    code: [
+      "",
+      [Validators.required, Validators.minLength(6), Validators.maxLength(6)],
+    ],
   });
 
   ngOnInit(): void {
-    // La única fuente de verdad es el servicio
     this.email = this.authService.getTempEmailForFlow();
-    
     if (!this.email) {
-      this.toast.error('Sesión de reseteo inválida. Por favor, empieza de nuevo.');
-      this.router.navigate(['/auth/forgot-password']);
+      this.toast.error(
+        "Sesión Inválida",
+        "Sesión de reseteo inválida. Por favor, empieza de nuevo."
+      );
+      this.router.navigate(["/auth/forgot-password"]);
       return;
     }
-    
-    // Creamos una versión ofuscada del email para la UI
-    const [user, domain] = this.email.split('@');
-    this.obfuscatedEmail = `${user.substring(0, 3)}...${user.substring(user.length - 2)}@${domain}`;
+    const [user, domain] = this.email.split("@");
+    const protectedUser =
+      user.length > 3
+        ? `${user.substring(0, 1)}***${user.substring(user.length - 1)}`
+        : user;
+    this.obfuscatedEmail = `${protectedUser}@${domain}`;
   }
 
-  get code() { return this.verifyForm.get('code'); }
+  get code() {
+    return this.verifyForm.get("code");
+  }
 
   onSubmit(): void {
     if (this.verifyForm.invalid || !this.email) {
       this.verifyForm.markAllAsTouched();
+      this.toast.error("Código Inválido", "El código debe tener 6 dígitos.");
       return;
     }
 
     this.loading = true;
     const code = this.verifyForm.value.code!;
 
-    this.authService.verifyResetCode(this.email, code)
-      .pipe(
-        finalize(() => this.loading = false)
-      )
+    this.authService
+      .verifyResetCode(this.email, code)
+      .pipe(finalize(() => (this.loading = false)))
       .subscribe({
         next: (isValid) => {
           if (isValid) {
-            // Guardamos el código verificado para el siguiente paso
-            sessionStorage.setItem('resetCode', code);
-            // Mantenemos el email en el authService y navegamos
-            this.router.navigate(['/auth/set-password']);
+            sessionStorage.setItem("resetCode", code);
+            this.router.navigate(["/auth/reset-password"]);
           } else {
-             // Esto es por si acaso, ya que el servicio debería arrojar un error
-             this.toast.error('Código inválido o expirado.');
+            this.toast.error(
+              "Código Inválido",
+              "El código no coincide o ha expirado."
+            );
           }
         },
         error: (errMessage) => {
-          this.toast.error(errMessage);
-        }
+          this.toast.error(
+            "Error de Verificación",
+            errMessage || "Código incorrecto. Vuelve a intentarlo."
+          );
+        },
       });
   }
 
@@ -83,19 +96,23 @@ export class VerifyCodeComponent implements OnInit {
     if (!this.email || this.resending) {
       return;
     }
-    
     this.resending = true;
-    this.authService.forgotPassword(this.email)
-      .pipe(
-        finalize(() => this.resending = false)
-      )
+    this.authService
+      .forgotPassword(this.email)
+      .pipe(finalize(() => (this.resending = false)))
       .subscribe({
         next: (response) => {
-          this.toast.success(response.message || 'Se ha reenviado el código a tu correo.');
+          this.toast.success(
+            "Reenvío Exitoso",
+            response.message || "Se ha reenviado un nuevo código."
+          );
         },
         error: (errMessage) => {
-          this.toast.error(errMessage);
-        }
+          this.toast.error(
+            "Error al Reenviar",
+            errMessage || "No se pudo reenviar el código."
+          );
+        },
       });
   }
 }

@@ -9,6 +9,8 @@ import { User } from "../../../interfaces/users";
 import { DialogComponent } from "../../../shared/dialog/dialog.component";
 import { UserRole } from "../../../interfaces/users/roles.enum";
 import { AvatarComponent } from "../../../shared/avatar/avatar.component";
+// 👇 IMPORTANTE: Importamos el nuevo componente de tarjeta
+import { DashboardUserCardComponent } from "../../../components/dashboard/dashboard-user-card/dashboard-user-card.component";
 
 import { QueryUserParams } from "../../../interfaces/users/query-user.interface";
 import { PaginatedUserResponse } from "../../../interfaces/users/paginated-user.response.interface";
@@ -31,6 +33,7 @@ import { FormsModule } from "@angular/forms";
     SearchBarComponent,
     FormsModule,
     ToggleSwitch,
+    DashboardUserCardComponent, // 👈 Lo añadimos aquí
   ],
   templateUrl: "./user-list.component.html",
 })

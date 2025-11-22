@@ -1,32 +1,19 @@
 import { Component, OnInit, inject, signal } from "@angular/core";
-import { CommonModule, DecimalPipe } from "@angular/common";
+import { CommonModule } from "@angular/common";
 import { Router, RouterModule } from "@angular/router";
 import { catchError } from "rxjs/operators";
 import { of } from "rxjs";
-
-import { CardModule } from "primeng/card";
-import { TagModule } from "primeng/tag";
-import { ButtonModule } from "primeng/button";
 
 import { PropertyService } from "../../../services/property.service";
 import { Property } from "../../../interfaces/properties/property.interface";
 import { PropertyStatus } from "../../../interfaces/properties/property-status.enum";
 
 type LoadState = "loading" | "loaded" | "error";
-type TagSeverity =
-  | "success"
-  | "secondary"
-  | "info"
-  | "warn"
-  | "danger"
-  | "contrast"
-  | null
-  | undefined;
 
 @Component({
   selector: "app-my-properties",
   standalone: true,
-  imports: [CommonModule, RouterModule, CardModule, TagModule, ButtonModule],
+  imports: [CommonModule, RouterModule],
   templateUrl: "./my-properties.component.html",
 })
 export class MyPropertiesComponent implements OnInit {
@@ -36,18 +23,20 @@ export class MyPropertiesComponent implements OnInit {
   properties = signal<Property[]>([]);
   loadState = signal<LoadState>("loading");
 
-  statusSeverity: Record<PropertyStatus, TagSeverity> = {
-    sale: "success",
-    rent: "info",
-    sold: "danger",
-    rented: "warn",
-  };
-
+  // Mapa de Etiquetas (Texto)
   statusLabels: Record<PropertyStatus, string> = {
     sale: "En Venta",
     rent: "En Alquiler",
     sold: "Vendida",
     rented: "Alquilada",
+  };
+
+  // Mapa de Clases CSS (Estilo Técnico/Neón)
+  statusClasses: Record<PropertyStatus, string> = {
+    sale: "text-emerald-400 border-emerald-500/30 bg-emerald-500/10",
+    rent: "text-sky-400 border-sky-500/30 bg-sky-500/10",
+    sold: "text-slate-500 border-slate-500/30 bg-slate-500/10 line-through opacity-70",
+    rented: "text-purple-400 border-purple-500/30 bg-purple-500/10",
   };
 
   ngOnInit(): void {
@@ -57,12 +46,12 @@ export class MyPropertiesComponent implements OnInit {
   loadProperties(): void {
     this.loadState.set("loading");
     this.propertyService
-      .getMyProperties({ page: 1, limit: 100 }) // Pedimos hasta 100
+      .getMyProperties({ page: 1, limit: 100 })
       .pipe(
         catchError((err) => {
           console.error("Error cargando propiedades:", err);
           this.loadState.set("error");
-          return of(null); // Retornamos null en caso de error
+          return of(null);
         })
       )
       .subscribe((response) => {
@@ -70,7 +59,6 @@ export class MyPropertiesComponent implements OnInit {
           this.properties.set(response.data);
           this.loadState.set("loaded");
         } else {
-          // Si la respuesta es null (por el catchError)
           this.loadState.set("error");
         }
       });
@@ -80,14 +68,19 @@ export class MyPropertiesComponent implements OnInit {
     return this.statusLabels[status as PropertyStatus] || status;
   }
 
-  getStatusSeverity(status: string): TagSeverity {
-    return this.statusSeverity[status as PropertyStatus] || "secondary";
+  getStatusClass(status: string): string {
+    return (
+      this.statusClasses[status as PropertyStatus] ||
+      "text-slate-400 border-slate-500/30"
+    );
   }
-  /**
-   * Navega al formulario de edición de propiedades en el dashboard
-   */
+
   editProperty(propertyId: string) {
-    this.router.navigate(["/dashboard/properties/edit", propertyId]);
+    // IMPORTANTE: Asegúrate que esta ruta exista en tu routing principal
+    // Si no, redirige a donde corresponda o ajusta la ruta.
+    this.router.navigate(["/dashboard/property-form", propertyId]);
+    // Nota: Asumo que reutilizas el formulario de creación para edición
+    // pasando el ID, o tienes una ruta específica 'edit'.
   }
 
   onImageError(event: Event) {

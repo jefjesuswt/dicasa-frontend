@@ -1,108 +1,130 @@
 <div
-  class="bg-white rounded-xl shadow-md overflow-hidden transition-all duration-300 hover:shadow-xl hover:-translate-y-1 flex flex-col h-full"
+  class="group relative flex flex-col h-full bg-slate-900 border border-white/10 hover:border-sky-500/50 transition-all duration-500 overflow-hidden"
 >
-  <div class="relative flex-shrink-0">
+  <div class="relative h-64 overflow-hidden bg-slate-950">
     <img
       [src]="property.images[0] || '/assets/images/placeholder-property.png'"
       [alt]="property.title"
-      class="w-full h-48 object-cover"
-      (error)="
-        $any($event.target).src = '/assets/images/placeholder-property.png'
-      "
+      class="w-full h-full object-cover transition-all duration-700 filter grayscale opacity-80 group-hover:grayscale-0 group-hover:opacity-100 group-hover:scale-105 scroll-target-grayscale"
+      (error)="onImageError($event)"
     />
-    <div class="absolute top-2 right-2">
+
+    <div
+      class="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-transparent opacity-90"
+    ></div>
+
+    <div class="absolute top-4 left-4">
       <span
-        class="text-xs font-semibold px-2.5 py-0.5 rounded-full"
-        [ngClass]="getStatusClass(property.status)"
+        class="text-[10px] font-bold uppercase tracking-widest px-3 py-1 border backdrop-blur-sm"
+        [class]="getStatusClass(property.status)"
       >
         {{ getStatusText(property.status) }}
       </span>
     </div>
+
+    <div class="absolute bottom-4 left-4 right-4">
+      <p class="text-2xl font-mono font-bold text-white tracking-tight">
+        @if (property.status === 'sale' || property.status === 'sold') { ${{
+          property.price | number
+        }}
+        } @else { ${{ property.price | number
+        }}<span class="text-sm text-slate-400">/mes</span>
+        }
+      </p>
+      <div class="flex items-center gap-2 mt-1">
+        <i class="pi pi-map-marker text-sky-500 text-xs"></i>
+        <p
+          class="text-xs text-slate-300 uppercase tracking-wide line-clamp-1 font-medium"
+        >
+          {{ property.address.address }}
+        </p>
+      </div>
+    </div>
   </div>
 
-  <div class="p-4 flex flex-col flex-grow">
-    <div class="flex justify-between items-start mb-2">
-      <h3
-        class="text-lg font-semibold text-gray-900 line-clamp-2"
-        title="{{ property.title }}"
-      >
-        {{ property.title }}
-      </h3>
-      <p class="text-lg font-bold text-sky-600 whitespace-nowrap ml-2">
-        {{
-          property.status === "sale" || property.status === "sold"
-            ? "$" + (property.price | number)
-            : "$" + (property.price | number) + "/mes"
-        }}
-      </p>
-    </div>
-
-    <p
-      class="text-gray-600 text-sm mb-3 line-clamp-1"
-      title="{{ property.address.address }}"
+  <div class="p-6 flex flex-col flex-grow border-t border-white/5">
+    <h3
+      class="text-sm font-bold text-white uppercase tracking-wider mb-6 line-clamp-2 leading-relaxed h-[3rem]"
     >
-      <i class="pi pi-map-marker"></i>
-      {{ property.address.address }}
-    </p>
+      {{ property.title }}
+    </h3>
 
-    <!--
-      INICIO DE LA REFACTORIZACIÓN
-      Este bloque ahora es dinámico según el tipo de propiedad.
-    -->
     <div
-      class="flex text-sm text-gray-500 border-t border-gray-100 pt-3 mt-auto"
-      [class.justify-between]="property.type !== 'land'"
-      [class.justify-center]="property.type === 'land'"
+      class="mt-auto grid divide-x divide-white/10 border border-white/10 bg-white/5"
     >
-      <!-- Caso 1: Residencial (Casa, Villa, Apartamento) -->
-      @if (property.type === 'house' || property.type === 'apartment' ||
-      property.type === 'villa') {
+      @if (property.type === 'land') {
       <div
-        class="flex items-center"
-        title="{{ property.bedrooms }} Dormitorios"
+        class="p-3 flex flex-col items-center justify-center text-center col-span-3"
       >
-        <span class="font-medium"
-          >{{ property.bedrooms || 0 }} Dormitorios</span
+        <i
+          class="pi pi-globe text-slate-500 mb-1 text-lg group-hover:text-sky-400 transition-colors"
+        ></i>
+        <span class="text-xs text-slate-400 uppercase tracking-wider font-mono"
+          >Área Total</span
         >
-      </div>
-      <div class="flex items-center" title="{{ property.bathrooms }} Baños">
-        <span class="font-medium">{{ property.bathrooms || 0 }} Baños</span>
-      </div>
-      <div class="flex items-center" title="{{ property.area }} m²">
-        <span class="font-medium">{{ property.area | number }} m²</span>
-      </div>
-      }
-      <!-- Caso 2: Comercial (Tipo, Baños, Área) -->
-      @else if (property.type === 'commercial') {
-      <div class="flex items-center" title="Comercial">
-        <span class="font-medium">Comercial</span>
-      </div>
-      <div class="flex items-center" title="{{ property.bathrooms }} Baños">
-        <span class="font-medium">{{ property.bathrooms || 0 }}</span>
-      </div>
-      <div class="flex items-center" title="{{ property.area }} m²">
-        <span class="font-medium">{{ property.area | number }} m²</span>
-      </div>
-      }
-      <!-- Caso 3: Terreno (Solo Área) -->
-      @else if (property.type === 'land') {
-      <div class="flex items-center" title="{{ property.area }} m²">
-        <span class="font-medium text-base"
+        <span class="text-sm font-bold text-white font-mono"
           >{{ property.area | number }} m²</span
         >
       </div>
+      } @else {
+      <div class="grid grid-cols-3 divide-x divide-white/10 w-full">
+        <div
+          class="p-3 flex flex-col items-center justify-center text-center group/icon"
+        >
+          @if (property.type === 'commercial') {
+          <i
+            class="pi pi-briefcase text-slate-500 mb-1 group-hover/icon:text-sky-400 transition-colors"
+          ></i>
+          <span class="text-[10px] text-slate-500 uppercase">Tipo</span>
+          <span class="text-xs font-bold text-white">Comm.</span>
+          } @else {
+          <i
+            class="pi pi-home text-slate-500 mb-1 group-hover/icon:text-sky-400 transition-colors"
+          ></i>
+          <span class="text-[10px] text-slate-500 uppercase">Hab.</span>
+          <span class="text-xs font-bold text-white font-mono">{{
+            property.bedrooms || 0
+          }}</span>
+          }
+        </div>
+
+        <div
+          class="p-3 flex flex-col items-center justify-center text-center group/icon"
+        >
+          <i
+            class="pi pi-user text-slate-500 mb-1 group-hover/icon:text-sky-400 transition-colors"
+          ></i>
+          <span class="text-[10px] text-slate-500 uppercase">Baños</span>
+          <span class="text-xs font-bold text-white font-mono">{{
+            property.bathrooms || 0
+          }}</span>
+        </div>
+
+        <div
+          class="p-3 flex flex-col items-center justify-center text-center group/icon"
+        >
+          <i
+            class="pi pi-th-large text-slate-500 mb-1 group-hover/icon:text-sky-400 transition-colors"
+          ></i>
+          <span class="text-[10px] text-slate-500 uppercase">M²</span>
+          <span class="text-xs font-bold text-white font-mono">{{
+            property.area | number
+          }}</span>
+        </div>
+      </div>
       }
     </div>
-    <!-- FIN DE LA REFACTORIZACIÓN -->
   </div>
 
-  <div class="px-4 pb-4">
-    <a
-      [routerLink]="['/properties', property._id]"
-      class="w-full inline-flex justify-center items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-sky-600 hover:bg-sky-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-sky-500 transition-colors"
-    >
-      Ver detalles
-      <i class="pi pi-arrow-right ml-2"></i>
-    </a>
-  </div>
+  <a
+    [routerLink]="['/properties', property._id]"
+    class="block w-full py-4 bg-slate-950 border-t border-white/10 text-center hover:bg-sky-500 hover:text-slate-950 transition-all duration-300 group/btn relative overflow-hidden"
+  >
+    <span class="relative z-10 text-xs font-bold uppercase tracking-[0.2em]">
+      Ver Detalles...
+    </span>
+    <div
+      class="absolute inset-0 bg-sky-400 transform translate-y-full group-hover/btn:translate-y-0 transition-transform duration-300 ease-out"
+    ></div>
+  </a>
 </div>

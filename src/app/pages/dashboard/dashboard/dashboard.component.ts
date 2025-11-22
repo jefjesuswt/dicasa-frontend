@@ -1,5 +1,13 @@
-import { Component, computed, DestroyRef, inject, OnInit } from "@angular/core";
-import { CommonModule } from "@angular/common";
+import {
+  Component,
+  computed,
+  DestroyRef,
+  inject,
+  OnInit,
+  AfterViewInit,
+  OnDestroy,
+} from "@angular/core";
+import { CommonModule, DOCUMENT } from "@angular/common";
 import { Router, RouterModule, RouterOutlet } from "@angular/router";
 import { PropertyService } from "../../../services/property.service";
 import { AuthService } from "../../../services/auth.service";
@@ -7,11 +15,8 @@ import { finalize } from "rxjs";
 import { Property } from "../../../interfaces/properties";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { PaginatedProperties } from "../../../interfaces/properties/paginated-properties.interface";
-import { DashboardPropertyCardComponent } from "../../../components/dashboard/dashboard-property-card/dashboard-property-card.component";
 import { StatCard } from "../../../interfaces/dashboard/stat-card.interface";
 import { StatCardsComponent } from "../../../components/dashboard/stat-cards/stat-cards.component";
-
-const statusTypes = ["for_sale", "for_rent", "sold", "rented"] as const;
 
 @Component({
   selector: "dashboard-dashboard",
@@ -19,22 +24,23 @@ const statusTypes = ["for_sale", "for_rent", "sold", "rented"] as const;
   imports: [CommonModule, RouterModule, RouterOutlet, StatCardsComponent],
   templateUrl: "./dashboard.component.html",
 })
-export class DashboardComponent implements OnInit {
+export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   private authService = inject(AuthService);
   private propertyService = inject(PropertyService);
   private destroyRef = inject(DestroyRef);
-  private router = inject(Router);
+  private document = inject(DOCUMENT); // Inyectado para animaciones UI
 
   public statsLoading = true;
   public user = computed(() => this.authService.currentUser());
   public isSuperAdmin = computed(() => this.authService.isSuperAdmin());
+  private observer: IntersectionObserver | null = null; // Para animaciones UI
 
   public stats: StatCard[] = [
     {
       title: "Total de Propiedades",
       value: 0,
       icon: "pi pi-home",
-      color: "bg-blue-100",
+      color: "bg-blue-100", // OJO: Estos colores quizás debas ajustarlos en el hijo luego
       textColor: "text-blue-800",
     },
     {
@@ -71,6 +77,15 @@ export class DashboardComponent implements OnInit {
       });
   }
 
+  // Lógica UI para animaciones (Copiada del estilo de referencia)
+  ngAfterViewInit() {
+    this.initScrollAnimations();
+  }
+
+  ngOnDestroy() {
+    this.observer?.disconnect();
+  }
+
   loadStatsData(): void {
     this.statsLoading = true;
     this.propertyService
@@ -93,5 +108,21 @@ export class DashboardComponent implements OnInit {
     this.stats[3].value = properties.filter(
       (p) => p.status === "sold" || p.status === "rented"
     ).length;
+  }
+
+  private initScrollAnimations() {
+    this.observer?.disconnect();
+    const options = { root: null, rootMargin: "0px", threshold: 0.1 };
+
+    this.observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add("is-visible");
+        }
+      });
+    }, options);
+
+    const elements = this.document.querySelectorAll(".reveal-on-scroll");
+    elements.forEach((el) => this.observer?.observe(el));
   }
 }

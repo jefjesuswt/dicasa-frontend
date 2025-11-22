@@ -36,9 +36,13 @@ export class HeaderComponent {
     return this.authService.isAdmin() || this.authService.isSuperAdmin();
   });
 
+  navLinks: NavLink[] = [
+    { path: "/properties", label: "Propiedades", exact: false },
+    { path: "/contact", label: "Contacto", exact: false },
+  ];
+
   @HostListener("document:click", ["$event"])
   clickOutside(event: Event) {
-    // Si el menú de perfil está abierto Y el clic NO fue dentro de este componente
     if (
       this.isProfileMenuOpen &&
       !this.eRef.nativeElement.contains(event.target)
@@ -47,36 +51,17 @@ export class HeaderComponent {
     }
   }
 
-  navLinks: NavLink[] = [
-    { path: "/properties", label: "Propiedades", exact: false },
-    { path: "/contact", label: "Contacto", exact: false },
-  ];
-
   toggleMobileMenu() {
     this.isMenuOpen = !this.isMenuOpen;
   }
-
   toggleProfileMenu() {
     this.isProfileMenuOpen = !this.isProfileMenuOpen;
   }
 
-  getIconForRoute(path: string): string {
-    const iconMap: { [key: string]: string } = {
-      "/": "home",
-      "/properties": "building",
-      "/contact": "envelope",
-      "/auth/login": "sign-in",
-      profile: "user-edit",
-      logout: "sign-out",
-      "/dashboard": "cog",
-    };
-    return iconMap[path] || "link";
-  }
-
-  closeMenusAndNavigate(path: string | any[]): void {
+  closeMenusAndNavigate(path: string): void {
     this.isMenuOpen = false;
     this.isProfileMenuOpen = false;
-    this.router.navigate(Array.isArray(path) ? path : [path]);
+    this.router.navigate([path]);
   }
 
   logout() {

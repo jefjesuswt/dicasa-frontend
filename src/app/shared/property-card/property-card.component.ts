@@ -12,18 +12,19 @@ import { Property } from "../../interfaces/properties/property.interface";
 export class PropertyCardComponent {
   @Input() property!: Property;
 
+  // Retorna clases para modo oscuro (Fondo translúcido + Borde + Texto brillante)
   getStatusClass(status: string): string {
     switch (status) {
       case "sale":
-        return "bg-green-100 text-green-800";
+        return "bg-emerald-500/10 text-emerald-400 border-emerald-500/20";
       case "rent":
-        return "bg-blue-100 text-blue-800";
+        return "bg-sky-500/10 text-sky-400 border-sky-500/20";
       case "sold":
-        return "bg-red-100 text-red-800";
+        return "bg-red-500/10 text-red-400 border-red-500/20";
       case "rented":
-        return "bg-purple-100 text-purple-800";
+        return "bg-purple-500/10 text-purple-400 border-purple-500/20";
       default:
-        return "bg-gray-100 text-gray-800";
+        return "bg-slate-500/10 text-slate-400 border-slate-500/20";
     }
   }
 

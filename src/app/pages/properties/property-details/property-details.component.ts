@@ -1,6 +1,6 @@
 import { Component, inject, OnInit } from "@angular/core";
 import { trigger, transition, style, animate } from "@angular/animations";
-import { ActivatedRoute, Router } from "@angular/router";
+import { ActivatedRoute, Router, RouterModule } from "@angular/router";
 import { CommonModule } from "@angular/common";
 import { FormsModule } from "@angular/forms";
 import { finalize } from "rxjs";
@@ -33,28 +33,33 @@ const initialState: PropertyState = {
   imports: [
     CommonModule,
     FormsModule,
+    RouterModule,
     NgMagnizoomModule,
     AppointmentFormComponent,
     AvatarComponent,
   ],
   templateUrl: "./property-details.component.html",
+  styles: [
+    `
+      /* Personalización del scrollbar para las miniaturas */
+      .custom-scrollbar::-webkit-scrollbar {
+        height: 4px;
+      }
+      .custom-scrollbar::-webkit-scrollbar-track {
+        background: rgba(255, 255, 255, 0.05);
+      }
+      .custom-scrollbar::-webkit-scrollbar-thumb {
+        background-color: #38bdf8; /* sky-400 */
+      }
+    `,
+  ],
   animations: [
-    trigger("slideUpDown", [
-      transition(":increment", [
-        style({ opacity: 0, transform: "translateY(5%)" }),
-        animate(
-          "300ms ease-out",
-          style({ opacity: 1, transform: "translateY(0%)" })
-        ),
+    trigger("fadeImage", [
+      transition(":enter", [
+        style({ opacity: 0 }),
+        animate("400ms ease-out", style({ opacity: 1 })),
       ]),
-
-      transition(":decrement", [
-        style({ opacity: 0, transform: "translateY(-5%)" }),
-        animate(
-          "300ms ease-out",
-          style({ opacity: 1, transform: "translateY(0%)" })
-        ),
-      ]),
+      // Eliminamos el slide lateral para dar una sensación más "estática" y profesional
     ]),
   ],
 })
@@ -70,12 +75,18 @@ export class PropertyDetailsComponent implements OnInit {
     sold: "Vendida",
     rented: "Alquilada",
   };
+
+  /* ESTILO ARQUITECTÓNICO:
+     Usamos bordes definidos y fondos sólidos semitransparentes
+     en lugar de efectos "glow" difusos.
+  */
   private statusClasses: Record<string, string> = {
-    sale: "bg-green-100 text-green-800",
-    rent: "bg-blue-100 text-blue-800",
-    sold: "bg-gray-100 text-gray-800",
-    rented: "bg-yellow-100 text-yellow-800",
+    sale: "bg-emerald-950/50 text-emerald-400 border-emerald-500/50",
+    rent: "bg-sky-950/50 text-sky-400 border-sky-500/50",
+    sold: "bg-slate-800 text-slate-400 border-slate-600 line-through",
+    rented: "bg-purple-950/50 text-purple-400 border-purple-500/50",
   };
+
   private typeLabels: Record<string, string> = {
     apartment: "Apartamento",
     house: "Casa",
@@ -89,7 +100,10 @@ export class PropertyDetailsComponent implements OnInit {
   }
 
   getStatusClass(status: string): string {
-    return this.statusClasses[status] || "bg-gray-100 text-gray-800";
+    return (
+      this.statusClasses[status] ||
+      "bg-slate-800 text-slate-400 border-slate-600"
+    );
   }
 
   getTypeLabel(type: string): string {
@@ -97,19 +111,19 @@ export class PropertyDetailsComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    window.scrollTo(0, 0);
     this.route.paramMap.subscribe((params) => {
       const id = params.get("id");
       if (id) {
         this.loadProperty(id);
       } else {
-        this.setError("No property ID provided");
+        this.setError("ID de propiedad no proporcionado");
       }
     });
   }
 
   private loadProperty(id: string): void {
     this.setLoading(true);
-
     this.propertyService
       .getProperty(id)
       .pipe(finalize(() => this.setLoading(false)))
@@ -121,14 +135,13 @@ export class PropertyDetailsComponent implements OnInit {
               ? property.images
               : ["/assets/images/placeholder-property.jpg"],
           };
-
           this.setState({
             property: propertyWithImages,
             error: null,
+            activeImageIndex: 0,
           });
         },
         error: (errorMessage) => {
-          console.error("Error loading property:", errorMessage);
           this.setError(errorMessage);
         },
       });
@@ -139,10 +152,7 @@ export class PropertyDetailsComponent implements OnInit {
   }
 
   private setError(error: string | null): void {
-    this.setState({
-      error,
-      loading: false,
-    });
+    this.setState({ error, loading: false });
   }
 
   private setState(partialState: Partial<PropertyState>): void {
@@ -151,79 +161,27 @@ export class PropertyDetailsComponent implements OnInit {
 
   setActiveImage(index: number): void {
     if (!this.state.property?.images?.length) return;
-
     const maxIndex = this.state.property.images.length - 1;
     const newIndex = Math.max(0, Math.min(index, maxIndex));
-
-    if (newIndex === this.state.activeImageIndex) {
-      return;
-    }
-
-    this.setState({ isImageLoading: true });
-
-    setTimeout(() => {
-      this.setState({
-        activeImageIndex: newIndex,
-        isImageLoading: false,
-      });
-    }, 0);
-  }
-  previousImage(): void {
-    if (!this.state.property?.images?.length) return;
-    this.setActiveImage(this.state.activeImageIndex - 1);
-  }
-
-  nextImage(): void {
-    if (!this.state.property?.images?.length) return;
-    this.setActiveImage(this.state.activeImageIndex + 1);
+    if (newIndex === this.state.activeImageIndex) return;
+    this.setState({ activeImageIndex: newIndex });
   }
 
   goBack(): void {
     this.router.navigate(["/properties"]);
   }
 
-  onContactSubmit(event: Event): void {
-    event.preventDefault();
-    const form = event.target as HTMLFormElement;
-    const formData = new FormData(form);
-
-    const contactData = {
-      name: formData.get("name") as string,
-      email: formData.get("email") as string,
-      phone: formData.get("phone") as string,
-      message: formData.get("message") as string,
-    };
-
-    console.log("Contact form submitted:", contactData);
-
-    alert("¡Gracias por tu mensaje! Nos pondremos en contacto contigo pronto.");
-    form.reset();
-  }
-
+  // Getters
   get property(): Property | null {
     return this.state.property;
   }
-
   get loading(): boolean {
     return this.state.loading;
   }
-
   get error(): string | null {
     return this.state.error;
   }
-
   get activeImageIndex(): number {
     return this.state.activeImageIndex;
-  }
-
-  get isImageLoading(): boolean {
-    return this.state.isImageLoading;
-  }
-
-  onImageError(event: Event) {
-    const element = event.target as HTMLImageElement;
-    if (element) {
-      element.src = "/assets/images/placeholder-property.png";
-    }
   }
 }

@@ -1,21 +1,49 @@
-<div class="flex flex-col min-h-[calc(100vh-4rem)] justify-center px-4 py-12 sm:px-6 lg:px-8">
-    <div class="max-w-md w-full space-y-8 mx-auto">
-      <div class="text-center">
-        <i class="pi pi-shield text-6xl text-sky-600"></i>
-        <h2 class="mt-6 text-3xl font-bold text-gray-900">
-          Verifica tu Identidad
-        </h2>
-        @if (email) {
-          <p class="mt-2 text-lg text-gray-600">
-            Enviamos un código de 6 dígitos a
-            <span class="font-medium text-gray-900">{{ email }}</span>.
-          </p>
-        }
+<div
+  class="min-h-screen bg-slate-950 text-slate-300 font-sans bg-grid pt-24 pb-16 flex items-center justify-center"
+>
+  <div
+    class="max-w-md w-full mx-auto p-8 border border-white/10 bg-white/5 backdrop-blur-sm"
+  >
+    <!-- HEADER -->
+    <div class="text-center mb-10">
+      <div
+        class="h-10 w-10 bg-white/5 border border-white/20 flex items-center justify-center mx-auto mb-4"
+      >
+        <i class="pi pi-shield text-xl text-sky-500"></i>
       </div>
+      <h2 class="text-2xl font-bold text-white uppercase tracking-widest mb-4">
+        Verificación de Código
+      </h2>
 
-      <form class="mt-8 space-y-6" [formGroup]="verifyForm" (ngSubmit)="onSubmit()">
-        <div>
-          <label for="code" class="block text-sm font-medium text-gray-700">Código de verificación</label>
+      @if (email) {
+      <p class="mt-2 text-sm text-slate-400 font-light max-w-sm mx-auto">
+        Ingresa el código de 6 dígitos que enviamos a tu correo electrónico:
+      </p>
+      <span
+        class="font-mono text-white text-xs font-bold block mt-3 px-4 py-2 border border-white/10 bg-slate-900/50"
+      >
+        {{ obfuscatedEmail }}
+      </span>
+      }
+    </div>
+
+    <form class="space-y-6" [formGroup]="verifyForm" (ngSubmit)="onSubmit()">
+      <!-- INPUT CÓDIGO -->
+      <div class="group relative">
+        <label for="code" class="sr-only">Código de verificación</label>
+
+        <div
+          class="relative w-full bg-white/5 border border-white/10 focus-within:border-sky-500 focus-within:bg-slate-900 transition-colors"
+        >
+          <!-- Icono de sobre superpuesto -->
+          <div
+            class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none"
+          >
+            <i
+              class="pi pi-lock text-slate-500 group-focus-within:text-sky-500 transition-colors text-xs"
+            ></i>
+          </div>
+
           <input
             id="code"
             name="code"
@@ -24,37 +52,51 @@
             pattern="[0-9]*"
             maxlength="6"
             formControlName="code"
-            class="mt-1 appearance-none relative block w-full px-3 py-2 border placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-sky-500 focus:border-sky-500 sm:text-sm"
-            placeholder="Código de 6 dígitos"
-            [class.border-red-300]="code?.invalid && code?.touched"
-            [class.border-gray-300]="!code?.invalid || !code?.touched"
+            class="w-full pl-10 pr-4 py-3 text-center bg-transparent placeholder-slate-600 text-white focus:outline-none font-mono text-xl tracking-[0.5em]"
+            placeholder="000000"
           />
-          @if (code?.invalid && code?.touched) {
-            <div class="mt-1 text-sm text-red-600">
-              @if (code?.errors?.['required']) { <span>El código es requerido.</span> }
-              @if (code?.errors?.['minlength'] || code?.errors?.['maxlength']) { <span>El código debe tener 6 dígitos.</span> }
-            </div>
+        </div>
+
+        @if (code?.invalid && code?.touched) {
+        <div class="mt-1 text-[10px] text-red-500 font-mono text-center">
+          * CÓDIGO REQUERIDO, 6 DÍGITOS NUMÉRICOS
+        </div>
+        }
+      </div>
+
+      <!-- BOTÓN SUBMIT -->
+      <div class="pt-4">
+        <button
+          type="submit"
+          [disabled]="loading || verifyForm.invalid"
+          class="w-full py-4 bg-sky-500 hover:bg-sky-400 text-slate-950 font-bold text-xs uppercase tracking-[0.2em] transition-all duration-300 shadow-[0_0_20px_rgba(14,165,233,0.3)] disabled:opacity-50 disabled:cursor-not-allowed disabled:shadow-none disabled:bg-slate-800 disabled:text-slate-500 flex justify-center items-center gap-3"
+        >
+          @if (!loading) {
+          <span>VERIFICAR CÓDIGO</span>
+          } @else {
+          <i class="pi pi-spin pi-spinner"></i>
+          <span class="font-mono">VERIFICANDO...</span>
           }
-        </div>
+        </button>
+      </div>
+    </form>
 
-        <div>
-          <button
-            type="submit"
-            [disabled]="loading || verifyForm.invalid"
-            class="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-sky-600 hover:bg-sky-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-sky-500 disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            @if (!loading) { <span>Verificar Código</span> } @else { <span>Verificando...</span> }
-          </button>
-        </div>
-      </form>
-
-       <!-- Opción para reenviar código -->
-       <div class="text-center text-sm">
-          <p class="text-gray-600">¿No recibiste el código?</p>
-          <button (click)="resendCode()" [disabled]="resending" class="font-medium text-sky-600 hover:text-sky-500 disabled:opacity-50 disabled:cursor-not-allowed">
-            @if (!resending) { <span>Reenviar código</span> } @else { <span>Reenviando...</span> }
-          </button>
-        </div>
-
+    <!-- ACCIÓN DE REENVÍO -->
+    <div class="text-center mt-6 border-t border-white/10 pt-4">
+      <p class="text-slate-500 text-xs font-light mb-2">
+        ¿No recibiste el código?
+      </p>
+      <button
+        (click)="resendCode()"
+        [disabled]="resending"
+        class="font-bold text-slate-500 hover:text-white transition-colors uppercase tracking-wider text-xs disabled:opacity-50 disabled:cursor-not-allowed"
+      >
+        @if (!resending) {
+        <i class="pi pi-refresh text-sky-500 text-[10px] mr-1"></i> REENVIAR
+        CÓDIGO } @else {
+        <i class="pi pi-spin pi-spinner text-sky-500 text-[10px] mr-1"></i>
+        REENVIANDO... }
+      </button>
     </div>
   </div>
+</div>

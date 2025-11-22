@@ -1,81 +1,142 @@
-<div class="container mx-auto px-4 py-8">
-  <h2 class="text-3xl font-bold text-gray-900 mb-6">
-    Mis Propiedades Asignadas
-  </h2>
+<div class="animate-fade-in">
+  <div
+    class="flex flex-col md:flex-row justify-between items-end mb-8 border-b border-white/10 pb-6"
+  >
+    <div>
+      <h2
+        class="text-xl text-white font-light uppercase tracking-[0.15em] mb-2"
+      >
+        Gestión de Activos
+      </h2>
+      <p class="text-slate-500 text-sm font-light">
+        Administra tu portafolio de propiedades publicadas.
+      </p>
+    </div>
+
+    @if (loadState() === 'loaded') {
+    <div class="text-right hidden md:block">
+      <div class="text-[10px] font-bold text-sky-500 uppercase tracking-widest">
+        Total Propiedades
+      </div>
+      <div class="text-2xl font-mono text-white">
+        {{ properties().length | number : "2.0" }}
+      </div>
+    </div>
+    }
+  </div>
 
   @switch (loadState()) { @case ('loading') {
-  <div class="flex justify-center items-center h-64">
+  <div class="flex flex-col items-center justify-center py-24 opacity-50">
     <div
-      class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-sky-500"
+      class="w-12 h-12 border-2 border-white/10 border-t-sky-500 animate-spin mb-4"
     ></div>
+    <span class="text-[10px] font-mono uppercase tracking-widest text-slate-400"
+      >Cargando Inventario...</span
+    >
   </div>
   } @case ('error') {
-  <div class="bg-red-50 text-red-700 p-4 rounded-lg">
-    <p>
-      Error al cargar tus propiedades. Por favor, intenta de nuevo más tarde.
+  <div class="border border-red-500/20 bg-red-500/5 p-6 text-center">
+    <i class="pi pi-exclamation-triangle text-red-500 text-2xl mb-2"></i>
+    <p class="text-red-400 font-mono text-xs uppercase">
+      Error recuperando datos.
     </p>
   </div>
   } @case ('loaded') { @if (properties().length > 0; as props) {
-  <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-    @for (property of properties(); track property._id) {
-    <p-card>
-      <ng-template pTemplate="header">
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    @for (prop of properties(); track prop._id) {
+    <div
+      class="group bg-white/5 border border-white/10 hover:border-sky-500/30 transition-all duration-300 flex flex-col"
+    >
+      <div
+        class="relative h-56 overflow-hidden bg-black border-b border-white/10"
+      >
         <img
-          [src]="
-            property.images[0] || '/assets/images/placeholder-property.png'
-          "
-          alt="{{ property.title }}"
-          class="w-full h-56 object-cover rounded-lg"
+          [src]="prop.images[0] || '/assets/images/placeholder-property.png'"
+          alt="{{ prop.title }}"
+          class="w-full h-full object-cover opacity-70 grayscale group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-500 transform group-hover:scale-105"
           (error)="onImageError($event)"
         />
-      </ng-template>
 
-      <ng-template pTemplate="title">
-        <a
-          [routerLink]="['/properties', property._id]"
-          class="text-xl font-semibold text-gray-900 hover:text-sky-600 transition-colors"
-          target="_blank"
-          title="Ver propiedad en pestaña nueva"
-        >
-          {{ property.title }}
-        </a>
-      </ng-template>
-
-      <ng-template pTemplate="subtitle">
-        <!-- Usamos el DecimalPipe para formatear el precio -->
-        <p class="text-gray-700 font-medium text-lg">
-          {{ property.price }} USD
-        </p>
-        <p class_name="text-sm text-gray-500">
-          {{ property.address.city }}, {{ property.address.state }}
-        </p>
-      </ng-template>
-
-      <ng-template pTemplate="footer">
-        <div class="flex items-center justify-between gap-4">
-          <p-tag
-            [value]="getStatusLabel(property.status)"
-            [severity]="getStatusSeverity(property.status)"
-            [rounded]="true"
+        <div class="absolute top-3 right-3">
+          <span
+            class="px-2 py-1 border text-[10px] font-bold uppercase tracking-widest backdrop-blur-md shadow-lg"
+            [class]="getStatusClass(prop.status)"
           >
-          </p-tag>
-          <button
-            pButton
-            label="Editar"
-            icon="pi pi-pencil"
-            (click)="editProperty(property._id)"
-            class="p-button-sm p-button-outlined"
-          ></button>
+            {{ getStatusLabel(prop.status) }}
+          </span>
         </div>
-      </ng-template>
-    </p-card>
+
+        <div
+          class="absolute bottom-0 left-0 bg-slate-950/80 px-3 py-1 border-t border-r border-white/10 text-[10px] font-mono text-slate-400"
+        >
+          REF: {{ prop._id | slice : 0 : 6 }}...
+        </div>
+      </div>
+
+      <div class="p-5 flex-1 flex flex-col justify-between">
+        <div>
+          <h3
+            class="text-base font-bold text-white uppercase tracking-tight mb-2 truncate"
+            title="{{ prop.title }}"
+          >
+            {{ prop.title }}
+          </h3>
+
+          <div class="flex flex-col gap-1 mb-4">
+            <div
+              class="flex items-center gap-2 text-xs text-slate-500 font-mono"
+            >
+              <i class="pi pi-map-marker text-[10px]"></i>
+              <span class="truncate"
+                >{{ prop.address.city }}, {{ prop.address.state }}</span
+              >
+            </div>
+
+            <div
+              class="flex items-center gap-2 text-sm font-mono text-white mt-1"
+            >
+              <span class="text-sky-500">$</span>
+              {{ prop.price | number }}
+            </div>
+          </div>
+        </div>
+
+        <div
+          class="pt-4 border-t border-white/5 flex items-center justify-between gap-3"
+        >
+          <a
+            [routerLink]="['/properties', prop._id]"
+            target="_blank"
+            class="flex-1 flex items-center justify-center gap-2 py-2 border border-white/10 hover:bg-white/5 text-xs font-bold uppercase tracking-widest text-slate-400 hover:text-white transition-colors"
+          >
+            <i class="pi pi-external-link text-[10px]"></i> Ver
+          </a>
+        </div>
+      </div>
+    </div>
     }
   </div>
   } @else {
-  <div class="bg-blue-50 text-blue-700 p-4 rounded-lg">
-    <p>
-      Aún no tienes propiedades asignadas. Puedes crear una desde el dashboard.
+  <div
+    class="border border-dashed border-white/10 bg-white/5 p-12 flex flex-col items-center justify-center text-center"
+  >
+    <div
+      class="w-16 h-16 rounded-full bg-slate-900 border border-white/10 flex items-center justify-center mb-4 text-slate-600"
+    >
+      <i class="pi pi-folder-open text-2xl"></i>
+    </div>
+    <h3 class="text-white font-bold uppercase tracking-widest mb-2">
+      Sin Propiedades
+    </h3>
+    <p class="text-slate-500 text-sm font-light max-w-xs mb-6">
+      No tienes propiedades asignadas a tu perfil actualmente.
     </p>
+    <a
+      routerLink="/dashboard/property-form"
+      class="px-6 py-3 bg-sky-600 hover:bg-sky-500 text-white text-xs font-bold uppercase tracking-widest transition-colors"
+    >
+      <i class="pi pi-plus mr-2"></i> Publicar Nueva
+    </a>
   </div>
   } } }
 </div>

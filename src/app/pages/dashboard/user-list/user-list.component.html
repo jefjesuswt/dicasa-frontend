@@ -1,150 +1,189 @@
-<div class="p-4 md:p-6">
+<div class="p-4 md:p-6 bg-slate-950 border-b border-white/10">
   <shared-search-bar
     (search)="onUserSearch($event)"
     [dropdownOptions]="userRoleOptions"
-    placeholder="Buscar por nombre, email o teléfono..."
-    label="Buscar Usuario"
-    dropdownLabel="Rol"
-    buttonText="Buscar"
+    placeholder="Buscar ID, nombre, email..."
+    label="Directorio de Usuarios"
+    dropdownLabel="Filtrar Rol"
+    buttonText="BUSCAR"
   >
   </shared-search-bar>
 </div>
 
 <div
-  class="px-4 md:px-6 py-4 border-b border-gray-200 flex items-center justify-between"
+  class="px-4 md:px-6 py-6 bg-slate-950 border-b border-white/10 flex flex-col md:flex-row md:items-center justify-between gap-4"
 >
-  <h2 class="text-lg font-medium text-gray-900">Usuarios</h2>
+  <div class="flex items-center gap-3">
+    <h2 class="text-xl font-bold text-white uppercase tracking-tight">
+      Gestión de Usuarios
+    </h2>
+    @if (!loading) {
+    <span
+      class="px-2 py-0.5 bg-white/10 rounded text-xs font-mono text-slate-400 border border-white/5"
+    >
+      {{ totalUsers }} REGISTROS
+    </span>
+    }
+  </div>
 
-  <div class="flex items-center gap-4">
-    <div class="flex items-center">
+  <div class="flex items-center justify-between md:justify-end gap-6">
+    <div class="flex items-center gap-3">
       <p-toggleswitch
         [(ngModel)]="showInactive"
         (onChange)="onInactiveToggleChange()"
       ></p-toggleswitch>
-
-      <label class="ml-2 text-sm font-medium text-gray-700">
-        Mostrar inactivos
+      <label
+        class="text-xs font-bold text-slate-500 uppercase tracking-wider cursor-pointer"
+      >
+        Mostrar Inactivos
       </label>
     </div>
 
     <button
-      class="px-3 md:px-4 py-2 bg-sky-600 text-white rounded-md hover:bg-sky-700 flex items-center text-sm md:text-base"
+      class="px-5 py-2.5 bg-sky-600 hover:bg-sky-500 text-white text-xs font-bold uppercase tracking-widest rounded-sm transition-all shadow-[0_0_15px_rgba(2,132,199,0.3)] hover:shadow-[0_0_20px_rgba(2,132,199,0.5)] flex items-center gap-2"
       (click)="addUser()"
     >
-      <i class="pi pi-plus md:mr-2"></i>
-      <span class="hidden md:inline">Agregar Usuario</span>
+      <i class="pi pi-plus text-sm"></i>
+      <span class="hidden md:inline">Nuevo Usuario</span>
     </button>
   </div>
 </div>
 
 @if (loading) {
-<div class="flex justify-center items-center py-16">
-  <i class="pi pi-spin pi-spinner text-sky-600" style="font-size: 2rem"></i>
-  <span class="ml-3 text-gray-700">Cargando usuarios...</span>
+<div class="flex flex-col justify-center items-center py-24 bg-slate-950">
+  <div
+    class="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-sky-500 mb-4"
+  ></div>
+  <span class="text-slate-500 font-mono text-sm animate-pulse"
+    >CARGANDO DATOS...</span
+  >
 </div>
 } @if (error && !loading) {
-<div class="m-4 p-4 bg-red-50 text-red-700 rounded-lg">
-  <p>{{ error }}</p>
-  <button
-    (click)="loadUsers()"
-    class="mt-2 text-sm text-sky-700 hover:underline"
-  >
-    Reintentar
-  </button>
+<div class="m-6 p-6 bg-red-500/5 border border-red-500/20 rounded-sm">
+  <div class="flex items-start gap-3">
+    <i class="pi pi-exclamation-triangle text-red-400 mt-1"></i>
+    <div>
+      <h3 class="text-red-400 font-bold uppercase text-sm mb-1">
+        Error de Conexión
+      </h3>
+      <p class="text-red-400/70 text-sm font-mono mb-4">{{ error }}</p>
+      <button
+        (click)="loadUsers()"
+        class="text-xs font-bold text-white bg-red-500/20 px-4 py-2 hover:bg-red-500/30 transition-colors uppercase tracking-wider"
+      >
+        Reintentar
+      </button>
+    </div>
+  </div>
 </div>
 } @if (!loading && !error && users.length > 0) {
-<div class="overflow-x-auto">
-  <table class="min-w-full divide-y divide-gray-200">
-    <thead class="bg-gray-50">
+
+<div class="hidden md:block overflow-x-auto bg-slate-950 min-h-[400px]">
+  <table class="min-w-full divide-y divide-white/10 text-left">
+    <thead class="bg-white/[0.02]">
       <tr>
         <th
           scope="col"
-          class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+          class="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider"
         >
-          Nombre
+          Usuario
         </th>
         <th
           scope="col"
-          class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+          class="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider"
         >
-          Email
+          Contacto
         </th>
         <th
           scope="col"
-          class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+          class="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider"
         >
-          Rol
+          Rol Asignado
         </th>
         <th
           scope="col"
-          class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+          class="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider"
         >
           Estado
         </th>
         <th
           scope="col"
-          class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider"
+          class="px-6 py-4 text-right text-xs font-bold text-slate-500 uppercase tracking-wider"
         >
           Acciones
         </th>
       </tr>
     </thead>
-    <tbody class="bg-white divide-y divide-gray-200">
+    <tbody class="divide-y divide-white/10">
       @for (user of users; track user._id) {
-      <tr class="hover:bg-gray-50">
+      <tr class="hover:bg-white/[0.02] transition-colors group">
         <td class="px-6 py-4 whitespace-nowrap">
           <div class="flex items-center">
-            <div
-              class="flex-shrink-0 h-10 w-10 bg-gray-200 rounded-full flex items-center justify-center"
-            >
+            <div class="flex-shrink-0 h-9 w-9 relative">
               <shared-avatar
-                class="w-6 h-6"
+                class="w-9 h-9 rounded-md ring-1 ring-white/10"
                 [src]="user.profileImageUrl"
                 [id]="user?._id"
               ></shared-avatar>
             </div>
             <div class="ml-4">
-              <div class="text-sm font-medium text-gray-900">
-                {{ user.name }}
-              </div>
+              <div class="text-sm font-bold text-white">{{ user.name }}</div>
               @if (user.phoneNumber) {
-              <div class="text-sm text-gray-500">{{ user.phoneNumber }}</div>
+              <div class="text-xs text-slate-500 font-mono mt-0.5">
+                {{ user.phoneNumber }}
+              </div>
               }
             </div>
           </div>
         </td>
+
         <td class="px-6 py-4 whitespace-nowrap">
-          <div class="text-sm text-gray-900">{{ user.email }}</div>
+          <div class="text-xs text-slate-400 font-mono">{{ user.email }}</div>
         </td>
+
         <td class="px-6 py-4 whitespace-nowrap">
           <span
-            class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full"
+            class="px-2 py-1 inline-flex text-[10px] leading-tight font-bold uppercase tracking-wider rounded-sm border border-transparent"
             [ngClass]="getRoleBadgeClass(user.roles)"
+            style="mix-blend-mode: screen"
           >
             {{ getRoleLabel(user.roles) }}
           </span>
         </td>
+
         <td class="px-6 py-4 whitespace-nowrap">
-          <span
-            class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full"
-            [ngClass]="statusBadgeClass[user.isActive.toString()]"
-          >
-            {{ user.isActive ? "Activo" : "Inactivo" }}
-          </span>
+          <div class="flex items-center gap-2">
+            <div
+              [class]="
+                'w-1.5 h-1.5 rounded-full ' +
+                (user.isActive
+                  ? 'bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.6)]'
+                  : 'bg-slate-600')
+              "
+            ></div>
+            <span
+              class="text-xs font-medium uppercase tracking-wide text-slate-400"
+            >
+              {{ user.isActive ? "Activo" : "Inactivo" }}
+            </span>
+          </div>
         </td>
+
         <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-          <div class="flex justify-end space-x-2">
+          <div
+            class="flex justify-end gap-1 opacity-60 group-hover:opacity-100 transition-opacity"
+          >
             <button
               (click)="editUser(user)"
-              class="p-1 text-yellow-600 hover:text-yellow-900 rounded-full hover:bg-yellow-50"
-              title="Editar usuario"
+              class="h-8 w-8 flex items-center justify-center text-slate-400 hover:text-sky-400 hover:bg-white/5 rounded-sm transition-colors"
+              title="Editar"
             >
               <i class="pi pi-pencil"></i>
             </button>
             <button
               (click)="openDeleteDialog(user)"
-              class="p-1 text-red-600 hover:text-red-900 rounded-full hover:bg-red-50"
-              title="Eliminar usuario"
+              class="h-8 w-8 flex items-center justify-center text-slate-400 hover:text-red-400 hover:bg-white/5 rounded-sm transition-colors"
+              title="Eliminar"
             >
               <i class="pi pi-trash"></i>
             </button>
@@ -155,35 +194,57 @@
     </tbody>
   </table>
 </div>
+
+<div class="md:hidden p-4 space-y-4 bg-slate-950">
+  @for (user of users; track user._id) {
+  <dashboard-user-card
+    [user]="user"
+    (edit)="editUser($event)"
+    (delete)="openDeleteDialog($event)"
+  ></dashboard-user-card>
+  }
+</div>
+
 } @if (!loading && !error && users.length === 0) {
-<div class="text-center py-16 text-gray-500">
-  <i class="pi pi-users text-4xl mb-3"></i>
-  <p>No se encontraron usuarios.</p>
-  <button (click)="addUser()" class="mt-4 text-sky-600 hover:underline">
-    Agregar el primer usuario
+<div
+  class="flex flex-col items-center justify-center py-32 bg-slate-950 border-t border-white/10"
+>
+  <div
+    class="w-16 h-16 bg-white/5 rounded-full flex items-center justify-center mb-4"
+  >
+    <i class="pi pi-users text-2xl text-slate-500"></i>
+  </div>
+  <p class="text-slate-400 font-mono text-sm mb-6">
+    NO SE ENCONTRARON USUARIOS
+  </p>
+  <button
+    (click)="addUser()"
+    class="text-sky-500 hover:text-sky-400 text-xs font-bold uppercase tracking-widest border-b border-sky-500/30 hover:border-sky-500 transition-all pb-0.5"
+  >
+    Crear Primer Registro
   </button>
 </div>
 } @if (totalUsers > 0 && !loading) {
 <div
-  class="flex justify-between items-center px-6 py-3 border-t border-gray-200"
+  class="flex justify-between items-center px-6 py-4 bg-slate-950 border-t border-white/10"
 >
   <button
     (click)="onPageChange(currentPage - 1)"
     [disabled]="currentPage === 1"
-    class="px-4 py-2 bg-gray-200 rounded-md disabled:opacity-50"
+    class="px-4 py-2 text-xs font-bold uppercase tracking-wider text-slate-400 border border-white/10 rounded-sm hover:bg-white/5 disabled:opacity-30 disabled:hover:bg-transparent transition-colors"
   >
     Anterior
   </button>
-  <span class="text-sm text-gray-700">
-    Página {{ currentPage }} de {{ Math.ceil(totalUsers / rowsPerPage) }} ({{
-      totalUsers
-    }}
-    usuarios)
+
+  <span class="text-xs text-slate-500 font-mono">
+    PÁGINA <span class="text-white">{{ currentPage }}</span> /
+    {{ Math.ceil(totalUsers / rowsPerPage) }}
   </span>
+
   <button
     (click)="onPageChange(currentPage + 1)"
     [disabled]="currentPage * rowsPerPage >= totalUsers"
-    class="px-4 py-2 bg-gray-200 rounded-md disabled:opacity-50"
+    class="px-4 py-2 text-xs font-bold uppercase tracking-wider text-slate-400 border border-white/10 rounded-sm hover:bg-white/5 disabled:opacity-30 disabled:hover:bg-transparent transition-colors"
   >
     Siguiente
   </button>
@@ -192,22 +253,26 @@
 
 <shared-dialog
   [isOpen]="isDeleteDialogOpen"
-  title="Confirmar Eliminación"
+  title="ELIMINAR ACCESO"
   (close)="closeDeleteDialog()"
 >
   <div class="space-y-6">
-    <p class="text-sm text-gray-600">
-      ¿Estás seguro de que deseas eliminar al usuario
-      <strong>"{{ userToDelete?.name || "seleccionado" }}"</strong>?
-      <br />
-      Esta acción no se puede deshacer.
+    <p class="text-sm text-slate-600 leading-relaxed">
+      Estás a punto de eliminar al usuario
+      <strong class="text-slate-900">{{
+        userToDelete?.name || "seleccionado"
+      }}</strong>
+      del sistema. <br /><br />
+      <span class="text-red-600 text-xs font-bold uppercase"
+        >Esta acción es irreversible.</span
+      >
     </p>
     <div class="flex justify-end space-x-3">
       <button
         type="button"
         (click)="closeDeleteDialog()"
         [disabled]="isDeleting"
-        class="bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50"
+        class="bg-white py-2 px-4 border border-gray-300 rounded-sm shadow-sm text-xs font-bold uppercase tracking-wide text-gray-700 hover:bg-gray-50 disabled:opacity-50 transition-colors"
       >
         Cancelar
       </button>
@@ -215,13 +280,13 @@
         type="button"
         (click)="confirmDelete()"
         [disabled]="isDeleting"
-        class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-red-600 hover:bg-red-700 disabled:opacity-50"
+        class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-xs font-bold uppercase tracking-wide rounded-sm text-white bg-red-600 hover:bg-red-700 disabled:opacity-50 transition-colors"
       >
         @if (isDeleting) {
         <i class="pi pi-spin pi-spinner mr-2"></i>
-        <span>Eliminando...</span>
+        <span>Procesando...</span>
         } @else {
-        <span>Eliminar</span>
+        <span>Confirmar Eliminación</span>
         }
       </button>
     </div>

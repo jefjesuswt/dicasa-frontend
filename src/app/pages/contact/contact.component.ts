@@ -1,5 +1,11 @@
-import { Component, inject, OnInit } from "@angular/core";
-import { CommonModule } from "@angular/common";
+import {
+  Component,
+  inject,
+  OnInit,
+  AfterViewInit,
+  OnDestroy,
+} from "@angular/core";
+import { CommonModule, DOCUMENT } from "@angular/common";
 import {
   FormBuilder,
   FormGroup,
@@ -16,27 +22,24 @@ import {
 } from "ngx-intl-tel-input";
 
 import { finalize } from "rxjs/operators";
-import { SectionHeaderComponent } from "../../shared/section-header/section-header.component";
-
 import { ContactService } from "../../services/contact.service";
 import { CreateContactDto } from "../../interfaces/contact/create-contact.dto";
 
 @Component({
   selector: "app-contact",
   standalone: true,
-  imports: [
-    CommonModule,
-    ReactiveFormsModule,
-    SectionHeaderComponent,
-    NgxIntlTelInputModule,
-  ],
+  imports: [CommonModule, ReactiveFormsModule, NgxIntlTelInputModule],
   templateUrl: "./contact.component.html",
 })
-export class ContactComponent implements OnInit {
+export class ContactComponent implements OnInit, AfterViewInit, OnDestroy {
+  // --- Lógica Visual (Observer) ---
+  private observer: IntersectionObserver | null = null;
+  private document = inject(DOCUMENT);
+
+  // --- Lógica de Negocio ---
   loading = false;
   private fb = inject(FormBuilder);
   private toast = inject(HotToastService);
-
   private contactService = inject(ContactService);
 
   searchCountryField = [SearchCountryField.Iso2, SearchCountryField.Name];
@@ -54,6 +57,34 @@ export class ContactComponent implements OnInit {
     this.initializeForm();
   }
 
+  ngAfterViewInit() {
+    this.initScrollObserver();
+  }
+
+  ngOnDestroy() {
+    this.observer?.disconnect();
+  }
+
+  private initScrollObserver() {
+    const options = {
+      root: null,
+      rootMargin: "0px",
+      threshold: 0.2,
+    };
+
+    this.observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add("is-visible");
+          this.observer?.unobserve(entry.target);
+        }
+      });
+    }, options);
+
+    const elements = this.document.querySelectorAll(".reveal-on-scroll");
+    elements.forEach((el) => this.observer?.observe(el));
+  }
+
   private initializeForm(): void {
     this.contactForm = this.fb.group({
       name: ["", Validators.required],
@@ -66,7 +97,7 @@ export class ContactComponent implements OnInit {
   onSubmit(): void {
     if (this.contactForm.invalid) {
       this.contactForm.markAllAsTouched();
-      this.toast.error("Por favor, completa todos los campos requeridos.");
+      this.toast.error("Campos incompletos o inválidos.");
       return;
     }
 
@@ -93,12 +124,13 @@ export class ContactComponent implements OnInit {
       .pipe(finalize(() => (this.isSending = false)))
       .subscribe({
         next: (response) => {
-          this.toast.success(response.message || "¡Mensaje enviado con éxito!");
+          this.toast.success(
+            response.message || "Solicitud enviada correctamente."
+          );
           this.contactForm.reset();
-          this.contactForm.markAsPristine();
         },
         error: (errMessage) => {
-          this.toast.error(`Error al enviar: ${errMessage}`);
+          this.toast.error(`Error de transmisión: ${errMessage}`);
         },
       });
   }

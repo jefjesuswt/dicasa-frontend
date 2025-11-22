@@ -13,6 +13,13 @@ export const routes: Routes = [
     pathMatch: "full",
   },
   {
+    path: "landing",
+    loadComponent: () =>
+      import("./pages/landing/landing-page.component").then(
+        (m) => m.LandingPageComponent
+      ),
+  },
+  {
     path: "contact",
     loadComponent: () =>
       import("./pages/contact/contact.component").then(

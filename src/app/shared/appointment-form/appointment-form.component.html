@@ -1,136 +1,214 @@
 <form
   [formGroup]="appointmentForm"
   (ngSubmit)="onAppointmentSubmit()"
-  class="space-y-4"
+  class="flex flex-col gap-6"
 >
-  <div>
-    <label for="name" class="block text-sm font-medium text-gray-700 mb-1"
-      >Nombre</label
-    >
-    <input
-      type="text"
-      id="name"
-      formControlName="name"
-      required
-      class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-sky-500"
-      [class.border-red-500]="
-        appointmentForm.get('name')?.invalid &&
-        appointmentForm.get('name')?.touched
-      "
-    />
+  <!-- Header del Formulario (Opcional, para dar contexto) -->
+  <div class="border-b border-white/10 pb-4 mb-2">
+    <p class="text-slate-500 text-xs mt-1 font-mono">
+      COMPLETE LOS DATOS PARA COORDINAR SU CITA
+    </p>
   </div>
-  <div>
-    <label for="email" class="block text-sm font-medium text-gray-700 mb-1"
-      >Email</label
+
+  <!-- Nombre -->
+  <div class="group">
+    <label
+      for="name"
+      class="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2 group-focus-within:text-sky-500 transition-colors"
     >
-    <input
-      type="email"
-      id="email"
-      formControlName="email"
-      required
-      class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-sky-500"
-      [class.border-red-500]="
-        appointmentForm.get('email')?.invalid &&
-        appointmentForm.get('email')?.touched
-      "
-    />
+      Nombre Completo
+    </label>
+    <div class="relative">
+      <input
+        type="text"
+        id="name"
+        formControlName="name"
+        placeholder="JUAN PEREZ..."
+        class="block w-full bg-white/5 border border-white/10 px-4 py-3 text-white placeholder-slate-600 focus:border-sky-500 focus:bg-slate-900 focus:ring-1 focus:ring-sky-500/20 focus:outline-none transition-all duration-300 font-mono text-sm"
+        [class.border-red-500]="name?.invalid && (name?.dirty || name?.touched)"
+      />
+      <!-- Icono de Estado -->
+      @if (name?.invalid && (name?.dirty || name?.touched)) {
+      <i
+        class="pi pi-exclamation-circle absolute right-4 top-3.5 text-red-500"
+      ></i>
+      }
+    </div>
+    @if (name?.invalid && (name?.dirty || name?.touched)) {
+    <span class="text-[10px] text-red-500 font-mono mt-1 block tracking-wide">
+      * ESTE CAMPO ES REQUERIDO
+    </span>
+    }
   </div>
-  <div>
-    <label for="phone" class="block text-sm font-medium text-gray-700 mb-1"
-      >Teléfono</label
+
+  <!-- Email -->
+  <div class="group">
+    <label
+      for="email"
+      class="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2 group-focus-within:text-sky-500 transition-colors"
     >
-    <ngx-intl-tel-input
-      [cssClass]="'custom'"
-      [preferredCountries]="preferredCountries"
-      [enableAutoCountrySelect]="true"
-      [enablePlaceholder]="true"
-      [selectedCountryISO]="CountryISO.Venezuela"
-      [phoneValidation]="true"
-      [separateDialCode]="true"
-      [numberFormat]="phoneFormat"
-      name="phoneNumber"
-      formControlName="phoneNumber"
-      id="phoneNumber"
+      Correo Electrónico
+    </label>
+    <div class="relative">
+      <input
+        type="email"
+        id="email"
+        formControlName="email"
+        placeholder="CORREO@EJEMPLO.COM"
+        class="block w-full bg-white/5 border border-white/10 px-4 py-3 text-white placeholder-slate-600 focus:border-sky-500 focus:bg-slate-900 focus:ring-1 focus:ring-sky-500/20 focus:outline-none transition-all duration-300 font-mono text-sm"
+        [class.border-red-500]="
+          email?.invalid && (email?.dirty || email?.touched)
+        "
+      />
+      @if (email?.invalid && (email?.dirty || email?.touched)) {
+      <i
+        class="pi pi-exclamation-circle absolute right-4 top-3.5 text-red-500"
+      ></i>
+      }
+    </div>
+    @if (email?.invalid && (email?.dirty || email?.touched)) {
+    <span class="text-[10px] text-red-500 font-mono mt-1 block tracking-wide">
+      * FORMATO DE CORREO INVÁLIDO
+    </span>
+    }
+  </div>
+
+  <!-- Teléfono -->
+  <div class="group">
+    <label
+      for="phone"
+      class="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2 group-focus-within:text-sky-500 transition-colors"
     >
-    </ngx-intl-tel-input>
+      Teléfono de Contacto
+    </label>
+    <!--
+       WRAPPER ESTRUCTURAL:
+       Aquí aplicamos los estilos de borde y fondo al DIV contenedor.
+       El input interno se vuelve transparente via CSS.
+    -->
+    <div
+      class="relative w-full bg-white/5 border border-white/10 focus-within:border-sky-500 focus-within:bg-slate-900 focus-within:ring-1 focus-within:ring-sky-500/20 transition-all duration-300"
+      [class.border-red-500]="phoneNumber?.invalid && phoneNumber?.touched"
+    >
+      <ngx-intl-tel-input
+        [cssClass]="
+          'w-full !bg-transparent !border-none !shadow-none !text-white font-mono text-sm !h-[46px] flex items-center'
+        "
+        [preferredCountries]="preferredCountries"
+        [enableAutoCountrySelect]="true"
+        [enablePlaceholder]="true"
+        [selectedCountryISO]="CountryISO.Venezuela"
+        [phoneValidation]="true"
+        [separateDialCode]="true"
+        [numberFormat]="phoneFormat"
+        name="phoneNumber"
+        formControlName="phoneNumber"
+        id="phoneNumber"
+      ></ngx-intl-tel-input>
+    </div>
 
     @if (phoneNumber?.invalid && phoneNumber?.touched) {
-    <p class="mt-1 text-sm text-red-600">
-      @if (phoneNumber?.errors?.['validatePhoneNumber']) {
-      <span>Ingresa un número válido para el país seleccionado.</span>
-      } @else if (phoneNumber?.errors?.['required']) {
-      <span>El número de teléfono es requerido.</span>
-      } @else if (phoneNumber?.errors?.['invalidNumber']) {
-      <span>Número de teléfono inválido.</span>
-      }
-    </p>
+    <span class="text-[10px] text-red-500 font-mono mt-1 block tracking-wide">
+      * NÚMERO DE TELÉFONO INVÁLIDO
+    </span>
     }
   </div>
 
-  <div>
+  <!-- Datepicker -->
+  <div class="group">
+    <div class="flex justify-between items-end mb-2">
+      <label
+        class="block text-[10px] font-bold text-slate-400 uppercase tracking-widest group-focus-within:text-sky-500 transition-colors"
+      >
+        Fecha y Hora
+      </label>
+      <span
+        class="text-[9px] text-slate-500 font-mono border border-white/10 px-2 py-0.5 rounded"
+      >
+        LUN-VIE | 08:00 - 18:00
+      </span>
+    </div>
+
+    <!--
+       WRAPPER ESTRUCTURAL DATEPICKER:
+       Igual que el teléfono, el DIV controla la estética.
+    -->
+    <div
+      class="relative bg-white/5 border border-white/10 hover:bg-white/10 focus-within:border-sky-500 focus-within:bg-slate-900 focus-within:ring-1 focus-within:ring-sky-500/20 transition-all duration-300"
+      [class.border-red-500]="
+        appointmentDate?.invalid &&
+        (appointmentDate?.dirty || appointmentDate?.touched)
+      "
+    >
+      <p-datepicker
+        formControlName="appointmentDate"
+        [showTime]="true"
+        [hourFormat]="'12'"
+        [showIcon]="false"
+        placeholder="SELECCIONAR FECHA..."
+        styleClass="w-full architectural-datepicker"
+        [minDate]="minDate"
+        [disabledDays]="[0, 6]"
+        [stepMinute]="30"
+        [defaultDate]="defaultPickerDate"
+        [readonlyInput]="true"
+        appendTo="body"
+      >
+      </p-datepicker>
+
+      <!-- Icono de Calendario superpuesto para dar feedback visual -->
+      <div
+        class="absolute right-4 top-3 pointer-events-none text-slate-500 group-focus-within:text-sky-500 transition-colors"
+      >
+        <i class="pi pi-calendar"></i>
+      </div>
+    </div>
+
+    @if (appointmentDate?.invalid && (appointmentDate?.dirty ||
+    appointmentDate?.touched)) {
+    <span class="text-[10px] text-red-500 font-mono mt-1 block tracking-wide">
+      @if (appointmentDate?.errors?.['timeRange']) { * HORARIO FUERA DE OFICINA
+      } @else { * FECHA REQUERIDA }
+    </span>
+    }
+  </div>
+
+  <!-- Mensaje -->
+  <div class="group">
     <label
-      for="appointmentDate"
-      class="block text-sm font-medium text-gray-700 mb-1"
+      for="message"
+      class="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2 group-focus-within:text-sky-500 transition-colors"
     >
-      Fecha y Hora de la Cita
+      Mensaje Adicional
     </label>
-    <small class="block text-xs text-gray-500 mb-2">
-      Horario disponible: Lunes a Viernes, de 8:00 AM a 6:00 PM.
-    </small>
-
-    <p-datepicker
-      formControlName="appointmentDate"
-      [showTime]="true"
-      [hourFormat]="'12'"
-      [showIcon]="true"
-      placeholder="Selecciona fecha y hora"
-      styleClass="w-full"
-      inputStyleClass="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-sky-500"
-      [class.ng-invalid]="dateError"
-      [class.ng-dirty]="dateError"
-      [minDate]="minDate"
-      [disabledDays]="[0, 6]"
-      [stepMinute]="30"
-      [defaultDate]="defaultPickerDate"
-      [readonlyInput]="true"
-      appendTo="body"
-    >
-    </p-datepicker>
-
-    @if (dateError) {
-    <p class="text-red-500 text-sm mt-1">{{ dateError }}</p>
-    }
-  </div>
-
-  <div>
-    <label for="message" class="block text-sm font-medium text-gray-700 mb-1"
-      >Mensaje</label
-    >
     <textarea
       id="message"
       formControlName="message"
-      rows="5"
-      required
-      class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-sky-500"
+      rows="3"
+      class="block w-full bg-white/5 border border-white/10 px-4 py-3 text-white placeholder-slate-600 focus:border-sky-500 focus:bg-slate-900 focus:ring-1 focus:ring-sky-500/20 focus:outline-none transition-all duration-300 font-mono text-sm resize-none"
       [class.border-red-500]="
-        appointmentForm.get('message')?.invalid &&
-        appointmentForm.get('message')?.touched
+        message?.invalid && (message?.dirty || message?.touched)
       "
     ></textarea>
+    @if (message?.invalid && (message?.dirty || message?.touched)) {
+    <span class="text-[10px] text-red-500 font-mono mt-1 block tracking-wide">
+      * MÍNIMO 10 CARACTERES
+    </span>
+    }
   </div>
 
+  <!-- Botón Submit -->
   <button
     type="submit"
     [disabled]="isSubmitting() || appointmentForm.invalid"
-    class="w-full bg-sky-600 text-white py-2 px-4 rounded-md hover:bg-sky-700 transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed"
+    class="w-full py-4 mt-2 bg-sky-500 hover:bg-sky-400 text-slate-950 font-bold text-xs uppercase tracking-[0.2em] transition-all duration-300 shadow-[0_0_20px_rgba(14,165,233,0.3)] hover:shadow-[0_0_30px_rgba(56,189,248,0.5)] disabled:opacity-50 disabled:cursor-not-allowed disabled:shadow-none disabled:bg-slate-800 disabled:text-slate-500 flex justify-center items-center gap-3"
   >
     @if (isSubmitting()) {
-    <span
-      class="animate-spin h-5 w-5 border-t-2 border-b-2 border-white rounded-full inline-block"
-    ></span>
-    <span class="ml-2">Enviando...</span>
+    <i class="pi pi-spin pi-spinner"></i>
+    <span>Procesando...</span>
     } @else {
-    <span>Solicitar Cita</span>
+    <span>Confirmar Cita</span>
+    <i class="pi pi-arrow-right"></i>
     }
   </button>
 </form>

@@ -1,162 +1,247 @@
 @import "tailwindcss";
 
 @import "primeicons/primeicons.css";
-  
-  /* Oculta la scrollbar en Firefox y IE/Edge (versiones antiguas) */
-  html {
-    scrollbar-width: none;  /* Firefox */
-    -ms-overflow-style: none; /* IE y Edge */
+
+/* Oculta la scrollbar en Firefox y IE/Edge (versiones antiguas) */
+html {
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE y Edge */
+}
+
+/* Variables Globales del Tema Dicasa "Architectural" */
+:root {
+  --color-primary: #38bdf8; /* sky-400 */
+  --color-primary-hover: #0ea5e9; /* sky-500 */
+  --color-secondary: #1e40af; /* blue-800 */
+  --bg-dark: #020617; /* slate-950 */
+  --bg-panel: rgba(255, 255, 255, 0.03);
+  --border-light: rgba(255, 255, 255, 0.1);
+}
+
+/* --- 2. UTILIDADES DE DISEÑO --- */
+
+/* Tipografía Técnica */
+.font-mono {
+  font-family: "Courier New", Courier, monospace;
+}
+
+/* Fondo de Rejilla (Grid) Arquitectónico */
+.bg-grid {
+  background-size: 40px 40px;
+  background-image: linear-gradient(
+      to right,
+      rgba(255, 255, 255, 0.03) 1px,
+      transparent 1px
+    ),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+}
+
+/* Texto con Gradiente Corporativo */
+.text-gradient {
+  background: linear-gradient(to right, var(--color-primary), #2563eb);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  color: transparent;
+}
+
+/* Panel de Vidrio (Glassmorphism) */
+.glass-panel {
+  background: var(--bg-panel);
+  border: 1px solid var(--border-light);
+  backdrop-filter: blur(8px);
+}
+
+/* --- 3. ANIMACIONES E INTERACCIONES --- */
+
+/* Efecto de línea inferior en Hover (Navbar) */
+.hover-line {
+  position: relative;
+}
+.hover-line::after {
+  content: "";
+  position: absolute;
+  bottom: -4px;
+  left: 0;
+  width: 0%;
+  height: 1px;
+  background-color: var(--color-primary);
+  transition: width 0.3s ease;
+}
+.hover-line:hover::after {
+  width: 100%;
+}
+
+/* Lógica Reveal on Scroll (Scroll Spy) */
+.reveal-on-scroll {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: all 0.8s cubic-bezier(0.2, 1, 0.3, 1);
+  will-change: opacity, transform;
+}
+
+.reveal-on-scroll.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Comportamiento Específico por Dispositivo */
+
+/* MOBILE: Al entrar en pantalla, quitamos gris y mostramos todo */
+@media (max-width: 768px) {
+  .reveal-on-scroll.is-visible .scroll-target-grayscale {
+    filter: grayscale(0) !important;
   }
+  .reveal-on-scroll.is-visible .scroll-target-opacity {
+    opacity: 1 !important;
+  }
+  .reveal-on-scroll.is-visible .scroll-target-border {
+    opacity: 1 !important;
+  }
+}
 
-
+/* DESKTOP: Solo mostramos opacidad, mantenemos gris para que funcione el hover */
+@media (min-width: 769px) {
+  .reveal-on-scroll.is-visible .scroll-target-opacity {
+    opacity: 1 !important;
+  }
+  /* No forzamos grayscale(0) aquí para permitir que el hover CSS funcione */
+}
 
 .iti {
-  width: 100%; 
-  display: block; 
-  position: relative; 
+  width: 100%;
+  display: block;
+  position: relative;
 }
 
-/* El input interno generado por la librería */
+/* INPUT PRINCIPAL */
 .iti__tel-input {
-  /* ... (Estilos base como antes: appearance, width, padding-top/bottom, border, color, rounded, font-size, etc.) ... */
   appearance: none;
-  position: relative; 
+  position: relative;
   display: block;
   width: 100%;
-  padding-top: 0.75rem;    
-  padding-bottom: 0.75rem; 
-  border-width: 1px;       
-  border-style: solid;
-  border-color: #d1d5db;    
-  color: #111827;           
-  border-radius: 0.375rem; 
-  font-size: 0.875rem;     
-  line-height: 1.25rem;    
-  transition: border-color .15s ease-in-out, box-shadow .15s ease-in-out;
-  padding-left: 5rem !important; 
-  --placeholder-color: #6b7880; 
+  padding-top: 0.75rem;
+  padding-bottom: 0.75rem;
+
+  /* Fondo transparente y sin bordes */
+  background-color: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+
+  /* Texto Blanco */
+  color: #ffffff !important;
+
+  font-size: 1rem;
+  line-height: 1.5rem;
+
+  /* --- CORRECCIÓN AQUÍ --- */
+  /* Aumentamos de 3rem a 6rem para que el texto no se monte sobre el +58 */
+  padding-left: 5rem !important;
+
+  /* Placeholder más claro */
+  --placeholder-color: #64748b; /* slate-500 */
 }
 
-/* --- NUEVO: Cuando el dropdown está abierto, quita el borde inferior redondeado del input --- */
-.iti.iti--open .iti__tel-input {
-  border-bottom-left-radius: 0;
-  border-bottom-right-radius: 0;
-  border-bottom-color: transparent !important;
-}
-
-
-.iti__selected-flag {
-  background-color: transparent !important; 
-  outline: none !important; 
-  box-shadow: none !important; 
-}
-
-/* Estilo específico para placeholder */
+/* Placeholder específico */
 .iti__tel-input::placeholder {
-  color: var(--placeholder-color);
-  opacity: 1; 
+  color: var(--placeholder-color) !important;
+  opacity: 1;
+  font-family: "Courier New", Courier, monospace; /* Font mono para consistencia */
+  font-size: 0.875rem;
 }
 
-/* --- Estado de Focus --- */
+/* Focus: Quitamos el outline azul por defecto porque usamos border-b en el HTML */
 .iti__tel-input:focus {
-  /* Recrea focus:outline-none focus:ring-sky-500 focus:border-sky-500 focus:z-10 */
-  outline: 2px solid transparent;
-  outline-offset: 2px;
-  border-color: #0ea5e9 !important; /* focus:border-sky-500 */
-  --tw-ring-color: #0ea5e9;       /* focus:ring-sky-500 */
-  --tw-ring-offset-shadow: var(--tw-ring-inset,/*!*/ /*!*/ /*!*/ /*!*/) 0 0 0 var(--tw-ring-offset-width, 0px) var(--tw-ring-offset-color, #fff);
-  --tw-ring-shadow: var(--tw-ring-inset,/*!*/ /*!*/ /*!*/ /*!*/) 0 0 0 calc(1px + var(--tw-ring-offset-width, 0px)) var(--tw-ring-color);
-  box-shadow: var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow, 0 0 #0000);
-  z-index: 10;                     /* focus:z-10 */
+  outline: none !important;
+  box-shadow: none !important;
+  border-color: transparent !important;
 }
 
-/* --- Estado de Error (Inválido y Tocado) --- */
-/* Apuntamos al input cuando el componente wrapper tiene clases de error */
-ngx-intl-tel-input.ng-invalid.ng-touched .iti__tel-input {
-  border-color: #fca5a5 !important; /* Equivalente a border-red-300 */
-  box-shadow: none; /* Evita que el ring de focus oculte el borde */
-}
-/* Mantiene el ring rojo en focus cuando hay error */
-ngx-intl-tel-input.ng-invalid.ng-touched .iti__tel-input:focus {
-  border-color: #fca5a5 !important; /* Equivalente a border-red-300 */
-  --tw-ring-color: #f87171;       /* Equivalente a ring-red-400 (un poco más oscuro) */
-  box-shadow: var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow, 0 0 #0000);
-}
-
-/* --- Ajustes del Dropdown (Opcional) --- */
+/* --- DROPDOWN (LISTA DE PAÍSES) --- */
 .iti__country-list {
-  position: absolute !important; 
-  z-index: 9999 !important; 
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); 
-  
-  /* --- CORRECCIÓN v4 --- */
-  /* 1. Quitamos el width: 100% para que la librería alinee el dropdown */
-  
-  /* 2. Añadimos un min-width para que no sea "angosto" */
-  
-  box-sizing: border-box; 
-  border-top: none !important; /* Elimina el borde superior del dropdown */
+  position: absolute !important;
+  z-index: 9999 !important;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.5),
+    0 4px 6px -2px rgba(0, 0, 0, 0.3);
 
-  /* Esquinas superiores cuadradas para 'pegarse' al input */
-  border-top-left-radius: 0;
-  border-top-right-radius: 0;
-  /* Esquinas inferiores redondeadas (como el input) */
-  border-bottom-left-radius: 0.375rem;
-  border-bottom-right-radius: 0.375rem;
-  
-  /* Mueve la lista 1px hacia arriba para que se solape con el borde del input */
-  margin-top: -1px; 
-  /* --- FIN DE CORRECCIÓN --- */
+  box-sizing: border-box;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important; /* Borde fino blanco */
+  border-radius: 0.25rem;
+  margin-top: 0.5rem;
 
-  max-height: 23rem; 
+  max-height: 18rem;
   overflow-y: auto;
-  
-  background-color: white !important; 
 
-  scrollbar-width: none; 
-  -ms-overflow-style: none; 
+  /* --- CAMBIO CRÍTICO: Fondo Oscuro --- */
+  background-color: #020617 !important; /* slate-950 */
+  backdrop-filter: blur(10px);
+
+  scrollbar-width: thin;
+  scrollbar-color: #334155 #020617;
 }
 
-.iti__country-list::-webkit-scrollbar {
-  display: none; 
-}
-
-/* --- NUEVO: Oculta el input de búsqueda de países --- */
+/* Ocultar buscador nativo feo */
 .iti__search-container {
   display: none !important;
 }
 
-.iti__flag-container {
-  z-index: 50 !important; /* Asegura que el contenedor de la bandera quede encima del input */
+/* Bandera seleccionada */
+.iti__selected-flag {
+  background-color: transparent !important;
+  outline: none !important;
+  padding-left: 0 !important;
+}
+.iti__arrow {
+  border-top-color: #94a3b8 !important; /* Flecha gris clara */
+}
+.iti__arrow.iti__arrow--up {
+  border-bottom-color: #38bdf8 !important; /* Flecha azul al abrir */
 }
 
-.iti__tel-input:focus {
-  z-index: 1 !important; /* Evita que el input tape el dropdown */
-}
-
-.iti__divider {
-  border-bottom-color: #e5e7eb; /* border-gray-200 */
-}
-
-/* --- NUEVO: Estilo para cada item (país) en la lista --- */
+/* Items de la lista (Países) */
 .iti__country {
   display: flex !important;
   align-items: center !important;
-  width: 100%;
-  font-size: 0.875rem; /* <-- 3. Fuente más pequeña (text-sm) */
-  padding-top: 0.5rem;    /* Más espacio vertical */
-  padding-bottom: 0.5rem; /* Más espacio vertical */
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  color: #e2e8f0 !important; /* Texto claro (slate-200) */
+  font-size: 0.875rem;
+  transition: all 0.2s;
 }
 
-/* --- NUEVO: Estilo para el código de país (dial code) --- */
-.iti__dial-code {
-  margin-left: auto;   /* <-- La magia: lo empuja a la derecha */
-  padding-left: 0.5rem; /* Espacio para que no se pegue */
-  color: #6b7880;      /* (text-gray-500) Color más sutil */
-}
-
+/* Hover en los países */
 .iti__country:hover,
 .iti__country.iti__highlight {
-  background-color: #f3f4f6; /* bg-gray-100 */
+  background-color: rgba(56, 189, 248, 0.1) !important; /* Azul transparente */
+  color: #38bdf8 !important; /* Texto azul */
 }
 
+/* Código de país (+58, +1) */
+.iti__dial-code {
+  margin-left: auto;
+  color: #64748b !important; /* slate-500 */
+  font-family: "Courier New", Courier, monospace;
+}
+
+/* Scrollbar del dropdown */
+.iti__country-list::-webkit-scrollbar {
+  width: 6px;
+}
+.iti__country-list::-webkit-scrollbar-track {
+  background: #020617;
+}
+.iti__country-list::-webkit-scrollbar-thumb {
+  background-color: #334155;
+  border-radius: 3px;
+}
+
+/* Autofill Fix para Chrome (Evita el fondo blanco forzado) */
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+  -webkit-box-shadow: 0 0 0 30px #020617 inset !important;
+  -webkit-text-fill-color: white !important;
+  caret-color: white !important;
+  transition: background-color 5000s ease-in-out 0s;
+}

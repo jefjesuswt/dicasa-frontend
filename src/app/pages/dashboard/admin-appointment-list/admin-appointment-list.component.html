@@ -1,133 +1,207 @@
-<div
-  class="px-4 md:px-6 py-4 border-b border-gray-200 flex items-center justify-between"
->
-  <h2 class="text-lg font-medium text-gray-900">Gestión de Citas</h2>
-</div>
-
-<div class="p-4 md:p-6">
+<!-- SEARCH SECTION -->
+<div class="p-4 md:p-6 bg-slate-950 border-b border-white/10">
   <shared-search-bar
     (search)="onAppointmentSearch($event)"
     [dropdownOptions]="statusOptions"
-    placeholder="Buscar..."
-    label="Buscar Cita"
-    dropdownLabel="Estado"
-    buttonText="Buscar"
+    placeholder="Buscar cliente, email..."
+    label="Filtros de Agenda"
+    dropdownLabel="Estado de Cita"
+    buttonText="BUSCAR"
   >
   </shared-search-bar>
 </div>
 
+<!-- HEADER & CONTROLS -->
+<div
+  class="px-4 md:px-6 py-6 bg-slate-950 border-b border-white/10 flex items-center justify-between"
+>
+  <div class="flex items-center gap-3">
+    <h2 class="text-xl font-bold text-white uppercase tracking-tight">
+      Agenda de Citas
+    </h2>
+    @if (!loading) {
+    <span
+      class="px-2 py-0.5 bg-white/10 rounded text-xs font-mono text-slate-400 border border-white/5"
+    >
+      {{ totalAppointments }} REGISTROS
+    </span>
+    }
+  </div>
+</div>
+
+<!-- LOADING STATE -->
 @if (loading) {
-<div class="flex justify-center items-center py-16">
-  <i class="pi pi-spin pi-spinner text-sky-600" style="font-size: 2rem"></i>
-  <span class="ml-3 text-gray-700">Cargando citas...</span>
-</div>
-} @if (error && !loading) {
-<div class="m-4 p-4 bg-red-50 text-red-700 rounded-lg">
-  <p>{{ error }}</p>
-  <button
-    (click)="loadAppointments()"
-    class="mt-2 text-sm text-sky-700 hover:underline"
+<div class="flex flex-col justify-center items-center py-32 bg-slate-950">
+  <div
+    class="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-sky-500 mb-4"
+  ></div>
+  <span
+    class="text-slate-500 font-mono text-sm animate-pulse tracking-widest uppercase"
+    >Sincronizando Agenda...</span
   >
-    Reintentar
-  </button>
 </div>
-} @if (!loading && !error && appointments.length > 0) {
-<div class="hidden md:block overflow-x-auto">
-  <table class="min-w-full divide-y divide-gray-200">
-    <thead class="bg-gray-50">
+}
+
+<!-- ERROR STATE -->
+@if (error && !loading) {
+<div class="m-6 p-6 bg-red-500/5 border border-red-500/20 rounded-sm">
+  <div class="flex items-start gap-3">
+    <i class="pi pi-exclamation-triangle text-red-400 mt-1"></i>
+    <div>
+      <h3 class="text-red-400 font-bold uppercase text-sm mb-1">
+        Error de Conexión
+      </h3>
+      <p class="text-red-400/70 text-sm font-mono mb-4">{{ error }}</p>
+      <button
+        (click)="loadAppointments()"
+        class="text-xs font-bold text-white bg-red-500/20 px-4 py-2 hover:bg-red-500/30 transition-colors uppercase tracking-wider"
+      >
+        Reintentar
+      </button>
+    </div>
+  </div>
+</div>
+}
+
+<!-- CONTENT: DESKTOP TABLE -->
+@if (!loading && !error && appointments.length > 0) {
+<div class="hidden md:block overflow-x-auto bg-slate-950 min-h-[500px]">
+  <table class="min-w-full divide-y divide-white/10 text-left">
+    <thead class="bg-white/[0.02]">
       <tr>
         <th
           scope="col"
-          class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+          class="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider"
         >
-          Cliente
+          Cliente / Interesado
         </th>
         <th
           scope="col"
-          class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+          class="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider"
         >
-          Propiedad
+          Propiedad de Interés
         </th>
         <th
           scope="col"
-          class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+          class="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider"
         >
-          Agente
+          Agente Asignado
         </th>
         <th
           scope="col"
-          class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+          class="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider"
         >
-          Fecha de Cita
+          Fecha Programada
         </th>
         <th
           scope="col"
-          class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+          class="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider"
         >
-          Estado
+          Estado Actual
         </th>
         <th
           scope="col"
-          class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider"
+          class="px-6 py-4 text-right text-xs font-bold text-slate-500 uppercase tracking-wider"
         >
           Acciones
         </th>
       </tr>
     </thead>
-    <tbody class="bg-white divide-y divide-gray-200">
+    <tbody class="divide-y divide-white/10">
       @for (app of appointments; track app._id) {
-      <tr class="hover:bg-gray-50">
+      <tr class="hover:bg-white/[0.02] transition-colors group">
+        <!-- Cliente -->
         <td class="px-6 py-4 whitespace-nowrap">
-          <div class="text-sm font-medium text-gray-900">{{ app.name }}</div>
-          <div class="text-sm text-gray-500">{{ app.email }}</div>
+          <div>
+            <div class="text-sm font-bold text-white uppercase">
+              {{ app.name }}
+            </div>
+            <div
+              class="text-xs text-slate-500 font-mono mt-0.5 flex items-center gap-2"
+            >
+              <i class="pi pi-envelope text-[10px]"></i> {{ app.email }}
+            </div>
+          </div>
         </td>
+
+        <!-- Propiedad -->
         <td class="px-6 py-4 whitespace-nowrap">
           <a
             [routerLink]="['/properties', app.property._id]"
-            class="text-sm text-sky-600 hover:underline"
+            class="text-xs font-bold text-sky-400 hover:text-sky-300 hover:underline transition-colors uppercase flex items-center gap-2"
             title="{{ app.property.title }}"
           >
-            {{ app.property.title }}
+            <i class="pi pi-building text-slate-500"></i>
+            <span class="truncate max-w-[180px]">{{ app.property.title }}</span>
           </a>
         </td>
+
+        <!-- Agente -->
         <td class="px-6 py-4 whitespace-nowrap">
           @if (app.agent) {
-          <div class="text-sm text-gray-900">{{ app.agent.name }}</div>
+          <div class="flex items-center gap-2">
+            <div
+              class="w-6 h-6 rounded-full bg-slate-800 border border-white/10 overflow-hidden"
+            >
+              <!-- Si tuvieras imagen del agente -->
+              <i
+                class="pi pi-user text-[10px] text-slate-400 w-full h-full flex items-center justify-center"
+              ></i>
+            </div>
+            <span class="text-xs font-medium text-slate-300">{{
+              app.agent.name
+            }}</span>
+          </div>
           } @else {
-          <div class="text-sm text-red-500 italic">(Agente Eliminado)</div>
+          <span
+            class="text-[10px] text-red-400/60 font-mono italic border border-red-500/10 px-1.5 py-0.5 rounded-sm"
+          >
+            AGENTE ELIMINADO
+          </span>
           }
         </td>
+
+        <!-- Fecha -->
         <td class="px-6 py-4 whitespace-nowrap">
-          <div class="text-sm text-gray-900">
-            {{ app.appointmentDate | date : "dd/MM/yyyy" }}
-          </div>
-          <div class="text-sm text-gray-500">
-            {{ app.appointmentDate | date : "shortTime" }}
+          <div class="flex flex-col">
+            <span class="text-sm font-bold text-white font-mono">
+              {{ app.appointmentDate | date : "dd/MM/yyyy" }}
+            </span>
+            <span class="text-xs text-slate-500 font-mono">
+              {{ app.appointmentDate | date : "shortTime" }}
+            </span>
           </div>
         </td>
+
+        <!-- Estado -->
         <td class="px-6 py-4 whitespace-nowrap">
           <span
-            class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full"
+            class="px-2 py-1 inline-flex text-[10px] font-bold uppercase tracking-wider rounded-sm border border-transparent"
             [ngClass]="getStatusBadgeClass(app.status)"
+            style="mix-blend-mode: screen"
           >
             {{ getStatusLabel(app.status) }}
           </span>
         </td>
+
+        <!-- Acciones -->
         <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-          <div class="flex justify-end space-x-2">
+          <div
+            class="flex justify-end gap-1 opacity-60 group-hover:opacity-100 transition-opacity"
+          >
             <button
               (click)="editAppointment(app)"
-              class="p-1 text-yellow-600 hover:text-yellow-900 rounded-full hover:bg-yellow-50"
-              title="Editar estado"
+              class="h-8 w-8 flex items-center justify-center text-slate-400 hover:text-yellow-400 hover:bg-white/5 rounded-sm transition-colors border border-transparent hover:border-white/10"
+              title="Editar Estado"
             >
               <i class="pi pi-pencil"></i>
             </button>
             <button
               (click)="openDeleteDialog(app)"
-              class="p-1 text-red-600 hover:text-red-900 rounded-full hover:bg-red-50"
-              title="Eliminar cita"
+              class="h-8 w-8 flex items-center justify-center text-slate-400 hover:text-red-400 hover:bg-white/5 rounded-sm transition-colors border border-transparent hover:border-white/10"
+              title="Eliminar Cita"
             >
-              <i class="pi pi-trash"></i>
+              <i class="pi pi-trash text-xs"></i>
             </button>
           </div>
         </td>
@@ -136,85 +210,106 @@
     </tbody>
   </table>
 </div>
-}
 
-<div class="block md:hidden">
-  @if (!loading && !error && appointments.length > 0) {
-  <div class="px-4 py-4 space-y-4 bg-gray-50 rounded-md">
-    @for (app of appointments; track app._id) {
-    <dashboard-appointment-card
-      [appointment]="app"
-      [statusLabel]="getStatusLabel(app.status)"
-      [statusClass]="getStatusBadgeClass(app.status)"
-      (edit)="editAppointment($event)"
-      (delete)="openDeleteDialog($event)"
-    />
-    }
-  </div>
+<!-- CONTENT: MOBILE CARDS -->
+<div class="block md:hidden p-4 space-y-4 bg-slate-950">
+  @for (app of appointments; track app._id) {
+  <dashboard-appointment-card
+    [appointment]="app"
+    [statusLabel]="getStatusLabel(app.status)"
+    [statusClass]="getStatusBadgeClass(app.status)"
+    (edit)="editAppointment($event)"
+    (delete)="openDeleteDialog($event)"
+  />
   }
 </div>
+}
 
+<!-- EMPTY STATE -->
 @if (!loading && !error && appointments.length === 0) {
-<div class="text-center py-16 text-gray-500">
-  <i class="pi pi-calendar-times text-4xl mb-3"></i>
-  <p>No se encontraron citas.</p>
-</div>
-} @if (totalAppointments > 0 && !loading) {
 <div
-  class="flex justify-between items-center px-6 py-3 border-t border-gray-200"
+  class="flex flex-col items-center justify-center py-24 bg-slate-950 border-t border-white/10"
+>
+  <div
+    class="w-16 h-16 bg-white/5 rounded-full flex items-center justify-center mb-4 border border-white/10"
+  >
+    <i class="pi pi-calendar-times text-2xl text-slate-500"></i>
+  </div>
+  <p class="text-slate-400 font-mono text-xs uppercase tracking-widest">
+    No hay citas programadas con este criterio
+  </p>
+</div>
+}
+
+<!-- PAGINATION -->
+@if (totalAppointments > 0 && !loading) {
+<div
+  class="flex justify-between items-center px-6 py-4 bg-slate-950 border-t border-white/10"
 >
   <button
     (click)="onPageChange(currentPage - 1)"
     [disabled]="currentPage === 1"
-    class="px-4 py-2 bg-gray-200 rounded-md disabled:opacity-50"
+    class="px-4 py-2 text-xs font-bold uppercase tracking-wider text-slate-400 border border-white/10 rounded-sm hover:bg-white/5 disabled:opacity-30 disabled:hover:bg-transparent transition-colors"
   >
     Anterior
   </button>
-  <span class="text-sm text-gray-700">
-    Página {{ currentPage }} de
-    {{ Math.ceil(totalAppointments / rowsPerPage) }} a ({{ totalAppointments }}
-    citas)
+
+  <span class="text-xs text-slate-500 font-mono">
+    PÁGINA <span class="text-white">{{ currentPage }}</span> /
+    {{ Math.ceil(totalAppointments / rowsPerPage) }}
   </span>
+
   <button
     (click)="onPageChange(currentPage + 1)"
     [disabled]="currentPage * rowsPerPage >= totalAppointments"
-    class="px-4 py-2 bg-gray-200 rounded-md disabled:opacity-50"
+    class="px-4 py-2 text-xs font-bold uppercase tracking-wider text-slate-400 border border-white/10 rounded-sm hover:bg-white/5 disabled:opacity-30 disabled:hover:bg-transparent transition-colors"
   >
     Siguiente
   </button>
 </div>
 }
 
+<!-- DIALOG (Shared) -->
 <shared-dialog
   [isOpen]="isDeleteDialogOpen"
-  title="Confirmar Eliminación"
+  title="ELIMINAR CITA"
   (close)="closeDeleteDialog()"
 >
   <div class="space-y-6">
-    <p class="text-sm text-gray-600">
-      ¿Estás seguro de que deseas eliminar la cita de
-      <strong>"{{ appointmentToCancel?.name || "este cliente" }}"</strong>?
+    <p class="text-sm text-slate-600 leading-relaxed">
+      Estás a punto de cancelar y eliminar la cita agendada por:
       <br />
-      Esta acción no se puede deshacer.
+      <strong
+        class="text-slate-900 uppercase tracking-wide text-xs block mt-2 p-2 bg-slate-100 rounded-sm"
+      >
+        {{ appointmentToCancel?.name || "CLIENTE SELECCIONADO" }}
+      </strong>
+      <span class="block mt-2 text-xs text-red-500 italic"
+        >Esta acción es irreversible y liberará el espacio en la agenda.</span
+      >
     </p>
+
     <div class="flex justify-end space-x-3">
       <button
         type="button"
         (click)="closeDeleteDialog()"
         [disabled]="isDeleting"
-        class="bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50"
+        class="bg-white py-2 px-4 border border-gray-300 rounded-sm shadow-sm text-xs font-bold uppercase tracking-wide text-gray-700 hover:bg-gray-50 disabled:opacity-50 transition-colors"
       >
-        Cancelar
+        Mantener Cita
       </button>
       <button
         type="button"
         (click)="confirmDelete()"
         [disabled]="isDeleting"
-        class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-red-600 hover:bg-red-700 disabled:opacity-50"
+        class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-xs font-bold uppercase tracking-wide rounded-sm text-white bg-red-600 hover:bg-red-700 disabled:opacity-50 transition-colors"
       >
         @if (isDeleting) {
         <i class="pi pi-spin pi-spinner mr-2"></i>
-        <span>Eliminando...</span> } @else { <span>Eliminar</span> }
+        <span>Procesando...</span>
+        } @else {
+        <span>Confirmar Eliminación</span>
+        }
       </button>
     </div>
   </div>
