@@ -54,14 +54,10 @@
     >
     </ngx-intl-tel-input>
 
-    <!-- Mensajes de error -->
-    <!-- CAMBIO AQUÍ: Eliminado '|| submitted' y reemplazado por 'phoneNumber?.touched' -->
     @if (phoneNumber?.invalid && phoneNumber?.touched) {
     <p class="mt-1 text-sm text-red-600">
       @if (phoneNumber?.errors?.['validatePhoneNumber']) {
-      <span
-        >Ingresa un número de teléfono válido para el país seleccionado.</span
-      >
+      <span>Ingresa un número válido para el país seleccionado.</span>
       } @else if (phoneNumber?.errors?.['required']) {
       <span>El número de teléfono es requerido.</span>
       } @else if (phoneNumber?.errors?.['invalidNumber']) {
@@ -81,6 +77,7 @@
     <small class="block text-xs text-gray-500 mb-2">
       Horario disponible: Lunes a Viernes, de 8:00 AM a 6:00 PM.
     </small>
+
     <p-datepicker
       formControlName="appointmentDate"
       [showTime]="true"
@@ -89,10 +86,14 @@
       placeholder="Selecciona fecha y hora"
       styleClass="w-full"
       inputStyleClass="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-sky-500"
-      [minDate]="today"
+      [class.ng-invalid]="dateError"
+      [class.ng-dirty]="dateError"
+      [minDate]="minDate"
       [disabledDays]="[0, 6]"
-      [stepMinute]="60"
+      [stepMinute]="30"
       [defaultDate]="defaultPickerDate"
+      [readonlyInput]="true"
+      appendTo="body"
     >
     </p-datepicker>
 
