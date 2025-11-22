@@ -2,6 +2,7 @@ import { Component, inject } from "@angular/core";
 import { RouterLink, RouterLinkActive, RouterOutlet } from "@angular/router";
 import { CommonModule } from "@angular/common";
 import { AuthService } from "../../../services/auth.service";
+import { SeoService } from "../../../services/seo.service";
 
 @Component({
   selector: "profile-profile",
@@ -114,6 +115,14 @@ import { AuthService } from "../../../services/auth.service";
 })
 export class ProfileComponent {
   private authService = inject(AuthService);
+  private seoService = inject(SeoService);
+
+  ngOnInit() {
+    this.seoService.updateSeoData(
+      "Mi Cuenta",
+      "Gestiona tu perfil, citas y configuraciones personales."
+    );
+  }
 
   isAdmin(): boolean {
     return this.authService.isAdmin();

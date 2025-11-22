@@ -1,8 +1,14 @@
 [build]
+  # Usamos npm run build para asegurar que use el Angular CLI de tus dependencias
   command = "bun run build"
+
+  # IMPORTANTE: Cambiamos 'igemas-fr-proto' por 'dicasa-frontend'
+  # Esta ruta debe coincidir con la carpeta que se genera dentro de /dist
   publish = "dist/dicasa-frontend/browser"
 
-[[redirects]]
-  from = "/*"
-  to = "/index.html"
-  status = 200
+[[plugins]]
+  package = "@netlify/angular-runtime"
+
+[build.environment]
+  # Si quieres mantener la velocidad de Bun para instalar paquetes
+  NETLIFY_USE_BUN = "true"

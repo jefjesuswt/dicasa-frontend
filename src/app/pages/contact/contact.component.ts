@@ -4,6 +4,7 @@ import {
   OnInit,
   AfterViewInit,
   OnDestroy,
+  afterNextRender,
 } from "@angular/core";
 import { CommonModule, DOCUMENT } from "@angular/common";
 import {
@@ -24,6 +25,7 @@ import {
 import { finalize } from "rxjs/operators";
 import { ContactService } from "../../services/contact.service";
 import { CreateContactDto } from "../../interfaces/contact/create-contact.dto";
+import { SeoService } from "../../services/seo.service";
 
 @Component({
   selector: "app-contact",
@@ -31,9 +33,9 @@ import { CreateContactDto } from "../../interfaces/contact/create-contact.dto";
   imports: [CommonModule, ReactiveFormsModule, NgxIntlTelInputModule],
   templateUrl: "./contact.component.html",
 })
-export class ContactComponent implements OnInit, AfterViewInit, OnDestroy {
-  // --- Lógica Visual (Observer) ---
+export class ContactComponent implements OnInit, OnDestroy {
   private observer: IntersectionObserver | null = null;
+  private seoService = inject(SeoService);
   private document = inject(DOCUMENT);
 
   // --- Lógica de Negocio ---
@@ -53,12 +55,19 @@ export class ContactComponent implements OnInit, AfterViewInit, OnDestroy {
   contactForm!: FormGroup;
   isSending = false;
 
-  ngOnInit(): void {
-    this.initializeForm();
+  constructor() {
+    afterNextRender(() => {
+      this.initScrollObserver();
+    });
   }
 
-  ngAfterViewInit() {
-    this.initScrollObserver();
+  ngOnInit(): void {
+    this.seoService.updateSeoData(
+      "Contacto",
+      "Contáctanos para asesoría inmobiliaria, legal o financiera. Estamos ubicados en C.C. Plaza Mayor, Lechería."
+    );
+
+    this.initializeForm();
   }
 
   ngOnDestroy() {

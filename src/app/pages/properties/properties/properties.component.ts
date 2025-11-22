@@ -2,13 +2,11 @@ import {
   Component,
   inject,
   OnInit,
-  AfterViewInit,
   OnDestroy,
-  ElementRef,
-  ViewChildren,
-  QueryList,
+  afterNextRender,
+  PLATFORM_ID,
 } from "@angular/core";
-import { CommonModule, DOCUMENT } from "@angular/common"; // Importar DOCUMENT
+import { CommonModule, DOCUMENT, isPlatformBrowser } from "@angular/common";
 import { RouterModule } from "@angular/router";
 import { PropertyService } from "../../../services/property.service";
 import { PropertyCardComponent } from "../../../shared/property-card/property-card.component";
@@ -26,6 +24,7 @@ import { PropertyStatus } from "../../../interfaces/properties/property-status.e
 import Fingerprint from "fingerprinter-js";
 import { AnalyticsService } from "../../../services/analytics.service";
 import { v4 as uuidv4 } from "uuid";
+import { SeoService } from "../../../services/seo.service";
 
 @Component({
   selector: "properties-properties",
@@ -39,17 +38,15 @@ import { v4 as uuidv4 } from "uuid";
   ],
   templateUrl: "./properties.component.html",
 })
-export class PropertiesComponent implements OnInit, AfterViewInit, OnDestroy {
-  // --- Lógica Visual (Observer) ---
+export class PropertiesComponent implements OnInit, OnDestroy {
   private observer: IntersectionObserver | null = null;
   private document = inject(DOCUMENT);
+  private platformId = inject(PLATFORM_ID);
 
-  // --- Lógica de Negocio ---
   properties: Property[] = [];
   loading = true;
   error: string | null = null;
 
-  // filter
   searchQuery: string = "";
   selectedType: string = "all";
   currentStatus: string = "all";
@@ -63,23 +60,29 @@ export class PropertiesComponent implements OnInit, AfterViewInit, OnDestroy {
     { value: "commercial", label: "Comercial" },
   ];
 
-  // paging
   public totalProperties = 0;
   public currentPage = 1;
   public itemsPerPage = 10;
 
   private propertyService = inject(PropertyService);
   private analyticsService = inject(AnalyticsService);
+  private seoService = inject(SeoService);
 
-  constructor() {}
-
-  async ngOnInit(): Promise<void> {
-    this.loadProperties();
-    this.initializeAnalytics();
+  constructor() {
+    afterNextRender(() => {
+      this.initScrollObserver();
+      this.initializeAnalytics();
+    });
   }
 
-  ngAfterViewInit() {
-    this.initScrollObserver();
+  async ngOnInit(): Promise<void> {
+    // SEO
+    this.seoService.updateSeoData(
+      "Propiedades",
+      "Explora nuestro catálogo de casas, apartamentos y terrenos en venta y alquiler en Lechería."
+    );
+
+    this.loadProperties();
   }
 
   ngOnDestroy() {
@@ -133,7 +136,10 @@ export class PropertiesComponent implements OnInit, AfterViewInit, OnDestroy {
         next: (response: PaginatedProperties) => {
           this.properties = response.data;
           this.totalProperties = response.total;
-          this.initScrollObserver();
+
+          if (isPlatformBrowser(this.platformId)) {
+            setTimeout(() => this.initScrollObserver(), 100);
+          }
         },
         error: (errMessage) => {
           this.error = errMessage;
@@ -177,16 +183,19 @@ export class PropertiesComponent implements OnInit, AfterViewInit, OnDestroy {
     }
     this.currentPage = page;
     this.loadProperties();
-    window.scrollTo({ top: 0, behavior: "smooth" });
+
+    if (isPlatformBrowser(this.platformId)) {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
   }
 
   getTypeLabel(type: string): string {
     const labels: { [key: string]: string } = {
-      apartment: "Apartment",
-      house: "House",
+      apartment: "Apartamento",
+      house: "Casa",
       villa: "Villa",
-      land: "Land",
-      commercial: "Commercial",
+      land: "Terreno",
+      commercial: "Comercial",
     };
     return labels[type] || type;
   }

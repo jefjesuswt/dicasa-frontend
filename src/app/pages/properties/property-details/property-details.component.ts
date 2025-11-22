@@ -1,7 +1,7 @@
-import { Component, inject, OnInit } from "@angular/core";
+import { Component, inject, OnInit, PLATFORM_ID } from "@angular/core";
 import { trigger, transition, style, animate } from "@angular/animations";
 import { ActivatedRoute, Router, RouterModule } from "@angular/router";
-import { CommonModule } from "@angular/common";
+import { CommonModule, isPlatformBrowser } from "@angular/common";
 import { FormsModule } from "@angular/forms";
 import { finalize } from "rxjs";
 import { NgMagnizoomModule } from "ng-magnizoom";
@@ -10,6 +10,7 @@ import { PropertyService } from "../../../services/property.service";
 import { Property } from "../../../interfaces/properties/property.interface";
 import { AppointmentFormComponent } from "../../../shared/appointment-form/appointment-form.component";
 import { AvatarComponent } from "../../../shared/avatar/avatar.component";
+import { SeoService } from "../../../services/seo.service";
 
 type PropertyState = {
   property: Property | null;
@@ -59,7 +60,6 @@ const initialState: PropertyState = {
         style({ opacity: 0 }),
         animate("400ms ease-out", style({ opacity: 1 })),
       ]),
-      // Eliminamos el slide lateral para dar una sensación más "estática" y profesional
     ]),
   ],
 })
@@ -68,6 +68,8 @@ export class PropertyDetailsComponent implements OnInit {
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private propertyService = inject(PropertyService);
+  private seoService = inject(SeoService); // <--- INYECTAR
+  private platformId = inject(PLATFORM_ID); // <--- INYECTAR
 
   private statusLabels: Record<string, string> = {
     sale: "En Venta",
@@ -111,7 +113,10 @@ export class PropertyDetailsComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    window.scrollTo(0, 0);
+    if (isPlatformBrowser(this.platformId)) {
+      window.scrollTo(0, 0);
+    }
+
     this.route.paramMap.subscribe((params) => {
       const id = params.get("id");
       if (id) {
@@ -129,6 +134,22 @@ export class PropertyDetailsComponent implements OnInit {
       .pipe(finalize(() => this.setLoading(false)))
       .subscribe({
         next: (property) => {
+          // --- SEO DINÁMICO ---
+          // Esto actualiza los metadatos con la info real de la casa
+          const mainImage =
+            property.images && property.images.length > 0
+              ? property.images[0]
+              : undefined;
+
+          this.seoService.updateSeoData(
+            property.title,
+            `Propiedad en ${this.getStatusLabel(property.status)}. Precio: $${
+              property.price
+            }. ${property.description.substring(0, 100)}...`,
+            mainImage
+          );
+          // --------------------
+
           const propertyWithImages = {
             ...property,
             images: property.images?.length

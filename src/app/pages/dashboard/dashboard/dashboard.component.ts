@@ -17,6 +17,7 @@ import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { PaginatedProperties } from "../../../interfaces/properties/paginated-properties.interface";
 import { StatCard } from "../../../interfaces/dashboard/stat-card.interface";
 import { StatCardsComponent } from "../../../components/dashboard/stat-cards/stat-cards.component";
+import { SeoService } from "../../../services/seo.service";
 
 @Component({
   selector: "dashboard-dashboard",
@@ -28,12 +29,13 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   private authService = inject(AuthService);
   private propertyService = inject(PropertyService);
   private destroyRef = inject(DestroyRef);
-  private document = inject(DOCUMENT); // Inyectado para animaciones UI
+  private document = inject(DOCUMENT);
+  private seoService = inject(SeoService);
 
   public statsLoading = true;
   public user = computed(() => this.authService.currentUser());
   public isSuperAdmin = computed(() => this.authService.isSuperAdmin());
-  private observer: IntersectionObserver | null = null; // Para animaciones UI
+  private observer: IntersectionObserver | null = null;
 
   public stats: StatCard[] = [
     {
@@ -69,6 +71,11 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   constructor() {}
 
   ngOnInit(): void {
+    this.seoService.updateSeoData(
+      "Panel de Control",
+      "Gestión administrativa de propiedades y usuarios."
+    );
+
     this.loadStatsData();
     this.propertyService.statsUpdates$
       .pipe(takeUntilDestroyed(this.destroyRef))

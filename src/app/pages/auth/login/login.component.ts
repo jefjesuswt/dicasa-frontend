@@ -10,6 +10,7 @@ import { Router, RouterModule } from "@angular/router";
 import { ToastService } from "../../../services/toast.service";
 import { AuthService } from "../../../services/auth.service";
 import { finalize } from "rxjs/operators";
+import { SeoService } from "../../../services/seo.service";
 
 @Component({
   selector: "auth-login",
@@ -21,7 +22,15 @@ export class LoginComponent {
   private fb = inject(FormBuilder);
   private router = inject(Router);
   private authService = inject(AuthService);
+  private seoService = inject(SeoService);
   private toast = inject(ToastService);
+
+  ngOnInit() {
+    this.seoService.updateSeoData(
+      "Iniciar Sesión",
+      "Accede a tu cuenta de Dicasa Group."
+    );
+  }
 
   loading = false;
 

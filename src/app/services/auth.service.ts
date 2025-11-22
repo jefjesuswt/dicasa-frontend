@@ -1,4 +1,11 @@
-import { computed, inject, Injectable, signal } from "@angular/core";
+import {
+  computed,
+  inject,
+  Injectable,
+  signal,
+  PLATFORM_ID,
+} from "@angular/core";
+import { isPlatformBrowser } from "@angular/common";
 import { catchError, map, Observable, of, tap } from "rxjs";
 import { HttpClient } from "@angular/common/http";
 import { Router } from "@angular/router";
@@ -16,6 +23,9 @@ export class AuthService {
   private _authStatus = signal<AuthStatus>(AuthStatus.checking);
   private readonly FLOW_STATE_KEY = "auth_flow_email";
 
+  // Inyectamos el ID de la plataforma para saber si es Server o Browser
+  private platformId = inject(PLATFORM_ID);
+
   public currentUser = computed(() => this._currentUser());
   public authStatus = computed(() => this._authStatus());
 
@@ -25,20 +35,38 @@ export class AuthService {
   private http = inject(HttpClient);
 
   constructor() {
-    this.checkAuthStatus().subscribe();
+    // CORRECCIÓN CRÍTICA: Solo intentamos chequear auth si estamos en el navegador.
+    // El servidor (Node.js) no tiene token ni localStorage.
+    if (isPlatformBrowser(this.platformId)) {
+      this.checkAuthStatus().subscribe();
+    } else {
+      // En el servidor, asumimos directamente que no está autenticado
+      this._authStatus.set(AuthStatus.unauthenticated);
+    }
   }
 
+  // --- MÉTODOS DE SESSION STORAGE (Protegidos) ---
+
   public setTempEmailForFlow(email: string): void {
-    sessionStorage.setItem(this.FLOW_STATE_KEY, email);
+    if (isPlatformBrowser(this.platformId)) {
+      sessionStorage.setItem(this.FLOW_STATE_KEY, email);
+    }
   }
 
   public getTempEmailForFlow(): string | null {
-    return sessionStorage.getItem(this.FLOW_STATE_KEY);
+    if (isPlatformBrowser(this.platformId)) {
+      return sessionStorage.getItem(this.FLOW_STATE_KEY);
+    }
+    return null;
   }
 
   public clearTempEmailForFlow(): void {
-    sessionStorage.removeItem(this.FLOW_STATE_KEY);
+    if (isPlatformBrowser(this.platformId)) {
+      sessionStorage.removeItem(this.FLOW_STATE_KEY);
+    }
   }
+
+  // --- MÉTODOS PRINCIPALES ---
 
   public updateCurrentUserState(updatedUser: User): void {
     this._currentUser.set(updatedUser);
@@ -47,10 +75,15 @@ export class AuthService {
   setCurrentUser = ({ user, token }: AuthResponse) => {
     this._currentUser.set(user);
     this._authStatus.set(AuthStatus.authenticated);
-    localStorage.setItem("accessToken", token.accessToken);
-    if (token.refreshToken) {
-      localStorage.setItem("refreshToken", token.refreshToken);
+
+    // Protección de LocalStorage
+    if (isPlatformBrowser(this.platformId)) {
+      localStorage.setItem("accessToken", token.accessToken);
+      if (token.refreshToken) {
+        localStorage.setItem("refreshToken", token.refreshToken);
+      }
     }
+
     this.clearTempEmailForFlow();
   };
 
@@ -116,6 +149,13 @@ export class AuthService {
   }
 
   checkAuthStatus(): Observable<boolean> {
+    // 1. Si estamos en el SERVIDOR, retornamos false inmediatamente.
+    // Esto evita el error "localStorage is not defined".
+    if (!isPlatformBrowser(this.platformId)) {
+      return of(false);
+    }
+
+    // 2. Lógica normal del NAVEGADOR
     const url = `${this.apiUrl}/checkToken`;
     const token = localStorage.getItem("accessToken");
 
@@ -132,6 +172,7 @@ export class AuthService {
       catchError(() => {
         this._authStatus.set(AuthStatus.unauthenticated);
         this._currentUser.set(null);
+        // Seguro borrar porque ya validamos isPlatformBrowser arriba
         localStorage.removeItem("accessToken");
         localStorage.removeItem("refreshToken");
         return of(false);
@@ -169,8 +210,12 @@ export class AuthService {
     this._currentUser.set(null);
     this._authStatus.set(AuthStatus.unauthenticated);
     this.clearTempEmailForFlow();
-    localStorage.removeItem("accessToken");
-    localStorage.removeItem("refreshToken");
+
+    // Protección de LocalStorage
+    if (isPlatformBrowser(this.platformId)) {
+      localStorage.removeItem("accessToken");
+      localStorage.removeItem("refreshToken");
+    }
   }
 
   logout() {

@@ -2,13 +2,14 @@ import {
   Component,
   inject,
   OnInit,
-  AfterViewInit,
   OnDestroy,
+  afterNextRender,
 } from "@angular/core";
 import { CommonModule, DOCUMENT } from "@angular/common";
 import { RouterModule } from "@angular/router";
 import { PropertyService } from "../../services/property.service";
 import { Property } from "../../interfaces/properties/property.interface";
+import { SeoService } from "../../services/seo.service"; // <--- IMPORTAR
 
 @Component({
   selector: "home-home",
@@ -16,14 +17,21 @@ import { Property } from "../../interfaces/properties/property.interface";
   imports: [CommonModule, RouterModule],
   templateUrl: "./home.component.html",
 })
-export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
+export class HomeComponent implements OnInit, OnDestroy {
   featuredProperties: Property[] = [];
   loading = true;
   error: string | null = null;
 
   private propertyService = inject(PropertyService);
+  private seoService = inject(SeoService); // <--- INYECTAR
   private document = inject(DOCUMENT);
   private observer: IntersectionObserver | null = null;
+
+  constructor() {
+    afterNextRender(() => {
+      this.initScrollAnimations();
+    });
+  }
 
   services = [
     {
@@ -49,12 +57,16 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
   ];
 
   ngOnInit(): void {
+    // --- SEO STATIC ---
+    this.seoService.updateSeoData(
+      "Inicio",
+      "Asesoría integral y de calidad. Compra, venta y alquiler de propiedades en Lechería con Dicasa Group."
+    );
+
     this.loadProperties();
   }
 
-  ngAfterViewInit() {
-    this.initScrollAnimations();
-  }
+  // ELIMINADO ngAfterViewInit (Conflictivo con SSR)
 
   ngOnDestroy() {
     this.observer?.disconnect();
@@ -67,7 +79,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
         this.featuredProperties = properties.slice(0, 3);
         this.loading = false;
 
-        // Reiniciamos animaciones porque el DOM cambió
+        // Reiniciamos animaciones
         setTimeout(() => this.initScrollAnimations(), 100);
       },
       error: (err) => {
@@ -83,15 +95,13 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
     const options = {
       root: null,
       rootMargin: "0px",
-      threshold: 0.15, // Un poco más sensible para que cargue antes
+      threshold: 0.15,
     };
 
     this.observer = new IntersectionObserver((entries) => {
       entries.forEach((entry) => {
         if (entry.isIntersecting) {
           entry.target.classList.add("is-visible");
-          // Opcional: Dejar de observar una vez animado para mejor rendimiento
-          // this.observer?.unobserve(entry.target);
         }
       });
     }, options);

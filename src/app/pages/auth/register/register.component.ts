@@ -19,6 +19,7 @@ import {
   PhoneNumberFormat,
 } from "ngx-intl-tel-input";
 import { ToastService } from "../../../services/toast.service";
+import { SeoService } from "../../../services/seo.service";
 
 @Component({
   selector: "auth-register",
@@ -79,6 +80,7 @@ export class RegisterComponent {
   private fb = inject(FormBuilder);
   private authService = inject(AuthService);
   private toast = inject(ToastService);
+  private seoService = inject(SeoService); // Inyectar
 
   loading = false;
 
@@ -89,6 +91,13 @@ export class RegisterComponent {
   ];
   phoneFormat = PhoneNumberFormat.International;
   CountryISO = CountryISO;
+
+  ngOnInit() {
+    this.seoService.updateSeoData(
+      "Registro de Usuario",
+      "Crea tu cuenta en Dicasa Group para gestionar tus propiedades y citas."
+    );
+  }
 
   private passwordMatchValidator(g: AbstractControl): ValidationErrors | null {
     const password = g.get("password")?.value;

@@ -10,7 +10,11 @@ import {
 } from "@angular/router";
 import { provideHotToastConfig } from "@ngxpert/hot-toast";
 import { routes } from "./app.routes";
-import { provideHttpClient, withInterceptors } from "@angular/common/http";
+import {
+  provideHttpClient,
+  withFetch,
+  withInterceptors,
+} from "@angular/common/http";
 import { PreloadStrategyService } from "./services/preload-strategy.service";
 import { authInterceptor } from "./interceptors/auth.interceptor";
 import { provideAnimationsAsync } from "@angular/platform-browser/animations/async";
@@ -20,9 +24,15 @@ import { primeNgTranslation } from "./primeNgTranslation";
 
 import { registerLocaleData } from "@angular/common";
 import localeEs from "@angular/common/locales/es";
+import {
+  provideClientHydration,
+  withEventReplay,
+} from "@angular/platform-browser";
+
 registerLocaleData(localeEs, "es");
 export const appConfig: ApplicationConfig = {
   providers: [
+    provideClientHydration(withEventReplay()),
     provideZoneChangeDetection({ eventCoalescing: true }),
     { provide: LOCALE_ID, useValue: "es" },
     provideRouter(
@@ -39,10 +49,11 @@ export const appConfig: ApplicationConfig = {
         },
       },
     }),
-    provideHttpClient(withInterceptors([authInterceptor])),
+    provideHttpClient(withFetch(), withInterceptors([authInterceptor])),
     provideHotToastConfig({
       position: "bottom-center",
     }),
     provideAnimationsAsync(),
+    provideClientHydration(withEventReplay()),
   ],
 };
