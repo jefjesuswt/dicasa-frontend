@@ -1,522 +1,458 @@
-<div class="container mx-auto px-4 py-8">
-  <div class="max-w-3xl mx-auto">
-    <h1 class="text-2xl font-bold text-gray-900 mb-6">{{ pageTitle }}</h1>
+<div class="min-h-screen bg-slate-950 text-slate-300 font-sans p-4 md:p-8">
 
-    <div
-      class="transition-opacity duration-300"
-      [class.opacity-50]="initialLoading"
-      [class.pointer-events-none]="initialLoading"
-    >
-      @if (initialLoading) {
-      <div class="flex justify-center items-center py-16">
-        <i
-          class="pi pi-spin pi-spinner text-sky-600"
-          style="font-size: 2rem"
-        ></i>
-        <span class="ml-3 text-gray-700">Cargando propiedad...</span>
-      </div>
-      } @if (!initialLoading) {
-      <form
-        [formGroup]="propertyForm"
-        (ngSubmit)="onSubmit()"
-        class="bg-white p-6 md:p-8 rounded-lg shadow-md space-y-8"
-        [class.opacity-50]="isSaving"
-        [class.pointer-events-none]="isSaving"
+  <!-- Header -->
+  <div class="max-w-4xl mx-auto mb-8 border-b border-white/10 pb-6">
+    <div class="flex items-center gap-3 mb-2">
+      <button
+        (click)="cancel()"
+        class="group flex items-center justify-center w-8 h-8 rounded-sm text-slate-500 hover:text-white hover:bg-white/5 transition-all border border-transparent hover:border-white/10"
+        title="Cancelar y Volver"
       >
-        <section class="space-y-4">
-          <h2 class="text-lg font-semibold text-gray-800 border-b pb-2 mb-4">
-            Información Básica
-          </h2>
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div class="md:col-span-2">
-              <label
-                for="agent"
-                class="block text-sm font-medium text-gray-700 mb-1"
-                >Agente Asignado</label
-              >
-              <select
-                id="agent"
-                formControlName="agent"
-                class="block w-full rounded-md border-gray-300 shadow-sm focus:border-sky-500 focus:ring-sky-500 sm:text-sm py-2 px-3 disabled:bg-gray-100 disabled:cursor-not-allowed"
-                [disabled]="agents.length === 0"
-              >
-                <option [ngValue]="null" disabled>
-                  {{
-                    agents.length > 0
-                      ? "Seleccione un agente..."
-                      : "No hay agentes disponibles..."
-                  }}
-                </option>
-                @for (agent of agents; track agent._id) {
-                <option [ngValue]="agent._id">{{ agent.name }}</option>
-                }
-              </select>
-              @if (propertyForm.get('agent')?.invalid &&
-              propertyForm.get('agent')?.touched) {
-              <p class="mt-1 text-sm text-red-600">
-                Debe seleccionar un agente.
-              </p>
-              }
-            </div>
-
-            <div>
-              <label
-                for="title"
-                class="block text-sm font-medium text-gray-700 mb-1"
-                >Título</label
-              >
-              <input
-                id="title"
-                type="text"
-                formControlName="title"
-                class="block w-full rounded-md border-gray-300 shadow-sm focus:border-sky-500 focus:ring-sky-500 sm:text-sm py-2 px-3"
-              />
-              @if (propertyForm.get('title')?.invalid &&
-              propertyForm.get('title')?.touched) {
-              <p class="mt-1 text-sm text-red-600">
-                El título es requerido (mín. 5 caracteres).
-              </p>
-              }
-            </div>
-
-            <div>
-              <label
-                for="price"
-                class="block text-sm font-medium text-gray-700 mb-1"
-                >Precio (USD)</label
-              >
-              <input
-                id="price"
-                type="number"
-                formControlName="price"
-                class="block w-full rounded-md border-gray-300 shadow-sm focus:border-sky-500 focus:ring-sky-500 sm:text-sm py-2 px-3"
-              />
-              @if (propertyForm.get('price')?.invalid &&
-              propertyForm.get('price')?.touched) {
-              <p class="mt-1 text-sm text-red-600">
-                El precio es requerido (> 0).
-              </p>
-              }
-            </div>
-
-            <div>
-              <label
-                for="type"
-                class="block text-sm font-medium text-gray-700 mb-1"
-                >Tipo</label
-              >
-              <select
-                id="type"
-                formControlName="type"
-                class="block w-full rounded-md border-gray-300 shadow-sm focus:border-sky-500 focus:ring-sky-500 sm:text-sm py-2 px-3"
-              >
-                <option value="house">Casa</option>
-                <option value="apartment">Departamento</option>
-                <option value="land">Terreno</option>
-                <option value="commercial">Comercial</option>
-                <option value="villa">Villa</option>
-              </select>
-            </div>
-
-            <div>
-              <label
-                for="status"
-                class="block text-sm font-medium text-gray-700 mb-1"
-                >Estado</label
-              >
-              <select
-                id="status"
-                formControlName="status"
-                class="block w-full rounded-md border-gray-300 shadow-sm focus:border-sky-500 focus:ring-sky-500 sm:text-sm py-2 px-3"
-              >
-                <option value="sale">En Venta</option>
-                <option value="rent">En Alquiler</option>
-                <option value="sold">Vendido</option>
-                <option value="rented">Alquilado</option>
-              </select>
-            </div>
-          </div>
-
-          <div>
-            <label
-              for="description"
-              class="block text-sm font-medium text-gray-700 mb-1"
-              >Descripción</label
-            >
-            <textarea
-              id="description"
-              formControlName="description"
-              rows="4"
-              class="block w-full rounded-md border-gray-300 shadow-sm focus:border-sky-500 focus:ring-sky-500 sm:text-sm py-2 px-3"
-            ></textarea>
-            @if (propertyForm.get('description')?.invalid &&
-            propertyForm.get('description')?.touched) {
-            <p class="mt-1 text-sm text-red-600">
-              La descripción es requerida (mín. 20 caracteres).
-            </p>
-            }
-          </div>
-        </section>
-
-        <section class="space-y-4">
-          <h2 class="text-lg font-semibold text-gray-800 border-b pb-2 mb-4">
-            Detalles
-          </h2>
-          <div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
-            @if (isResidentialType) {
-            <div>
-              <label
-                for="bedrooms"
-                class="block text-sm font-medium text-gray-700 mb-1"
-                >Habitaciones</label
-              >
-              <input
-                id="bedrooms"
-                type="number"
-                formControlName="bedrooms"
-                min="0"
-                class="block w-full rounded-md border-gray-300 shadow-sm focus:border-sky-500 focus:ring-sky-500 sm:text-sm py-2 px-3"
-              />
-            </div>
-            <div>
-              <label
-                for="bathrooms"
-                class="block text-sm font-medium text-gray-700 mb-1"
-                >Baños</label
-              >
-              <input
-                id="bathrooms"
-                type="number"
-                formControlName="bathrooms"
-                min="0"
-                class="block w-full rounded-md border-gray-300 shadow-sm focus:border-sky-500 focus:ring-sky-500 sm:text-sm py-2 px-3"
-              />
-            </div>
-            } @else {
-            <div class="hidden sm:block sm:col-span-2"></div>
-            }
-            <div>
-              <label
-                for="area"
-                class="block text-sm font-medium text-gray-700 mb-1"
-                >Área (m²)</label
-              >
-              <input
-                id="area"
-                type="number"
-                formControlName="area"
-                min="1"
-                class="block w-full rounded-md border-gray-300 shadow-sm focus:border-sky-500 focus:ring-sky-500 sm:text-sm py-2 px-3"
-              />
-            </div>
-          </div>
-        </section>
-
-        <section formGroupName="address" class="space-y-4">
-          <h2 class="text-lg font-semibold text-gray-800 border-b pb-2 mb-4">
-            Dirección
-          </h2>
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div>
-              <label
-                for="address-address"
-                class="block text-sm font-medium text-gray-700 mb-1"
-                >Dirección</label
-              >
-              <input
-                id="address-address"
-                type="text"
-                formControlName="address"
-                class="block w-full rounded-md border-gray-300 shadow-sm focus:border-sky-500 focus:ring-sky-500 sm:text-sm py-2 px-3"
-              />
-            </div>
-            <div>
-              <label
-                for="address-state"
-                class="block text-sm font-medium text-gray-700 mb-1"
-                >Estado</label
-              >
-              <select
-                id="address-state"
-                formControlName="state"
-                class="block w-full rounded-md border-gray-300 shadow-sm focus:border-sky-500 focus:ring-sky-500 sm:text-sm py-2 px-3"
-              >
-                <option value="" disabled>Seleccione un estado...</option>
-                @for (state of states; track state.state) {
-                <option [value]="state.state">{{ state.state }}</option>
-                }
-              </select>
-              @if (propertyForm.get('address.state')?.invalid &&
-              propertyForm.get('address.state')?.touched) {
-              <p class="mt-1 text-sm text-red-600">El estado es requerido.</p>
-              }
-            </div>
-            <div>
-              <label
-                for="address-city"
-                class="block text-sm font-medium text-gray-700 mb-1"
-                >Ciudad / Municipio</label
-              >
-              <select
-                id="address-city"
-                formControlName="city"
-                [disabled]="isLoadingCities || cities.length === 0"
-                class="block w-full rounded-md border-gray-300 shadow-sm focus:border-sky-500 focus:ring-sky-500 sm:text-sm py-2 px-3 disabled:bg-gray-100 disabled:cursor-not-allowed"
-              >
-                <option value="" disabled>
-                  {{
-                    isLoadingCities ? "Cargando..." : "Seleccione una ciudad..."
-                  }}
-                </option>
-                @for (city of cities; track city) {
-                <option [value]="city">{{ city }}</option>
-                }
-              </select>
-              @if (propertyForm.get('address.city')?.invalid &&
-              propertyForm.get('address.city')?.touched) {
-              <p class="mt-1 text-sm text-red-600">La ciudad es requerida.</p>
-              }
-            </div>
-
-            <div>
-              <label
-                for="address-country"
-                class="block text-sm font-medium text-gray-700 mb-1"
-                >País</label
-              >
-              <input
-                id="address-country"
-                type="text"
-                formControlName="country"
-                class="block w-full rounded-md border-gray-300 shadow-sm focus:border-sky-500 focus:ring-sky-500 sm:text-sm py-2 px-3"
-              />
-            </div>
-          </div>
-        </section>
-
-        <section formGroupName="features" class="space-y-4">
-          <h2 class="text-lg font-semibold text-gray-800 border-b pb-2 mb-4">
-            Características Adicionales
-          </h2>
-          <div class="grid grid-cols-2 sm:grid-cols-3 gap-x-6 gap-y-4">
-            <div class="flex items-center">
-              <input
-                id="features-parking"
-                type="checkbox"
-                formControlName="hasParking"
-                class="h-4 w-4 text-sky-600 border-gray-300 rounded focus:ring-sky-500"
-              />
-              <label
-                for="features-parking"
-                class="ml-2 block text-sm text-gray-900"
-                >Estacionamiento</label
-              >
-            </div>
-            <div class="flex items-center">
-              <input
-                id="features-furniture"
-                type="checkbox"
-                formControlName="hasFurniture"
-                class="h-4 w-4 text-sky-600 border-gray-300 rounded focus:ring-sky-500"
-              />
-              <label
-                for="features-furniture"
-                class="ml-2 block text-sm text-gray-900"
-                >Amoblado</label
-              >
-            </div>
-            <div class="flex items-center">
-              <input
-                id="features-pool"
-                type="checkbox"
-                formControlName="hasPool"
-                class="h-4 w-4 text-sky-600 border-gray-300 rounded focus:ring-sky-500"
-              />
-              <label
-                for="features-pool"
-                class="ml-2 block text-sm text-gray-900"
-                >Piscina</label
-              >
-            </div>
-            <div class="flex items-center">
-              <input
-                id="features-garden"
-                type="checkbox"
-                formControlName="hasGarden"
-                class="h-4 w-4 text-sky-600 border-gray-300 rounded focus:ring-sky-500"
-              />
-              <label
-                for="features-garden"
-                class="ml-2 block text-sm text-gray-900"
-                >Jardín</label
-              >
-            </div>
-            <div class="flex items-center">
-              <input
-                id="features-pets"
-                type="checkbox"
-                formControlName="isPetFriendly"
-                class="h-4 w-4 text-sky-600 border-gray-300 rounded focus:ring-sky-500"
-              />
-              <label
-                for="features-pets"
-                class="ml-2 block text-sm text-gray-900"
-                >Admite Mascotas
-              </label>
-            </div>
-          </div>
-        </section>
-
-        <section class="space-y-4">
-          <h2 class="text-lg font-semibold text-gray-800 border-b pb-2 mb-4">
-            Imágenes
-          </h2>
-
-          @if (isEditMode && existingImageUrls.length > 0) {
-          <h3 class="text-sm font-medium text-gray-700">Imágenes Actuales</h3>
-          <div class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-3">
-            @for (url of existingImageUrls; track $index) {
-            <div class="relative group">
-              <img
-                [src]="url"
-                alt="Imagen existente"
-                class="h-24 w-24 object-cover rounded-md shadow-sm"
-              />
-              <button
-                type="button"
-                (click)="removeExistingImage($index)"
-                class="absolute top-0 right-0 -mt-2 bg-red-600 text-white rounded-full p-1 leading-none shadow-md opacity-0 group-hover:opacity-100 transition-opacity disabled:opacity-50"
-                [disabled]="isSaving"
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  class="h-4 w-4"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M6 18L18 6M6 6l12 12"
-                  />
-                </svg>
-              </button>
-            </div>
-            }
-          </div>
-          }
-
-          <div>
-            <label
-              for="file-upload"
-              class="block text-sm font-medium text-gray-700 mb-1"
-            >
-              {{ isEditMode ? "Agregar más imágenes" : "Subir Imágenes" }}
-              (Múltiples)
-            </label>
-            <input
-              id="file-upload"
-              type="file"
-              multiple
-              (change)="onFileSelect($event)"
-              class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-sky-50 file:text-sky-700 hover:file:bg-sky-100"
-              accept="image/png, image/jpeg, image/webp"
-              [disabled]="isSaving"
-            />
-            @if (isUploadingImages) {
-            <p class="mt-2 text-sm text-sky-600 flex items-center">
-              <i class="pi pi-spin pi-spinner mr-2"></i> Subiendo imágenes...
-            </p>
-            }
-          </div>
-
-          @if (imagePreviews.length > 0) {
-          <h3 class="text-sm font-medium text-gray-700">
-            Nuevas Imágenes (previsualización)
-          </h3>
-          <div class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-3">
-            @for (preview of imagePreviews; track $index) {
-            <div class="relative group">
-              <img
-                [src]="preview"
-                alt="Previsualización"
-                class="h-24 w-24 object-cover rounded-md shadow-sm"
-              />
-              <button
-                type="button"
-                (click)="removeSelectedFile($index)"
-                class="absolute top-0 right-0 -mt-2 -mr-2 bg-red-600 text-white rounded-full p-1 leading-none shadow-md opacity-0 group-hover:opacity-100 transition-opacity disabled:opacity-50"
-                [disabled]="isSaving"
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  class="h-4 w-4"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M6 18L18 6M6 6l12 12"
-                  />
-                </svg>
-              </button>
-            </div>
-            }
-          </div>
-          }
-        </section>
-
-        <div class="pt-2 flex items-center">
-          <input
-            id="featured"
-            type="checkbox"
-            formControlName="featured"
-            class="h-4 w-4 text-sky-600 border-gray-300 rounded focus:ring-sky-500"
-          />
-          <label
-            for="featured"
-            class="ml-2 block text-sm text-gray-900 font-medium"
-            >Marcar como Destacado</label
-          >
-        </div>
-
-        <div class="pt-6 border-t border-gray-200">
-          <div class="flex justify-end space-x-3">
-            <button
-              type="button"
-              (click)="cancel()"
-              [disabled]="isSaving"
-              class="bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-sky-500 disabled:opacity-50"
-            >
-              Cancelar
-            </button>
-            <button
-              type="submit"
-              [disabled]="
-                propertyForm.invalid || isSaving || propertyForm.pristine
-              "
-              class="inline-flex justify-center items-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-sky-600 hover:bg-sky-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-sky-500 disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              @if (isSaving) {
-              <span class="inline-flex items-center">
-                <i class="pi pi-spin pi-spinner mr-2"></i>
-                <span>Guardando...</span>
-              </span>
-              } @else {
-              <span>
-                {{ isEditMode ? "Guardar Cambios" : "Crear Propiedad" }}
-              </span>
-              }
-            </button>
-          </div>
-        </div>
-      </form>
-      }
+        <i class="pi pi-arrow-left text-sm group-hover:-translate-x-0.5 transition-transform"></i>
+      </button>
+      <h1 class="text-2xl font-bold text-white uppercase tracking-tight">
+        {{ pageTitle }}
+      </h1>
     </div>
+    <p class="text-sm text-slate-500 font-mono ml-11">
+      {{ isEditMode ? 'ACTUALIZAR FICHA TÉCNICA Y DETALLES DEL INMUEBLE.' : 'FORMULARIO DE INGRESO AL INVENTARIO DE PROPIEDADES.' }}
+    </p>
+  </div>
+
+  <!-- Loading State -->
+  <div
+    class="transition-opacity duration-300"
+    [class.opacity-50]="initialLoading"
+    [class.pointer-events-none]="initialLoading"
+  >
+    @if (initialLoading) {
+      <div class="flex flex-col justify-center items-center py-32 border border-dashed border-white/10 rounded-sm">
+        <div class="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-sky-500 mb-4"></div>
+        <span class="text-slate-500 font-mono text-sm animate-pulse tracking-widest uppercase">Cargando Inmueble...</span>
+      </div>
+    } @if (!initialLoading) {
+
+      <!-- Card Container -->
+      <div class="max-w-4xl mx-auto bg-slate-950 border border-white/10 relative shadow-2xl shadow-black/50">
+
+        <!-- Tech Corners -->
+        <div class="absolute top-0 left-0 w-3 h-3 border-t border-l border-sky-500"></div>
+        <div class="absolute top-0 right-0 w-3 h-3 border-t border-r border-sky-500"></div>
+        <div class="absolute bottom-0 left-0 w-3 h-3 border-b border-l border-sky-500"></div>
+        <div class="absolute bottom-0 right-0 w-3 h-3 border-b border-r border-sky-500"></div>
+
+        <form
+          [formGroup]="propertyForm"
+          (ngSubmit)="onSubmit()"
+          class="p-6 md:p-10 space-y-10"
+          [class.opacity-50]="isSaving"
+          [class.pointer-events-none]="isSaving"
+        >
+          <!-- SECCIÓN 1: INFO BÁSICA -->
+          <section class="space-y-6">
+            <h3 class="flex items-center gap-2 text-xs font-bold text-white uppercase tracking-widest border-b border-white/10 pb-2 mb-6 text-sky-500">
+              <i class="pi pi-file"></i> 01 // Información Básica
+            </h3>
+
+            <!-- Agente -->
+            <div class="bg-white/[0.02] border border-white/5 p-4 rounded-sm">
+               <label for="agent" class="block text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-2">
+                 Agente Asignado <span class="text-red-500">*</span>
+               </label>
+               <select
+                 id="agent"
+                 formControlName="agent"
+                 class="w-full bg-slate-900 border border-white/10 rounded-sm px-4 py-3 text-white placeholder-slate-600 focus:outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500 transition-all font-mono text-sm disabled:opacity-50"
+                 [class.border-red-500]="propertyForm.get('agent')?.invalid && propertyForm.get('agent')?.touched"
+               >
+                 <option [ngValue]="null" disabled class="text-slate-500">
+                   {{ agents.length > 0 ? "SELECCIONE AGENTE..." : "SIN AGENTES DISPONIBLES" }}
+                 </option>
+                 @for (agent of agents; track agent._id) {
+                   <option [ngValue]="agent._id" class="text-slate-300">{{ agent.name }}</option>
+                 }
+               </select>
+               @if (propertyForm.get('agent')?.invalid && propertyForm.get('agent')?.touched) {
+                 <p class="text-[10px] text-red-400 font-mono uppercase mt-1">Requerido</p>
+               }
+            </div>
+
+            <!-- Título y Precio -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div class="space-y-2">
+                <label for="title" class="block text-[10px] font-bold text-slate-500 uppercase tracking-widest">
+                  Título del Inmueble <span class="text-red-500">*</span>
+                </label>
+                <input
+                  id="title"
+                  type="text"
+                  formControlName="title"
+                  class="w-full bg-slate-900 border border-white/10 rounded-sm px-4 py-3 text-white placeholder-slate-600 focus:outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500 transition-all font-mono text-sm"
+                  placeholder="Ej. Casa Moderna en Lechería"
+                />
+                @if (propertyForm.get('title')?.invalid && propertyForm.get('title')?.touched) {
+                  <p class="text-[10px] text-red-400 font-mono uppercase mt-1">Requerido (Mín. 5 chars)</p>
+                }
+              </div>
+
+              <div class="space-y-2">
+                <label for="price" class="block text-[10px] font-bold text-slate-500 uppercase tracking-widest">
+                  Precio (USD) <span class="text-red-500">*</span>
+                </label>
+                <div class="relative">
+                   <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                     <span class="text-slate-500 font-mono">$</span>
+                   </div>
+                   <input
+                     id="price"
+                     type="number"
+                     formControlName="price"
+                     class="w-full bg-slate-900 border border-white/10 rounded-sm pl-8 pr-4 py-3 text-white placeholder-slate-600 focus:outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500 transition-all font-mono text-sm"
+                     placeholder="0.00"
+                   />
+                </div>
+                @if (propertyForm.get('price')?.invalid && propertyForm.get('price')?.touched) {
+                  <p class="text-[10px] text-red-400 font-mono uppercase mt-1">Requerido (> 0)</p>
+                }
+              </div>
+            </div>
+
+            <!-- Tipo y Estatus -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div class="space-y-2">
+                <label for="type" class="block text-[10px] font-bold text-slate-500 uppercase tracking-widest">
+                  Tipo de Inmueble <span class="text-red-500">*</span>
+                </label>
+                <select
+                  id="type"
+                  formControlName="type"
+                  class="w-full bg-slate-900 border border-white/10 rounded-sm px-4 py-3 text-white focus:outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500 font-mono text-sm"
+                >
+                  <option value="house">CASA</option>
+                  <option value="apartment">DEPARTAMENTO</option>
+                  <option value="land">TERRENO</option>
+                  <option value="commercial">LOCAL COMERCIAL</option>
+                  <option value="villa">VILLA</option>
+                </select>
+              </div>
+
+              <div class="space-y-2">
+                <label for="status" class="block text-[10px] font-bold text-slate-500 uppercase tracking-widest">
+                  Estatus Comercial <span class="text-red-500">*</span>
+                </label>
+                <select
+                  id="status"
+                  formControlName="status"
+                  class="w-full bg-slate-900 border border-white/10 rounded-sm px-4 py-3 text-white focus:outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500 font-mono text-sm"
+                >
+                  <option value="sale">EN VENTA</option>
+                  <option value="rent">EN ALQUILER</option>
+                  <option value="sold">VENDIDO</option>
+                  <option value="rented">ALQUILADO</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Descripción -->
+            <div class="space-y-2">
+               <label for="description" class="block text-[10px] font-bold text-slate-500 uppercase tracking-widest">
+                  Descripción Detallada <span class="text-red-500">*</span>
+                </label>
+                <textarea
+                  id="description"
+                  formControlName="description"
+                  rows="4"
+                  class="w-full bg-slate-900 border border-white/10 rounded-sm px-4 py-3 text-white placeholder-slate-600 focus:outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500 transition-all font-mono text-sm"
+                  placeholder="Describa las características principales..."
+                ></textarea>
+                @if (propertyForm.get('description')?.invalid && propertyForm.get('description')?.touched) {
+                  <p class="text-[10px] text-red-400 font-mono uppercase mt-1">Requerido (Mín. 20 chars)</p>
+                }
+            </div>
+          </section>
+
+          <!-- SECCIÓN 2: DETALLES -->
+          <section class="space-y-6">
+            <h3 class="flex items-center gap-2 text-xs font-bold text-white uppercase tracking-widest border-b border-white/10 pb-2 mb-6 text-sky-500">
+              <i class="pi pi-sliders-h"></i> 02 // Especificaciones Técnicas
+            </h3>
+
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
+               @if (isResidentialType) {
+                 <div class="space-y-2">
+                   <label for="bedrooms" class="block text-[10px] font-bold text-slate-500 uppercase tracking-widest">Habitaciones</label>
+                   <input
+                     id="bedrooms"
+                     type="number"
+                     formControlName="bedrooms"
+                     min="0"
+                     class="w-full bg-slate-900 border border-white/10 rounded-sm px-4 py-3 text-white focus:border-sky-500 font-mono text-sm"
+                   />
+                 </div>
+                 <div class="space-y-2">
+                    <label for="bathrooms" class="block text-[10px] font-bold text-slate-500 uppercase tracking-widest">Baños</label>
+                    <input
+                      id="bathrooms"
+                      type="number"
+                      formControlName="bathrooms"
+                      min="0"
+                      class="w-full bg-slate-900 border border-white/10 rounded-sm px-4 py-3 text-white focus:border-sky-500 font-mono text-sm"
+                    />
+                 </div>
+               } @else {
+                  <div class="hidden sm:block sm:col-span-2 p-4 border border-dashed border-white/10 rounded-sm flex items-center justify-center">
+                    <span class="text-xs text-slate-600 font-mono uppercase">Opciones residenciales no aplican</span>
+                  </div>
+               }
+
+               <div class="space-y-2">
+                 <label for="area" class="block text-[10px] font-bold text-slate-500 uppercase tracking-widest">Área Total (m²)</label>
+                 <input
+                   id="area"
+                   type="number"
+                   formControlName="area"
+                   min="1"
+                   class="w-full bg-slate-900 border border-white/10 rounded-sm px-4 py-3 text-white focus:border-sky-500 font-mono text-sm"
+                 />
+               </div>
+            </div>
+          </section>
+
+          <!-- SECCIÓN 3: UBICACIÓN -->
+          <section formGroupName="address" class="space-y-6">
+            <h3 class="flex items-center gap-2 text-xs font-bold text-white uppercase tracking-widest border-b border-white/10 pb-2 mb-6 text-sky-500">
+              <i class="pi pi-map"></i> 03 // Ubicación Geográfica
+            </h3>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div class="md:col-span-2 space-y-2">
+                <label for="address-address" class="block text-[10px] font-bold text-slate-500 uppercase tracking-widest">Dirección Exacta</label>
+                <input
+                  id="address-address"
+                  type="text"
+                  formControlName="address"
+                  class="w-full bg-slate-900 border border-white/10 rounded-sm px-4 py-3 text-white placeholder-slate-600 focus:outline-none focus:border-sky-500 font-mono text-sm"
+                  placeholder="Av. Principal, Edificio X, Piso Y..."
+                />
+              </div>
+
+              <div class="space-y-2">
+                <label for="address-state" class="block text-[10px] font-bold text-slate-500 uppercase tracking-widest">Estado</label>
+                <select
+                  id="address-state"
+                  formControlName="state"
+                  class="w-full bg-slate-900 border border-white/10 rounded-sm px-4 py-3 text-white focus:outline-none focus:border-sky-500 font-mono text-sm"
+                >
+                  <option value="" disabled class="text-slate-500">SELECCIONE ESTADO...</option>
+                  @for (state of states; track state.state) {
+                    <option [value]="state.state" class="text-slate-300">{{ state.state }}</option>
+                  }
+                </select>
+                @if (propertyForm.get('address.state')?.invalid && propertyForm.get('address.state')?.touched) {
+                  <p class="text-[10px] text-red-400 font-mono uppercase mt-1">Requerido</p>
+                }
+              </div>
+
+              <div class="space-y-2">
+                <label for="address-city" class="block text-[10px] font-bold text-slate-500 uppercase tracking-widest">Ciudad / Municipio</label>
+                <select
+                  id="address-city"
+                  formControlName="city"
+                  [disabled]="isLoadingCities || cities.length === 0"
+                  class="w-full bg-slate-900 border border-white/10 rounded-sm px-4 py-3 text-white focus:outline-none focus:border-sky-500 font-mono text-sm disabled:opacity-50"
+                >
+                  <option value="" disabled class="text-slate-500">
+                    {{ isLoadingCities ? "CARGANDO..." : "SELECCIONE CIUDAD..." }}
+                  </option>
+                  @for (city of cities; track city) {
+                    <option [value]="city" class="text-slate-300">{{ city }}</option>
+                  }
+                </select>
+                @if (propertyForm.get('address.city')?.invalid && propertyForm.get('address.city')?.touched) {
+                  <p class="text-[10px] text-red-400 font-mono uppercase mt-1">Requerido</p>
+                }
+              </div>
+            </div>
+          </section>
+
+          <!-- SECCIÓN 4: AMENIDADES -->
+          <section formGroupName="features" class="space-y-6">
+            <h3 class="flex items-center gap-2 text-xs font-bold text-white uppercase tracking-widest border-b border-white/10 pb-2 mb-6 text-sky-500">
+               <i class="pi pi-star"></i> 04 // Amenidades y Servicios
+            </h3>
+
+            <div class="grid grid-cols-2 sm:grid-cols-3 gap-4">
+              <!-- Checkbox Item -->
+              <div class="flex items-center p-3 bg-slate-900/50 border border-white/5 rounded-sm hover:border-sky-500/30 transition-colors">
+                <input
+                  id="features-parking"
+                  type="checkbox"
+                  formControlName="hasParking"
+                  class="h-4 w-4 bg-slate-800 border-slate-600 rounded text-sky-600 focus:ring-0 cursor-pointer"
+                />
+                <label for="features-parking" class="ml-3 block text-xs font-bold text-white uppercase cursor-pointer">Estacionamiento</label>
+              </div>
+
+              <div class="flex items-center p-3 bg-slate-900/50 border border-white/5 rounded-sm hover:border-sky-500/30 transition-colors">
+                <input
+                  id="features-furniture"
+                  type="checkbox"
+                  formControlName="hasFurniture"
+                  class="h-4 w-4 bg-slate-800 border-slate-600 rounded text-sky-600 focus:ring-0 cursor-pointer"
+                />
+                <label for="features-furniture" class="ml-3 block text-xs font-bold text-white uppercase cursor-pointer">Amoblado</label>
+              </div>
+
+              <div class="flex items-center p-3 bg-slate-900/50 border border-white/5 rounded-sm hover:border-sky-500/30 transition-colors">
+                <input
+                  id="features-pool"
+                  type="checkbox"
+                  formControlName="hasPool"
+                  class="h-4 w-4 bg-slate-800 border-slate-600 rounded text-sky-600 focus:ring-0 cursor-pointer"
+                />
+                <label for="features-pool" class="ml-3 block text-xs font-bold text-white uppercase cursor-pointer">Piscina</label>
+              </div>
+
+              <div class="flex items-center p-3 bg-slate-900/50 border border-white/5 rounded-sm hover:border-sky-500/30 transition-colors">
+                <input
+                  id="features-garden"
+                  type="checkbox"
+                  formControlName="hasGarden"
+                  class="h-4 w-4 bg-slate-800 border-slate-600 rounded text-sky-600 focus:ring-0 cursor-pointer"
+                />
+                <label for="features-garden" class="ml-3 block text-xs font-bold text-white uppercase cursor-pointer">Jardín</label>
+              </div>
+
+              <div class="flex items-center p-3 bg-slate-900/50 border border-white/5 rounded-sm hover:border-sky-500/30 transition-colors">
+                <input
+                  id="features-pets"
+                  type="checkbox"
+                  formControlName="isPetFriendly"
+                  class="h-4 w-4 bg-slate-800 border-slate-600 rounded text-sky-600 focus:ring-0 cursor-pointer"
+                />
+                <label for="features-pets" class="ml-3 block text-xs font-bold text-white uppercase cursor-pointer">Mascotas OK</label>
+              </div>
+            </div>
+          </section>
+
+          <!-- SECCIÓN 5: IMÁGENES -->
+          <section class="space-y-6">
+            <h3 class="flex items-center gap-2 text-xs font-bold text-white uppercase tracking-widest border-b border-white/10 pb-2 mb-6 text-sky-500">
+               <i class="pi pi-images"></i> 05 // Galería Multimedia
+            </h3>
+
+            <!-- Upload Area -->
+             <div class="border-2 border-dashed border-white/10 rounded-sm p-6 hover:border-sky-500/30 hover:bg-sky-500/5 transition-all text-center">
+                 <input
+                  id="file-upload"
+                  type="file"
+                  multiple
+                  (change)="onFileSelect($event)"
+                  class="hidden"
+                  accept="image/png, image/jpeg, image/webp"
+                  [disabled]="isSaving"
+                  #fileInput
+                />
+                <div class="flex flex-col items-center gap-2 cursor-pointer" (click)="fileInput.click()">
+                   <i class="pi pi-cloud-upload text-3xl text-slate-500"></i>
+                   <p class="text-sm font-bold text-white uppercase">{{ isEditMode ? "AGREGAR NUEVAS IMÁGENES" : "SUBIR IMÁGENES" }}</p>
+                   <p class="text-xs text-slate-500 font-mono">JPG, PNG, WEBP (Max 5MB)</p>
+                </div>
+                 @if (isUploadingImages) {
+                    <p class="mt-4 text-xs text-sky-400 font-mono animate-pulse">
+                      <i class="pi pi-spin pi-spinner mr-2"></i> Procesando subida...
+                    </p>
+                 }
+             </div>
+
+             <!-- Grid Imágenes Existentes -->
+             @if (isEditMode && existingImageUrls.length > 0) {
+              <div class="space-y-2">
+                <p class="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Galería Actual</p>
+                <div class="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-6 gap-4">
+                  @for (url of existingImageUrls; track $index) {
+                    <div class="relative group aspect-square bg-slate-900 border border-white/10 rounded-sm overflow-hidden">
+                       <img [src]="url" class="w-full h-full object-cover opacity-70 group-hover:opacity-100 transition-opacity">
+                       <button
+                         type="button"
+                         (click)="removeExistingImage($index)"
+                         class="absolute inset-0 flex items-center justify-center bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity text-red-500"
+                         [disabled]="isSaving"
+                       >
+                         <i class="pi pi-trash text-xl"></i>
+                       </button>
+                    </div>
+                  }
+                </div>
+              </div>
+             }
+
+             <!-- Grid Nuevas Imágenes -->
+             @if (imagePreviews.length > 0) {
+               <div class="space-y-2 pt-4 border-t border-white/5">
+                 <p class="text-[10px] font-bold text-sky-500 uppercase tracking-widest">Listo para subir ({{ imagePreviews.length }})</p>
+                 <div class="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-6 gap-4">
+                   @for (preview of imagePreviews; track $index) {
+                     <div class="relative group aspect-square bg-slate-900 border border-sky-500/30 rounded-sm overflow-hidden">
+                        <img [src]="preview" class="w-full h-full object-cover">
+                        <button
+                          type="button"
+                          (click)="removeSelectedFile($index)"
+                          class="absolute top-1 right-1 bg-slate-950 text-red-500 rounded-sm p-1 hover:bg-white transition-colors"
+                          [disabled]="isSaving"
+                        >
+                          <i class="pi pi-times"></i>
+                        </button>
+                     </div>
+                   }
+                 </div>
+               </div>
+             }
+          </section>
+
+          <!-- Featured Switch -->
+          <div class="py-6 border-t border-white/10 flex items-center">
+             <div class="flex items-center h-5">
+                <input
+                  id="featured"
+                  type="checkbox"
+                  formControlName="featured"
+                  class="w-4 h-4 bg-slate-900 border-white/20 rounded text-yellow-500 focus:ring-0 cursor-pointer"
+                />
+             </div>
+             <div class="ml-3">
+               <label for="featured" class="text-sm font-bold text-white uppercase tracking-wide cursor-pointer hover:text-yellow-400 transition-colors">Marcar como Destacado</label>
+               <p class="text-slate-500 text-xs mt-0.5 font-mono">Aparecerá en el carrusel principal del Home.</p>
+             </div>
+          </div>
+
+          <!-- Footer Actions -->
+          <div class="pt-6 border-t border-white/10 flex justify-end gap-3">
+             <button
+                type="button"
+                (click)="cancel()"
+                [disabled]="isSaving"
+                class="px-6 py-3 text-xs font-bold uppercase tracking-widest text-slate-400 hover:text-white border border-transparent hover:border-white/10 rounded-sm transition-all"
+             >
+               Cancelar
+             </button>
+
+             <button
+                type="submit"
+                [disabled]="propertyForm.invalid || isSaving || propertyForm.pristine"
+                class="px-8 py-3 bg-sky-600 hover:bg-sky-500 text-white text-xs font-bold uppercase tracking-widest rounded-sm shadow-[0_0_15px_rgba(2,132,199,0.3)] hover:shadow-[0_0_20px_rgba(2,132,199,0.5)] disabled:opacity-50 disabled:shadow-none disabled:cursor-not-allowed transition-all flex items-center gap-2"
+             >
+                @if (isSaving) {
+                  <i class="pi pi-spin pi-spinner"></i>
+                  <span>Guardando...</span>
+                } @else {
+                  <i class="pi pi-check"></i>
+                  <span>{{ isEditMode ? "Actualizar Ficha" : "Registrar Propiedad" }}</span>
+                }
+             </button>
+          </div>
+        </form>
+      </div>
+    }
   </div>
 </div>

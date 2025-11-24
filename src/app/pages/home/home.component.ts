@@ -9,7 +9,7 @@ import { CommonModule, DOCUMENT } from "@angular/common";
 import { RouterModule } from "@angular/router";
 import { PropertyService } from "../../services/property.service";
 import { Property } from "../../interfaces/properties/property.interface";
-import { SeoService } from "../../services/seo.service"; // <--- IMPORTAR
+import { SeoService } from "../../services/seo.service";
 
 @Component({
   selector: "home-home",
