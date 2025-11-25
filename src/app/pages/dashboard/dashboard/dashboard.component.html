@@ -91,6 +91,21 @@
             class="absolute bottom-[-2px] left-0 w-full h-[2px] bg-sky-500/50 scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left"
           ></span>
         </a>
+
+        @if (isSuperAdmin()) {
+        <a
+          routerLink="statistics"
+          routerLinkActive="text-sky-400 border-sky-500 bg-white/5"
+          class="group relative px-6 py-4 text-xs font-bold uppercase tracking-widest text-slate-500 border-b-2 border-transparent hover:text-white hover:bg-white/[0.02] transition-all cursor-pointer flex items-center gap-3"
+        >
+          <i class="pi pi-chart-line text-lg mb-0.5"></i>
+          <!-- Icono Chart -->
+          <span>Estadísticas</span>
+          <span
+            class="absolute bottom-[-2px] left-0 w-full h-[2px] bg-sky-500/50 scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left"
+          ></span>
+        </a>
+        }
       </nav>
     </div>
 

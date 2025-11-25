@@ -1,4 +1,10 @@
-import { Component, inject, OnInit, PLATFORM_ID } from "@angular/core";
+import {
+  afterNextRender,
+  Component,
+  inject,
+  OnInit,
+  PLATFORM_ID,
+} from "@angular/core";
 import { trigger, transition, style, animate } from "@angular/animations";
 import { ActivatedRoute, Router, RouterModule } from "@angular/router";
 import { CommonModule, isPlatformBrowser } from "@angular/common";

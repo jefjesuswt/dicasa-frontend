@@ -79,6 +79,14 @@ export const DASHBOARD_ROUTES: Routes = [
           ).then((m) => m.AdminAppointmentFormComponent),
         canActivate: [superAdminGuard],
       },
+      {
+        path: "statistics",
+        loadComponent: () =>
+          import(
+            "../../components/dashboard/statistics/statistics.component"
+          ).then((m) => m.StatisticsComponent),
+        canActivate: [superAdminGuard], // Protegido solo para SuperAdmin
+      },
     ],
   },
   {

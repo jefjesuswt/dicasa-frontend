@@ -21,6 +21,7 @@ import { provideAnimationsAsync } from "@angular/platform-browser/animations/asy
 import { providePrimeNG } from "primeng/config";
 import { MyPreset } from "./mypreset";
 import { primeNgTranslation } from "./primeNgTranslation";
+import { provideCharts, withDefaultRegisterables } from "ng2-charts";
 
 import { registerLocaleData } from "@angular/common";
 import localeEs from "@angular/common/locales/es";
@@ -40,6 +41,7 @@ export const appConfig: ApplicationConfig = {
       withPreloading(PreloadStrategyService),
       withViewTransitions()
     ),
+    provideCharts(withDefaultRegisterables()),
     providePrimeNG({
       translation: primeNgTranslation,
       theme: {

@@ -6,6 +6,8 @@ import {
   OnInit,
   AfterViewInit,
   OnDestroy,
+  PLATFORM_ID,
+  afterNextRender,
 } from "@angular/core";
 import { CommonModule, DOCUMENT } from "@angular/common";
 import { Router, RouterModule, RouterOutlet } from "@angular/router";
@@ -31,6 +33,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   private destroyRef = inject(DestroyRef);
   private document = inject(DOCUMENT);
   private seoService = inject(SeoService);
+  private platformId = inject(PLATFORM_ID);
 
   public statsLoading = true;
   public user = computed(() => this.authService.currentUser());
@@ -68,7 +71,11 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     },
   ];
 
-  constructor() {}
+  constructor() {
+    afterNextRender(() => {
+      this.initScrollAnimations();
+    });
+  }
 
   ngOnInit(): void {
     this.seoService.updateSeoData(
