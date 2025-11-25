@@ -134,27 +134,18 @@
        Igual que el teléfono, el DIV controla la estética.
     -->
     <div
-      class="relative bg-white/5 border border-white/10 hover:bg-white/10 focus-within:border-sky-500 focus-within:bg-slate-900 focus-within:ring-1 focus-within:ring-sky-500/20 transition-all duration-300"
+      class="relative bg-white/5 z-50 border border-white/10 hover:bg-white/10 focus-within:border-sky-500 focus-within:bg-slate-900 focus-within:ring-1 focus-within:ring-sky-500/20 transition-all duration-300"
       [class.border-red-500]="
         appointmentDate?.invalid &&
         (appointmentDate?.dirty || appointmentDate?.touched)
       "
     >
-      <p-datepicker
+      <app-custom-datepicker
         formControlName="appointmentDate"
-        [showTime]="true"
-        [hourFormat]="'12'"
-        [showIcon]="false"
-        placeholder="SELECCIONAR FECHA..."
-        styleClass="w-full architectural-datepicker"
         [minDate]="minDate"
-        [disabledDays]="[0, 6]"
-        [stepMinute]="30"
-        [defaultDate]="defaultPickerDate"
-        [readonlyInput]="true"
-        appendTo="body"
-      >
-      </p-datepicker>
+        [disabledDates]="occupiedDates"
+        placeholder="SELECCIONAR FECHA..."
+      ></app-custom-datepicker>
 
       <!-- Icono de Calendario superpuesto para dar feedback visual -->
       <div

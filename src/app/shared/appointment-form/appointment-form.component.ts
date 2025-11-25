@@ -30,10 +30,8 @@ import {
 } from "ngx-intl-tel-input";
 import parsePhoneNumberFromString from "libphonenumber-js/max";
 import { ToastService } from "../../services/toast.service";
+import { CustomDatepickerComponent } from "../custom-datepicker/custom-datepicker.component";
 
-/**
- * Validador: Lunes a Viernes, 8:00 AM - 6:00 PM
- */
 function timeRangeValidator(control: AbstractControl): ValidationErrors | null {
   const value = control.value;
   if (!value) return null;
@@ -71,7 +69,7 @@ function timeRangeValidator(control: AbstractControl): ValidationErrors | null {
   imports: [
     CommonModule,
     ReactiveFormsModule,
-    DatePickerModule,
+    CustomDatepickerComponent,
     NgxIntlTelInputModule,
   ],
   templateUrl: "./appointment-form.component.html",
@@ -171,6 +169,7 @@ function timeRangeValidator(control: AbstractControl): ValidationErrors | null {
 })
 export class AppointmentFormComponent implements OnInit {
   @Input({ required: true }) propertyId!: string;
+  @Input() agentId?: string;
 
   private fb = inject(FormBuilder);
   private appointmentsService = inject(AppointmentsService);
@@ -192,10 +191,25 @@ export class AppointmentFormComponent implements OnInit {
 
   appointmentForm!: FormGroup;
   currentUser = this.authService.currentUser;
+  occupiedDates: Date[] = [];
 
   ngOnInit(): void {
     this.initializeDates();
     this.initializeForm();
+
+    if (this.agentId) {
+      this.loadAvailability();
+    }
+  }
+
+  private loadAvailability(): void {
+    if (!this.agentId) return;
+
+    this.appointmentsService
+      .getAgentAvailability(this.agentId)
+      .subscribe((dates) => {
+        this.occupiedDates = dates;
+      });
   }
 
   private initializeDates(): void {

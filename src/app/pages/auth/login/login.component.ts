@@ -1,4 +1,11 @@
-import { Component, inject } from "@angular/core";
+import {
+  AfterViewInit,
+  Component,
+  ElementRef,
+  inject,
+  OnDestroy,
+  ViewChild,
+} from "@angular/core";
 import { CommonModule } from "@angular/common";
 import {
   FormGroup,
@@ -7,6 +14,7 @@ import {
   FormBuilder,
 } from "@angular/forms";
 import { Router, RouterModule } from "@angular/router";
+import { AutofillMonitor } from "@angular/cdk/text-field";
 import { ToastService } from "../../../services/toast.service";
 import { AuthService } from "../../../services/auth.service";
 import { finalize } from "rxjs/operators";
@@ -18,12 +26,16 @@ import { SeoService } from "../../../services/seo.service";
   imports: [CommonModule, ReactiveFormsModule, RouterModule],
   templateUrl: "./login.component.html",
 })
-export class LoginComponent {
+export class LoginComponent implements AfterViewInit, OnDestroy {
+  @ViewChild("emailInput") emailInput!: ElementRef<HTMLElement>;
+  @ViewChild("passwordInput") passInput!: ElementRef<HTMLElement>;
+
   private fb = inject(FormBuilder);
   private router = inject(Router);
   private authService = inject(AuthService);
   private seoService = inject(SeoService);
   private toast = inject(ToastService);
+  private autofill = inject(AutofillMonitor);
 
   ngOnInit() {
     this.seoService.updateSeoData(
@@ -70,6 +82,16 @@ export class LoginComponent {
           );
         },
       });
+  }
+
+  ngAfterViewInit() {
+    this.autofill.monitor(this.emailInput).subscribe();
+    this.autofill.monitor(this.passInput).subscribe();
+  }
+
+  ngOnDestroy() {
+    this.autofill.stopMonitoring(this.emailInput);
+    this.autofill.stopMonitoring(this.passInput);
   }
 
   get email() {

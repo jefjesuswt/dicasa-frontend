@@ -1,6 +1,6 @@
 import { Injectable } from "@angular/core";
 import { HttpClient, HttpParams } from "@angular/common/http";
-import { catchError, Observable } from "rxjs";
+import { catchError, map, Observable, of } from "rxjs";
 
 import {
   CreateAppointmentDto,
@@ -70,6 +70,15 @@ export class AppointmentsService {
     return this.http
       .patch<Appointment>(`${this.apiUrl}/${id}/reassign-agent`, dto)
       .pipe(catchError(handleApiError));
+  }
+
+  getAgentAvailability(agentId: string): Observable<Date[]> {
+    return this.http
+      .get<string[]>(`${this.apiUrl}/agent/${agentId}/availability`)
+      .pipe(
+        map((dates) => dates.map((d) => new Date(d))),
+        catchError(() => of([]))
+      );
   }
 
   remove(id: string): Observable<{ message: string }> {
