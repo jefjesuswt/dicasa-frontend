@@ -23,7 +23,7 @@ import {
 import { User } from "../../../interfaces/users";
 import { UsersService } from "../../../services/users.service";
 
-import { DatePickerModule } from "primeng/datepicker";
+import { CustomDatepickerComponent } from "../../../shared/custom-datepicker/custom-datepicker.component";
 import { AppointmentsService } from "../../../services/appointment.service";
 
 type StatusOption = {
@@ -34,7 +34,7 @@ type StatusOption = {
 @Component({
   selector: "admin-appointment-form",
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterModule, DatePickerModule],
+  imports: [CommonModule, ReactiveFormsModule, RouterModule, CustomDatepickerComponent],
   templateUrl: "./admin-appointment-form.component.html",
 })
 export class AdminAppointmentFormComponent implements OnInit {

@@ -22,6 +22,7 @@ export class DashboardAppointmentCardComponent {
   @Output() delete = new EventEmitter<Appointment>();
 
   onEdit() {
+    if (!this.appointment.property) return;
     this.edit.emit(this.appointment);
   }
 

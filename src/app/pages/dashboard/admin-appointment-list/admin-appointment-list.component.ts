@@ -128,15 +128,18 @@ export class AdminAppointmentListComponent implements OnInit {
   }
 
   editAppointment(app: Appointment) {
+    if (!app.property) return;
     this.router.navigate(["/dashboard/appointments/edit", app._id]);
   }
 
   openDeleteDialog(app: Appointment): void {
+    console.log("Opening delete dialog for:", app);
     this.appointmentToCancel = app;
     this.isDeleteDialogOpen = true;
   }
 
   closeDeleteDialog(): void {
+    console.log("Closing delete dialog");
     this.isDeleteDialogOpen = false;
     this.appointmentToCancel = null;
     this.isDeleting = false;

@@ -1,14 +1,9 @@
 <div
-  class="group relative bg-slate-950 border border-white/10 hover:border-sky-500/30 transition-all duration-300 rounded-sm overflow-hidden flex flex-col h-full"
->
-  <div
-    class="flex items-center justify-between px-4 py-2 border-b border-white/10 bg-white/[0.02]"
-  >
+  class="group relative bg-slate-950 border border-white/10 hover:border-sky-500/30 transition-all duration-300 rounded-sm overflow-hidden flex flex-col h-full">
+  <div class="flex items-center justify-between px-4 py-2 border-b border-white/10 bg-white/[0.02]">
     <span
       class="px-2 py-0.5 inline-flex text-[10px] uppercase font-bold tracking-wider rounded-sm border border-transparent"
-      [ngClass]="statusClass"
-      style="mix-blend-mode: screen"
-    >
+      [ngClass]="statusClass" style="mix-blend-mode: screen">
       {{ statusLabel }}
     </span>
 
@@ -18,7 +13,7 @@
         {{ appointment.appointmentDate | date : "dd/MM" }}
         <span class="text-sky-500">{{
           appointment.appointmentDate | date : "HH:mm"
-        }}</span>
+          }}</span>
       </span>
     </div>
   </div>
@@ -29,21 +24,16 @@
       <div class="relative flex-shrink-0 mt-1">
         <shared-avatar
           class="w-10 h-10 block opacity-90 group-hover:opacity-100 transition-opacity ring-1 ring-white/10 rounded-full"
-          [src]="appointment.agent.profileImageUrl"
-        ></shared-avatar>
+          [src]="appointment.agent.profileImageUrl"></shared-avatar>
       </div>
       }
 
       <div class="min-w-0 flex-1">
-        <h3
-          class="text-sm font-bold text-white uppercase tracking-wide truncate leading-tight mb-1"
-          title="{{ appointment.name }}"
-        >
+        <h3 class="text-sm font-bold text-white uppercase tracking-wide truncate leading-tight mb-1"
+          title="{{ appointment.name }}">
           {{ appointment.name }}
         </h3>
-        <p
-          class="text-xs text-slate-500 truncate font-mono flex items-center gap-1"
-        >
+        <p class="text-xs text-slate-500 truncate font-mono flex items-center gap-1">
           <i class="pi pi-envelope text-[10px]"></i>
           {{ appointment.email }}
         </p>
@@ -54,26 +44,24 @@
 
     <div class="space-y-3">
       <div>
-        <span
-          class="text-[10px] text-slate-600 uppercase tracking-widest block mb-1"
-          >Propiedad</span
-        >
-        <a
-          [routerLink]="['/properties', appointment.property._id]"
-          class="text-xs font-medium text-sky-400 hover:text-sky-300 transition-colors flex items-center gap-2 truncate"
-        >
+        <span class="text-[10px] text-slate-600 uppercase tracking-widest block mb-1">Propiedad</span>
+        @if (appointment.property) {
+        <a [routerLink]="['/properties', appointment.property._id]"
+          class="text-xs font-medium text-sky-400 hover:text-sky-300 transition-colors flex items-center gap-2 truncate">
           <i class="pi pi-building text-slate-600"></i>
           <span class="truncate underline-offset-4 hover:underline">
             {{ appointment.property.title }}
           </span>
         </a>
+        } @else {
+        <span class="text-xs text-slate-500 font-mono italic flex items-center gap-2">
+          <i class="pi pi-exclamation-circle text-amber-500/50"></i> Propiedad no disponible
+        </span>
+        }
       </div>
 
       <div>
-        <span
-          class="text-[10px] text-slate-600 uppercase tracking-widest block mb-1"
-          >Agente Responsable</span
-        >
+        <span class="text-[10px] text-slate-600 uppercase tracking-widest block mb-1">Agente Responsable</span>
         @if (appointment.agent) {
         <span class="text-xs text-slate-400 font-mono truncate block">
           {{ appointment.agent.name }}
@@ -87,21 +75,16 @@
     </div>
   </div>
 
-  <div
-    class="px-2 py-2 flex justify-end gap-1 border-t border-white/10 bg-slate-950 mt-auto"
-  >
-    <button
-      (click)="onEdit()"
-      class="h-8 w-8 flex items-center justify-center text-slate-500 hover:text-yellow-400 hover:bg-yellow-400/10 border border-transparent hover:border-yellow-400/20 transition-all rounded-sm"
-      title="Editar estado"
-    >
+  <div class="px-2 py-2 flex justify-end gap-1 border-t border-white/10 bg-slate-950 mt-auto">
+    <button (click)="onEdit()" [disabled]="!appointment.property" [class.opacity-50]="!appointment.property"
+      [class.cursor-not-allowed]="!appointment.property"
+      class="h-8 w-8 flex items-center justify-center text-slate-500 hover:text-yellow-400 hover:bg-yellow-400/10 border border-transparent hover:border-yellow-400/20 transition-all rounded-sm disabled:hover:text-slate-500 disabled:hover:bg-transparent"
+      title="{{ appointment.property ? 'Editar estado' : 'Propiedad eliminada' }}">
       <i class="pi pi-pencil text-xs"></i>
     </button>
-    <button
-      (click)="onDelete()"
+    <button type="button" (click)="onDelete()"
       class="h-8 w-8 flex items-center justify-center text-slate-500 hover:text-red-400 hover:bg-red-400/10 border border-transparent hover:border-red-400/20 transition-all rounded-sm"
-      title="Eliminar cita"
-    >
+      title="Eliminar cita">
       <i class="pi pi-trash text-xs"></i>
     </button>
   </div>

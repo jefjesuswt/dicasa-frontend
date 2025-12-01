@@ -1,28 +1,18 @@
 <!-- SEARCH SECTION -->
 <div class="p-4 md:p-6 bg-slate-950 border-b border-white/10">
-  <shared-search-bar
-    (search)="onAppointmentSearch($event)"
-    [dropdownOptions]="statusOptions"
-    placeholder="Buscar cliente, email..."
-    label="Filtros de Agenda"
-    dropdownLabel="Estado de Cita"
-    buttonText="BUSCAR"
-  >
+  <shared-search-bar (search)="onAppointmentSearch($event)" [dropdownOptions]="statusOptions"
+    placeholder="Buscar cliente, email..." label="Filtros de Agenda" dropdownLabel="Estado de Cita" buttonText="BUSCAR">
   </shared-search-bar>
 </div>
 
 <!-- HEADER & CONTROLS -->
-<div
-  class="px-4 md:px-6 py-6 bg-slate-950 border-b border-white/10 flex items-center justify-between"
->
+<div class="px-4 md:px-6 py-6 bg-slate-950 border-b border-white/10 flex items-center justify-between">
   <div class="flex items-center gap-3">
     <h2 class="text-xl font-bold text-white uppercase tracking-tight">
       Agenda de Citas
     </h2>
     @if (!loading) {
-    <span
-      class="px-2 py-0.5 bg-white/10 rounded text-xs font-mono text-slate-400 border border-white/5"
-    >
+    <span class="px-2 py-0.5 bg-white/10 rounded text-xs font-mono text-slate-400 border border-white/5">
       {{ totalAppointments }} REGISTROS
     </span>
     }
@@ -32,13 +22,8 @@
 <!-- LOADING STATE -->
 @if (loading) {
 <div class="flex flex-col justify-center items-center py-32 bg-slate-950">
-  <div
-    class="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-sky-500 mb-4"
-  ></div>
-  <span
-    class="text-slate-500 font-mono text-sm animate-pulse tracking-widest uppercase"
-    >Sincronizando Agenda...</span
-  >
+  <div class="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-sky-500 mb-4"></div>
+  <span class="text-slate-500 font-mono text-sm animate-pulse tracking-widest uppercase">Sincronizando Agenda...</span>
 </div>
 }
 
@@ -52,10 +37,8 @@
         Error de Conexión
       </h3>
       <p class="text-red-400/70 text-sm font-mono mb-4">{{ error }}</p>
-      <button
-        (click)="loadAppointments()"
-        class="text-xs font-bold text-white bg-red-500/20 px-4 py-2 hover:bg-red-500/30 transition-colors uppercase tracking-wider"
-      >
+      <button (click)="loadAppointments()"
+        class="text-xs font-bold text-white bg-red-500/20 px-4 py-2 hover:bg-red-500/30 transition-colors uppercase tracking-wider">
         Reintentar
       </button>
     </div>
@@ -69,40 +52,22 @@
   <table class="min-w-full divide-y divide-white/10 text-left">
     <thead class="bg-white/[0.02]">
       <tr>
-        <th
-          scope="col"
-          class="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider"
-        >
+        <th scope="col" class="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">
           Cliente / Interesado
         </th>
-        <th
-          scope="col"
-          class="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider"
-        >
+        <th scope="col" class="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">
           Propiedad de Interés
         </th>
-        <th
-          scope="col"
-          class="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider"
-        >
+        <th scope="col" class="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">
           Agente Asignado
         </th>
-        <th
-          scope="col"
-          class="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider"
-        >
+        <th scope="col" class="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">
           Fecha Programada
         </th>
-        <th
-          scope="col"
-          class="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider"
-        >
+        <th scope="col" class="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">
           Estado Actual
         </th>
-        <th
-          scope="col"
-          class="px-6 py-4 text-right text-xs font-bold text-slate-500 uppercase tracking-wider"
-        >
+        <th scope="col" class="px-6 py-4 text-right text-xs font-bold text-slate-500 uppercase tracking-wider">
           Acciones
         </th>
       </tr>
@@ -116,46 +81,43 @@
             <div class="text-sm font-bold text-white uppercase">
               {{ app.name }}
             </div>
-            <div
-              class="text-xs text-slate-500 font-mono mt-0.5 flex items-center gap-2"
-            >
+            <div class="text-xs text-slate-500 font-mono mt-0.5 flex items-center gap-2">
               <i class="pi pi-envelope text-[10px]"></i> {{ app.email }}
             </div>
           </div>
         </td>
 
         <!-- Propiedad -->
+        <!-- Propiedad -->
         <td class="px-6 py-4 whitespace-nowrap">
-          <a
-            [routerLink]="['/properties', app.property._id]"
+          @if (app.property) {
+          <a [routerLink]="['/properties', app.property._id]"
             class="text-xs font-bold text-sky-400 hover:text-sky-300 hover:underline transition-colors uppercase flex items-center gap-2"
-            title="{{ app.property.title }}"
-          >
+            title="{{ app.property.title }}">
             <i class="pi pi-building text-slate-500"></i>
             <span class="truncate max-w-[180px]">{{ app.property.title }}</span>
           </a>
+          } @else {
+          <span class="text-xs text-slate-500 font-mono italic flex items-center gap-2">
+            <i class="pi pi-exclamation-circle text-amber-500/50"></i> Propiedad no disponible
+          </span>
+          }
         </td>
 
         <!-- Agente -->
         <td class="px-6 py-4 whitespace-nowrap">
           @if (app.agent) {
           <div class="flex items-center gap-2">
-            <div
-              class="w-6 h-6 rounded-full bg-slate-800 border border-white/10 overflow-hidden"
-            >
+            <div class="w-6 h-6 rounded-full bg-slate-800 border border-white/10 overflow-hidden">
               <!-- Si tuvieras imagen del agente -->
-              <i
-                class="pi pi-user text-[10px] text-slate-400 w-full h-full flex items-center justify-center"
-              ></i>
+              <i class="pi pi-user pl-1 text-slate-400 w-full h-full flex items-center justify-center"></i>
             </div>
             <span class="text-xs font-medium text-slate-300">{{
               app.agent.name
-            }}</span>
+              }}</span>
           </div>
           } @else {
-          <span
-            class="text-[10px] text-red-400/60 font-mono italic border border-red-500/10 px-1.5 py-0.5 rounded-sm"
-          >
+          <span class="text-[10px] text-red-400/60 font-mono italic border border-red-500/10 px-1.5 py-0.5 rounded-sm">
             AGENTE ELIMINADO
           </span>
           }
@@ -177,30 +139,23 @@
         <td class="px-6 py-4 whitespace-nowrap">
           <span
             class="px-2 py-1 inline-flex text-[10px] font-bold uppercase tracking-wider rounded-sm border border-transparent"
-            [ngClass]="getStatusBadgeClass(app.status)"
-            style="mix-blend-mode: screen"
-          >
+            [ngClass]="getStatusBadgeClass(app.status)" style="mix-blend-mode: screen">
             {{ getStatusLabel(app.status) }}
           </span>
         </td>
 
         <!-- Acciones -->
         <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-          <div
-            class="flex justify-end gap-1 opacity-60 group-hover:opacity-100 transition-opacity"
-          >
-            <button
-              (click)="editAppointment(app)"
-              class="h-8 w-8 flex items-center justify-center text-slate-400 hover:text-yellow-400 hover:bg-white/5 rounded-sm transition-colors border border-transparent hover:border-white/10"
-              title="Editar Estado"
-            >
+          <div class="flex justify-end gap-1 opacity-60 group-hover:opacity-100 transition-opacity">
+            <button (click)="editAppointment(app)" [disabled]="!app.property" [class.opacity-50]="!app.property"
+              [class.cursor-not-allowed]="!app.property"
+              class="h-8 w-8 flex items-center justify-center text-slate-400 hover:text-yellow-400 hover:bg-white/5 rounded-sm transition-colors border border-transparent hover:border-white/10 disabled:hover:text-slate-400 disabled:hover:bg-transparent"
+              title="{{ app.property ? 'Editar Estado' : 'Propiedad eliminada' }}">
               <i class="pi pi-pencil"></i>
             </button>
-            <button
-              (click)="openDeleteDialog(app)"
+            <button type="button" (click)="openDeleteDialog(app)"
               class="h-8 w-8 flex items-center justify-center text-slate-400 hover:text-red-400 hover:bg-white/5 rounded-sm transition-colors border border-transparent hover:border-white/10"
-              title="Eliminar Cita"
-            >
+              title="Eliminar Cita">
               <i class="pi pi-trash text-xs"></i>
             </button>
           </div>
@@ -214,25 +169,17 @@
 <!-- CONTENT: MOBILE CARDS -->
 <div class="block md:hidden p-4 space-y-4 bg-slate-950">
   @for (app of appointments; track app._id) {
-  <dashboard-appointment-card
-    [appointment]="app"
-    [statusLabel]="getStatusLabel(app.status)"
-    [statusClass]="getStatusBadgeClass(app.status)"
-    (edit)="editAppointment($event)"
-    (delete)="openDeleteDialog($event)"
-  />
+  <dashboard-appointment-card [appointment]="app" [statusLabel]="getStatusLabel(app.status)"
+    [statusClass]="getStatusBadgeClass(app.status)" (edit)="editAppointment($event)"
+    (delete)="openDeleteDialog($event)" />
   }
 </div>
 }
 
 <!-- EMPTY STATE -->
 @if (!loading && !error && appointments.length === 0) {
-<div
-  class="flex flex-col items-center justify-center py-24 bg-slate-950 border-t border-white/10"
->
-  <div
-    class="w-16 h-16 bg-white/5 rounded-full flex items-center justify-center mb-4 border border-white/10"
-  >
+<div class="flex flex-col items-center justify-center py-24 bg-slate-950 border-t border-white/10">
+  <div class="w-16 h-16 bg-white/5 rounded-full flex items-center justify-center mb-4 border border-white/10">
     <i class="pi pi-calendar-times text-2xl text-slate-500"></i>
   </div>
   <p class="text-slate-400 font-mono text-xs uppercase tracking-widest">
@@ -243,14 +190,9 @@
 
 <!-- PAGINATION -->
 @if (totalAppointments > 0 && !loading) {
-<div
-  class="flex justify-between items-center px-6 py-4 bg-slate-950 border-t border-white/10"
->
-  <button
-    (click)="onPageChange(currentPage - 1)"
-    [disabled]="currentPage === 1"
-    class="px-4 py-2 text-xs font-bold uppercase tracking-wider text-slate-400 border border-white/10 rounded-sm hover:bg-white/5 disabled:opacity-30 disabled:hover:bg-transparent transition-colors"
-  >
+<div class="flex justify-between items-center px-6 py-4 bg-slate-950 border-t border-white/10">
+  <button (click)="onPageChange(currentPage - 1)" [disabled]="currentPage === 1"
+    class="px-4 py-2 text-xs font-bold uppercase tracking-wider text-slate-400 border border-white/10 rounded-sm hover:bg-white/5 disabled:opacity-30 disabled:hover:bg-transparent transition-colors">
     Anterior
   </button>
 
@@ -259,51 +201,33 @@
     {{ Math.ceil(totalAppointments / rowsPerPage) }}
   </span>
 
-  <button
-    (click)="onPageChange(currentPage + 1)"
-    [disabled]="currentPage * rowsPerPage >= totalAppointments"
-    class="px-4 py-2 text-xs font-bold uppercase tracking-wider text-slate-400 border border-white/10 rounded-sm hover:bg-white/5 disabled:opacity-30 disabled:hover:bg-transparent transition-colors"
-  >
+  <button (click)="onPageChange(currentPage + 1)" [disabled]="currentPage * rowsPerPage >= totalAppointments"
+    class="px-4 py-2 text-xs font-bold uppercase tracking-wider text-slate-400 border border-white/10 rounded-sm hover:bg-white/5 disabled:opacity-30 disabled:hover:bg-transparent transition-colors">
     Siguiente
   </button>
 </div>
 }
 
 <!-- DIALOG (Shared) -->
-<shared-dialog
-  [isOpen]="isDeleteDialogOpen"
-  title="ELIMINAR CITA"
-  (close)="closeDeleteDialog()"
->
+<shared-dialog [isOpen]="isDeleteDialogOpen" title="ELIMINAR CITA" (close)="closeDeleteDialog()">
   <div class="space-y-6">
     <p class="text-sm text-slate-600 leading-relaxed">
       Estás a punto de cancelar y eliminar la cita agendada por:
       <br />
-      <strong
-        class="text-slate-900 uppercase tracking-wide text-xs block mt-2 p-2 bg-slate-100 rounded-sm"
-      >
+      <strong class="text-slate-900 uppercase tracking-wide text-xs block mt-2 p-2 bg-slate-100 rounded-sm">
         {{ appointmentToCancel?.name || "CLIENTE SELECCIONADO" }}
       </strong>
-      <span class="block mt-2 text-xs text-red-500 italic"
-        >Esta acción es irreversible y liberará el espacio en la agenda.</span
-      >
+      <span class="block mt-2 text-xs text-red-500 italic">Esta acción es irreversible y liberará el espacio en la
+        agenda.</span>
     </p>
 
     <div class="flex justify-end space-x-3">
-      <button
-        type="button"
-        (click)="closeDeleteDialog()"
-        [disabled]="isDeleting"
-        class="bg-white py-2 px-4 border border-gray-300 rounded-sm shadow-sm text-xs font-bold uppercase tracking-wide text-gray-700 hover:bg-gray-50 disabled:opacity-50 transition-colors"
-      >
+      <button type="button" (click)="closeDeleteDialog()" [disabled]="isDeleting"
+        class="bg-white py-2 px-4 border border-gray-300 rounded-sm shadow-sm text-xs font-bold uppercase tracking-wide text-gray-700 hover:bg-gray-50 disabled:opacity-50 transition-colors">
         Mantener Cita
       </button>
-      <button
-        type="button"
-        (click)="confirmDelete()"
-        [disabled]="isDeleting"
-        class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-xs font-bold uppercase tracking-wide rounded-sm text-white bg-red-600 hover:bg-red-700 disabled:opacity-50 transition-colors"
-      >
+      <button type="button" (click)="confirmDelete()" [disabled]="isDeleting"
+        class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-xs font-bold uppercase tracking-wide rounded-sm text-white bg-red-600 hover:bg-red-700 disabled:opacity-50 transition-colors">
         @if (isDeleting) {
         <i class="pi pi-spin pi-spinner mr-2"></i>
         <span>Procesando...</span>
