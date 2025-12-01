@@ -1,63 +1,42 @@
 <div
-  class="min-h-screen bg-slate-950 text-slate-300 font-sans bg-grid selection:bg-sky-400 selection:text-slate-950 pt-24 pb-16"
->
+  class="min-h-screen bg-slate-950 text-slate-300 font-sans bg-grid selection:bg-sky-400 selection:text-slate-950 pt-24 pb-16">
   @if (loading) {
   <div class="flex flex-col justify-center items-center h-[60vh]">
-    <div
-      class="animate-spin rounded-none h-12 w-12 border-2 border-white/10 border-t-sky-500 mb-4"
-    ></div>
-    <span
-      class="text-xs font-mono text-sky-500 uppercase tracking-[0.2em] animate-pulse"
-    >
+    <div class="animate-spin rounded-none h-12 w-12 border-2 border-white/10 border-t-sky-500 mb-4"></div>
+    <span class="text-xs font-mono text-sky-500 uppercase tracking-[0.2em] animate-pulse">
       Cargando Datos...
     </span>
   </div>
   } @if (error && !loading) {
   <div class="container mx-auto px-6 py-12">
-    <div
-      class="border border-red-500/30 bg-red-950/10 p-12 text-center max-w-2xl mx-auto backdrop-blur-sm"
-    >
+    <div class="border border-red-500/30 bg-red-950/10 p-12 text-center max-w-2xl mx-auto backdrop-blur-sm">
       <i class="pi pi-exclamation-triangle text-4xl text-red-500 mb-6"></i>
       <h3 class="text-white font-bold text-xl uppercase tracking-widest mb-2">
         Error de Sistema
       </h3>
       <div class="h-px w-16 bg-red-500 mx-auto mb-6"></div>
       <p class="text-red-400 font-mono text-sm mb-8">{{ error }}</p>
-      <button
-        (click)="goBack()"
-        class="px-8 py-4 bg-white text-slate-950 hover:bg-red-500 hover:text-white text-xs font-bold uppercase tracking-[0.2em] transition-colors"
-      >
+      <button (click)="goBack()"
+        class="px-8 py-4 bg-white text-slate-950 hover:bg-red-500 hover:text-white text-xs font-bold uppercase tracking-[0.2em] transition-colors">
         Volver al Catálogo
       </button>
     </div>
   </div>
   } @if (!loading && !error && property; as prop) {
   <div class="container mx-auto px-6">
-    <div
-      class="flex items-center justify-between mb-8 border-b border-white/10 pb-4"
-    >
-      <button
-        (click)="goBack()"
-        class="group flex items-center gap-3 text-slate-400 hover:text-white transition-colors"
-      >
-        <i
-          class="pi pi-arrow-left text-xs group-hover:-translate-x-1 transition-transform"
-        ></i>
-        <span class="text-xs font-bold uppercase tracking-widest"
-          >Volver al Listado</span
-        >
+    <div class="flex items-center justify-between mb-8 border-b border-white/10 pb-4">
+      <button (click)="goBack()"
+        class="group flex items-center gap-3 text-slate-400 hover:text-white transition-colors">
+        <i class="pi pi-arrow-left text-xs group-hover:-translate-x-1 transition-transform"></i>
+        <span class="text-xs font-bold uppercase tracking-widest">Volver al Listado</span>
       </button>
     </div>
 
-    <div
-      class="flex flex-col lg:flex-row justify-between items-end gap-8 mb-12"
-    >
+    <div class="flex flex-col lg:flex-row justify-between items-end gap-8 mb-12">
       <div class="w-full lg:w-2/3">
         <div class="flex flex-wrap items-center gap-3 mb-4">
-          <span
-            [class]="getStatusClass(prop.status)"
-            class="px-3 py-1 border text-[10px] font-bold uppercase tracking-widest"
-          >
+          <span [class]="getStatusClass(prop.status)"
+            class="px-3 py-1 border text-[10px] font-bold uppercase tracking-widest">
             {{ getStatusLabel(prop.status) }}
           </span>
           <div class="h-px w-8 bg-white/20"></div>
@@ -66,15 +45,11 @@
           </span>
         </div>
 
-        <h1
-          class="text-3xl md:text-5xl lg:text-6xl font-bold text-white uppercase tracking-tight leading-none mb-4"
-        >
+        <h1 class="text-3xl md:text-5xl lg:text-6xl font-bold text-white uppercase tracking-tight leading-none mb-4">
           {{ prop.title }}
         </h1>
 
-        <div
-          class="flex items-center text-slate-400 text-sm font-light border-l-2 border-sky-500 pl-4"
-        >
+        <div class="flex items-center text-slate-400 text-sm font-light border-l-2 border-sky-500 pl-4">
           <span class="uppercase tracking-wider">
             {{ prop.address.city }}, {{ prop.address.state }}
           </span>
@@ -84,75 +59,53 @@
       </div>
 
       <div class="w-full lg:w-1/3 flex flex-col items-start lg:items-end">
-        <div
-          class="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1"
-        >
+        <div class="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1">
           Valor de Mercado
         </div>
         <div class="flex items-baseline gap-1">
-          <span
-            class="text-4xl lg:text-5xl font-mono font-bold text-white tracking-tighter"
-          >
+          <span class="text-4xl lg:text-5xl font-mono font-bold text-white tracking-tighter">
             {{ prop.price | number }}
           </span>
           <span class="text-xl text-sky-500 font-bold">$</span>
         </div>
         @if (prop.status === 'rent') {
-        <span
-          class="text-[10px] text-slate-400 uppercase font-mono border-t border-white/10 pt-1 mt-1"
-        >
+        <span class="text-[10px] text-slate-400 uppercase font-mono border-t border-white/10 pt-1 mt-1">
           Facturación Mensual
         </span>
         }
       </div>
     </div>
 
-    <div
-      class="grid grid-cols-1 lg:grid-cols-12 gap-px bg-white/10 border border-white/10"
-    >
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-px bg-white/10 border border-white/10">
       <div class="lg:col-span-8 bg-slate-950">
-        <div
-          class="relative aspect-video bg-black group overflow-hidden border-b border-white/10"
-        >
+        <div class="relative aspect-video bg-black group overflow-hidden border-b border-white/10">
           @if (prop.images.length > 0) {
           <div class="w-full h-full" [@fadeImage]="activeImageIndex">
-            <ng-magnizoom
-              [imageSrc]="prop.images[activeImageIndex]"
-              [imageClass]="
+            <ng-magnizoom [imageSrc]="prop.images[activeImageIndex]" [imageClass]="
                 'w-full h-full object-cover opacity-90 group-hover:opacity-100 transition-opacity duration-500'
-              "
-            ></ng-magnizoom>
+              "></ng-magnizoom>
           </div>
 
-          <div
-            class="absolute top-0 left-0 w-full p-6 flex justify-between items-start pointer-events-none"
-          >
+          <div class="absolute top-0 left-0 w-full p-6 flex justify-between items-start pointer-events-none">
             <div
-              class="bg-slate-950/80 backdrop-blur text-white text-[10px] font-bold uppercase px-3 py-1 border border-white/10"
-            >
+              class="bg-slate-950/80 backdrop-blur text-white text-[10px] font-bold uppercase px-3 py-1 border border-white/10">
               Vista Principal
             </div>
           </div>
 
           <div class="absolute bottom-0 right-0 p-6 pointer-events-none">
             <div
-              class="bg-slate-950/80 backdrop-blur text-sky-400 text-xs font-mono px-4 py-2 border border-white/10 flex items-center gap-3"
-            >
+              class="bg-slate-950/80 backdrop-blur text-sky-400 text-xs font-mono px-4 py-2 border border-white/10 flex items-center gap-3">
               <i class="pi pi-camera"></i>
-              <span
-                >{{ activeImageIndex + 1 | number : "2.0" }} /
-                {{ prop.images.length | number : "2.0" }}</span
-              >
+              <span>{{ activeImageIndex + 1 | number : "2.0" }} /
+                {{ prop.images.length | number : "2.0" }}</span>
             </div>
           </div>
 
-          <div
-            class="absolute inset-0 bg-grid opacity-10 pointer-events-none"
-          ></div>
+          <div class="absolute inset-0 bg-grid opacity-10 pointer-events-none"></div>
           } @else {
           <div
-            class="w-full h-full flex flex-col items-center justify-center bg-slate-900 text-slate-600 font-mono text-xs"
-          >
+            class="w-full h-full flex flex-col items-center justify-center bg-slate-900 text-slate-600 font-mono text-xs">
             <i class="pi pi-image text-4xl mb-4 opacity-50"></i>
             <span>IMAGEN NO DISPONIBLE</span>
           </div>
@@ -160,85 +113,59 @@
         </div>
 
         @if (prop.images.length > 1) {
-        <div
-          class="flex overflow-x-auto border-b border-white/10 bg-slate-900/50 custom-scrollbar h-24"
-        >
+        <div class="flex overflow-x-auto border-b border-white/10 bg-slate-900/50 custom-scrollbar h-24">
           @for (img of prop.images; track i; let i = $index) {
-          <button
-            (click)="setActiveImage(i)"
-            class="relative w-32 h-full flex-shrink-0 border-r border-white/10 group focus:outline-none"
-          >
-            <img
-              [src]="img"
+          <button (click)="setActiveImage(i)"
+            class="relative w-32 h-full flex-shrink-0 border-r border-white/10 group focus:outline-none">
+            <img [src]="img"
               class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-300 opacity-50 group-hover:opacity-100"
-              [class.grayscale-0]="i === activeImageIndex"
-              [class.opacity-100]="i === activeImageIndex"
-            />
+              [class.grayscale-0]="i === activeImageIndex" [class.opacity-100]="i === activeImageIndex" />
             @if (i === activeImageIndex) {
-            <div
-              class="absolute inset-0 border-2 border-sky-500 pointer-events-none"
-            ></div>
+            <div class="absolute inset-0 border-2 border-sky-500 pointer-events-none"></div>
             }
           </button>
           }
         </div>
         }
 
-        <div
-          class="grid grid-cols-2 md:grid-cols-4 border-b border-white/10 divide-x divide-white/10 bg-slate-900/20"
-        >
-          <div
-            class="p-6 flex flex-col justify-between h-32 hover:bg-white/5 transition-colors group"
-          >
+        <div class="grid grid-cols-2 md:grid-cols-4 border-b border-white/10 divide-x divide-white/10 bg-slate-900/20">
+          <div class="p-6 flex flex-col justify-between h-32 hover:bg-white/5 transition-colors group">
             <span
-              class="text-[10px] text-slate-500 uppercase tracking-widest group-hover:text-sky-500 transition-colors"
-              >Área Total</span
-            >
+              class="text-[10px] text-slate-500 uppercase tracking-widest group-hover:text-sky-500 transition-colors">Área
+              Total</span>
             <div class="flex items-end gap-1">
               <span class="text-2xl text-white font-mono font-bold">{{
                 prop.area | number
-              }}</span>
+                }}</span>
               <span class="text-sm text-slate-500 font-mono mb-1">m²</span>
             </div>
           </div>
 
-          <div
-            class="p-6 flex flex-col justify-between h-32 hover:bg-white/5 transition-colors group"
-          >
+          <div class="p-6 flex flex-col justify-between h-32 hover:bg-white/5 transition-colors group">
             <span
-              class="text-[10px] text-slate-500 uppercase tracking-widest group-hover:text-sky-500 transition-colors"
-              >Habitaciones</span
-            >
+              class="text-[10px] text-slate-500 uppercase tracking-widest group-hover:text-sky-500 transition-colors">Habitaciones</span>
             <div class="flex items-end gap-1">
               <span class="text-2xl text-white font-mono font-bold">{{
                 prop.bedrooms || 0
-              }}</span>
+                }}</span>
               <span class="text-sm text-slate-500 font-mono mb-1">hab</span>
             </div>
           </div>
 
-          <div
-            class="p-6 flex flex-col justify-between h-32 hover:bg-white/5 transition-colors group"
-          >
+          <div class="p-6 flex flex-col justify-between h-32 hover:bg-white/5 transition-colors group">
             <span
-              class="text-[10px] text-slate-500 uppercase tracking-widest group-hover:text-sky-500 transition-colors"
-              >Baños</span
-            >
+              class="text-[10px] text-slate-500 uppercase tracking-widest group-hover:text-sky-500 transition-colors">Baños</span>
             <div class="flex items-end gap-1">
               <span class="text-2xl text-white font-mono font-bold">{{
                 prop.bathrooms || 0
-              }}</span>
+                }}</span>
               <span class="text-sm text-slate-500 font-mono mb-1">bth</span>
             </div>
           </div>
 
-          <div
-            class="p-6 flex flex-col justify-between h-32 hover:bg-white/5 transition-colors group"
-          >
+          <div class="p-6 flex flex-col justify-between h-32 hover:bg-white/5 transition-colors group">
             <span
-              class="text-[10px] text-slate-500 uppercase tracking-widest group-hover:text-sky-500 transition-colors"
-              >Estacionamiento</span
-            >
+              class="text-[10px] text-slate-500 uppercase tracking-widest group-hover:text-sky-500 transition-colors">Estacionamiento</span>
             <div class="flex items-end gap-2">
               <span class="text-xl text-white font-mono font-bold">
                 {{ prop.features.hasParking ? "SÍ" : "NO" }}
@@ -249,66 +176,44 @@
 
         <div class="p-8 md:p-12">
           <div class="mb-12">
-            <h3
-              class="text-sm font-bold text-white uppercase tracking-widest mb-6 flex items-center gap-3"
-            >
+            <h3 class="text-sm font-bold text-white uppercase tracking-widest mb-6 flex items-center gap-3">
               <span class="w-1 h-4 bg-sky-500"></span>
               Detalles de la Propiedad
             </h3>
-            <p
-              class="text-slate-300 leading-relaxed text-sm font-light whitespace-pre-wrap max-w-3xl"
-            >
+            <p class="text-slate-300 leading-relaxed text-sm font-light whitespace-pre-wrap max-w-3xl">
               {{
-                prop.description ||
-                  "No hay descripción disponible para esta propiedad."
+              prop.description ||
+              "No hay descripción disponible para esta propiedad."
               }}
             </p>
           </div>
 
           <div>
-            <h3
-              class="text-sm font-bold text-white uppercase tracking-widest mb-6 flex items-center gap-3"
-            >
+            <h3 class="text-sm font-bold text-white uppercase tracking-widest mb-6 flex items-center gap-3">
               <span class="w-1 h-4 bg-sky-500"></span>
               Características & Amenities
             </h3>
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
               @if (prop.features) { @if (prop.features.hasPool) {
-              <div
-                class="flex items-center gap-3 p-3 border border-white/5 bg-white/5"
-              >
+              <div class="flex items-center gap-3 p-3 border border-white/5 bg-white/5">
                 <i class="pi pi-check text-sky-500 text-xs"></i>
-                <span class="text-xs text-slate-200 uppercase tracking-wide"
-                  >Piscina Privada</span
-                >
+                <span class="text-xs text-slate-200 uppercase tracking-wide">Piscina Privada</span>
               </div>
               } @if (prop.features.hasGarden) {
-              <div
-                class="flex items-center gap-3 p-3 border border-white/5 bg-white/5"
-              >
+              <div class="flex items-center gap-3 p-3 border border-white/5 bg-white/5">
                 <i class="pi pi-check text-sky-500 text-xs"></i>
-                <span class="text-xs text-slate-200 uppercase tracking-wide"
-                  >Jardines / Áreas Verdes</span
-                >
+                <span class="text-xs text-slate-200 uppercase tracking-wide">Jardines / Áreas Verdes</span>
               </div>
               } @if (prop.features.isPetFriendly) {
-              <div
-                class="flex items-center gap-3 p-3 border border-white/5 bg-white/5"
-              >
+              <div class="flex items-center gap-3 p-3 border border-white/5 bg-white/5">
                 <i class="pi pi-check text-sky-500 text-xs"></i>
-                <span class="text-xs text-slate-200 uppercase tracking-wide"
-                  >Admite Mascotas</span
-                >
+                <span class="text-xs text-slate-200 uppercase tracking-wide">Admite Mascotas</span>
               </div>
               } @if (prop.features.hasFurniture) {
-              <div
-                class="flex items-center gap-3 p-3 border border-white/5 bg-white/5"
-              >
+              <div class="flex items-center gap-3 p-3 border border-white/5 bg-white/5">
                 <i class="pi pi-check text-sky-500 text-xs"></i>
-                <span class="text-xs text-slate-200 uppercase tracking-wide"
-                  >Totalmente Amoblado</span
-                >
+                <span class="text-xs text-slate-200 uppercase tracking-wide">Totalmente Amoblado</span>
               </div>
               } @if (!prop.features.hasPool && !prop.features.hasGarden &&
               !prop.features.isPetFriendly && !prop.features.hasFurniture) {
@@ -319,13 +224,8 @@
             </div>
           </div>
           <div class="flex items-center gap-2 mt-12">
-            <span
-              class="text-[10px] text-slate-600 uppercase tracking-widest font-bold"
-              >Ref. Propiedad</span
-            >
-            <div
-              class="bg-white/5 border border-white/10 px-2 py-1 text-[10px] font-mono text-sky-500"
-            >
+            <span class="text-[10px] text-slate-600 uppercase tracking-widest font-bold">Ref. Propiedad</span>
+            <div class="bg-white/5 border border-white/10 px-2 py-1 text-[10px] font-mono text-sky-500">
               {{ prop._id }}
             </div>
           </div>
@@ -333,28 +233,19 @@
       </div>
 
       <div class="lg:col-span-4 bg-slate-950 border-l border-white/10">
-        <div class="sticky top-24 p-8 space-y-8">
+        <div class="top-24 p-8 space-y-8">
           <div class="border border-white/10 bg-white/5 p-6 relative">
-            <div
-              class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-sky-500 to-blue-600"
-            ></div>
+            <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-sky-500 to-blue-600"></div>
 
-            <h3
-              class="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-6"
-            >
+            <h3 class="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-6">
               Representante Oficial
             </h3>
 
             <div class="flex items-center gap-5 mb-6">
-              <shared-avatar
-                [src]="prop.agent.profileImageUrl"
-                [id]="prop.agent._id"
-                class="w-14 h-14 rounded-none border border-white/20"
-              ></shared-avatar>
+              <shared-avatar [src]="prop.agent.profileImageUrl" [id]="prop.agent._id"
+                class="w-14 h-14 rounded-none border border-white/20"></shared-avatar>
               <div>
-                <h4
-                  class="text-white font-bold uppercase text-sm tracking-wide"
-                >
+                <h4 class="text-white font-bold uppercase text-sm tracking-wide">
                   {{ prop.agent.name }}
                 </h4>
                 <div class="text-sky-500 text-[10px] font-mono mt-1">
@@ -364,46 +255,28 @@
             </div>
 
             <div class="grid grid-cols-1 gap-3">
-              <a
-                href="tel:{{ prop.agent.phoneNumber }}"
-                class="flex items-center justify-center gap-2 py-3 border border-white/10 hover:bg-white/5 hover:border-sky-500/50 transition-all group"
-              >
-                <i
-                  class="pi pi-phone text-slate-500 group-hover:text-sky-500 transition-colors"
-                ></i>
+              <a href="tel:{{ prop.agent.phoneNumber }}"
+                class="flex items-center justify-center gap-2 py-3 border border-white/10 hover:bg-white/5 hover:border-sky-500/50 transition-all group">
+                <i class="pi pi-phone text-slate-500 group-hover:text-sky-500 transition-colors"></i>
                 <span class="text-xs font-mono text-slate-300">{{
                   prop.agent.phoneNumber
-                }}</span>
+                  }}</span>
               </a>
-              <a
-                href="mailto:{{ prop.agent.email }}"
-                class="flex items-center justify-center gap-2 py-3 border border-white/10 hover:bg-white/5 hover:border-sky-500/50 transition-all group"
-              >
-                <i
-                  class="pi pi-envelope text-slate-500 group-hover:text-sky-500 transition-colors"
-                ></i>
-                <span
-                  class="text-xs font-mono text-slate-300 truncate max-w-[180px]"
-                  >{{ prop.agent.email }}</span
-                >
+              <a href="mailto:{{ prop.agent.email }}"
+                class="flex items-center justify-center gap-2 py-3 border border-white/10 hover:bg-white/5 hover:border-sky-500/50 transition-all group">
+                <i class="pi pi-envelope text-slate-500 group-hover:text-sky-500 transition-colors"></i>
+                <span class="text-xs font-mono text-slate-300 truncate max-w-[180px]">{{ prop.agent.email }}</span>
               </a>
             </div>
           </div>
 
           <div>
-            <h3
-              class="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-4 flex items-center gap-2"
-            >
+            <h3 class="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-4 flex items-center gap-2">
               <i class="pi pi-calendar text-sky-500"></i> Agendar Cita
             </h3>
 
-            <div
-              class="bg-slate-900/30 border border-white/10 p-6 backdrop-blur-sm"
-            >
-              <shared-appointment-form
-                [propertyId]="prop._id"
-                [agentId]="prop.agent._id"
-              ></shared-appointment-form>
+            <div class="bg-slate-900/30 border border-white/10 p-6 backdrop-blur-sm">
+              <shared-appointment-form [propertyId]="prop._id" [agentId]="prop.agent._id"></shared-appointment-form>
             </div>
           </div>
         </div>

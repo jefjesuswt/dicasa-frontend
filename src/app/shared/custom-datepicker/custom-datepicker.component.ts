@@ -27,7 +27,10 @@ import { ControlValueAccessor, NG_VALUE_ACCESSOR } from "@angular/forms";
 export class CustomDatepickerComponent implements ControlValueAccessor {
   private elementRef = inject(ElementRef);
 
-  @Input() disabledDates: Date[] = [];
+  disabledDatesSignal = signal<Date[]>([]);
+  @Input() set disabledDates(value: Date[]) {
+    this.disabledDatesSignal.set(value);
+  }
   @Input() minDate?: Date;
   @Input() placeholder: string = "SELECCIONAR FECHA...";
 
@@ -40,10 +43,13 @@ export class CustomDatepickerComponent implements ControlValueAccessor {
   selectedMinute = signal(0);
 
   daysInMonth = computed(() => {
-    const year = this.currentViewDate().getFullYear();
-    const month = this.currentViewDate().getMonth();
+    const viewDate = this.currentViewDate();
+    if (!viewDate || isNaN(viewDate.getTime())) return [];
+
+    const year = viewDate.getFullYear();
+    const month = viewDate.getMonth();
     const date = new Date(year, month, 1);
-    const days = [];
+    const days: (Date | null)[] = [];
 
     const firstDayIndex = date.getDay();
 
@@ -58,8 +64,8 @@ export class CustomDatepickerComponent implements ControlValueAccessor {
     return days;
   });
 
-  onChange: any = () => {};
-  onTouch: any = () => {};
+  onChange: any = () => { };
+  onTouch: any = () => { };
   isDisabled = false;
 
   @HostListener("document:click", ["$event"])
@@ -116,11 +122,53 @@ export class CustomDatepickerComponent implements ControlValueAccessor {
     if (this.isDateDisabled(date)) return;
 
     const finalDate = new Date(date);
+
+    // Al seleccionar fecha, verificar si la hora actual (selectedHour) está bloqueada en esa nueva fecha
+    // Si está bloqueada, buscar la primera disponible desde las 8 o desde la actual
+    if (this.isTimeBlockedOnDate(date, this.selectedHour())) {
+      const firstFree = this.findFirstAvailableHour(date);
+      if (firstFree !== null) {
+        this.selectedHour.set(firstFree);
+      }
+    }
+
     finalDate.setHours(this.selectedHour());
     finalDate.setMinutes(this.selectedMinute());
 
     this.selectedDate.set(finalDate);
     this.onChange(finalDate);
+  }
+
+  private isTimeBlockedOnDate(date: Date, hour: number): boolean {
+    const blocked = this.getBlockedHours(date);
+    if (blocked.has(hour)) return true;
+
+    // Validar horas pasadas si es hoy
+    if (this.isToday(date)) {
+      const now = new Date();
+      // Bloqueamos si la hora es menor o igual a la actual
+      // Ejemplo: Son las 14:15. Bloqueamos 14, 13, 12...
+      if (hour <= now.getHours()) return true;
+    }
+
+    return false;
+  }
+
+  private findFirstAvailableHour(date: Date): number | null {
+    // Buscar entre 8 y 18
+    for (let h = 8; h <= 18; h++) {
+      if (!this.isTimeBlockedOnDate(date, h)) return h;
+    }
+    return null; // Día completo ocupado
+  }
+
+  private isToday(date: Date): boolean {
+    const now = new Date();
+    return (
+      date.getDate() === now.getDate() &&
+      date.getMonth() === now.getMonth() &&
+      date.getFullYear() === now.getFullYear()
+    );
   }
 
   updateTime(type: "hour" | "minute", increment: number) {
@@ -136,13 +184,69 @@ export class CustomDatepickerComponent implements ControlValueAccessor {
       this.selectedMinute.set(m);
     }
 
+    // Validar si la nueva hora está bloqueada
+    // Si está bloqueada, intentamos buscar la siguiente libre (solo si cambiamos hora)
+    if (type === 'hour' && this.isTimeBlocked(this.selectedHour())) {
+      this.findNextAvailableHour(increment);
+    }
+
     if (this.selectedDate()) {
       const updated = new Date(this.selectedDate()!);
       updated.setHours(this.selectedHour());
       updated.setMinutes(this.selectedMinute());
+
+      // Si aun asi es invalido (ej. cambio de minutos en hora bloqueada), no emitimos o mostramos error?
+      // Mejor forzamos una hora valida si es posible.
+      if (this.isTimeBlocked(this.selectedHour())) {
+        // Si la hora actual está bloqueada (ej. por cambio de fecha o minuto), buscar una libre
+        this.findNextAvailableHour(1);
+        updated.setHours(this.selectedHour());
+      }
+
       this.selectedDate.set(updated);
       this.onChange(updated);
     }
+  }
+
+  private findNextAvailableHour(direction: number) {
+    let h = this.selectedHour();
+    let attempts = 0;
+    // Evitar loop infinito
+    while (this.isTimeBlocked(h) && attempts < 24) {
+      h += direction;
+      if (h > 18) h = 8;
+      if (h < 8) h = 18;
+      attempts++;
+    }
+    // Si encontramos una libre, la seteamos
+    if (!this.isTimeBlocked(h)) {
+      this.selectedHour.set(h);
+    }
+  }
+
+  isTimeBlocked(hour: number): boolean {
+    if (!this.selectedDate()) return false;
+    return this.isTimeBlockedOnDate(this.selectedDate()!, hour);
+  }
+
+  private getBlockedHours(date: Date): Set<number> {
+    const blocked = new Set<number>();
+    if (!date) return blocked;
+
+    this.disabledDatesSignal().forEach((d) => {
+      const occ = new Date(d);
+      // Verificar si es el mismo día
+      if (
+        occ.getDate() === date.getDate() &&
+        occ.getMonth() === date.getMonth() &&
+        occ.getFullYear() === date.getFullYear()
+      ) {
+        const h = occ.getHours();
+        blocked.add(h);
+        blocked.add(h + 1); // Bloquear la siguiente hora también
+      }
+    });
+    return blocked;
   }
 
   isDateDisabled(date: Date): boolean {
@@ -174,15 +278,34 @@ export class CustomDatepickerComponent implements ControlValueAccessor {
       }
     }
 
-    // 4. Fechas ocupadas (backend)
-    return this.disabledDates.some((occupied) => {
-      const occ = new Date(occupied);
-      return (
-        occ.getDate() === date.getDate() &&
-        occ.getMonth() === date.getMonth() &&
-        occ.getFullYear() === date.getFullYear()
-      );
+    // 4. Fechas ocupadas (backend) - YA NO BLOQUEAMOS EL DÍA ENTERO
+    // Queremos que el usuario pueda entrar y ver las horas ocupadas.
+    return false;
+  }
+
+  unavailableHours = computed(() => {
+    const date = this.selectedDate();
+    if (!date) return [];
+
+    const blockedHours = this.getBlockedHours(date);
+    const result: Date[] = [];
+
+    blockedHours.forEach(h => {
+      const d = new Date(date);
+      d.setHours(h, 0, 0, 0);
+      result.push(d);
     });
+
+    return result.sort((a, b) => a.getTime() - b.getTime());
+  });
+
+  formatHour(date: Date): string {
+    let hours = date.getHours();
+    const ampm = hours >= 12 ? "PM" : "AM";
+    hours = hours % 12;
+    hours = hours ? hours : 12;
+    const minutes = date.getMinutes().toString().padStart(2, "0");
+    return `${hours}:${minutes} ${ampm}`;
   }
 
   formatDate(date: Date | null): string {
