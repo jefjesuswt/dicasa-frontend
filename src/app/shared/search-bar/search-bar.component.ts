@@ -28,7 +28,7 @@ export interface DropdownOption {
   imports: [CommonModule, FormsModule],
   template: `
     <div
-      class="w-full p-1 border border-white/10 bg-slate-900/60 backdrop-blur-md relative z-30"
+      class="w-full p-1 border border-[var(--border-light)] bg-[var(--bg-dark)]/90 backdrop-blur-md relative z-30 shadow-2xl"
     >
       <div class="flex flex-col md:flex-row gap-1">
         <div
@@ -46,10 +46,10 @@ export interface DropdownOption {
               (ngModelChange)="onQueryChange($event)"
               (keyup.enter)="onSearch()"
               [placeholder]="placeholder || 'INGRESA UNA ZONA...'"
-              class="w-full bg-transparent text-white placeholder-slate-600 font-mono text-sm border-none p-0 focus:ring-0 focus:outline-none uppercase tracking-wide"
+              class="w-full bg-transparent text-[var(--text-heading)] placeholder-[var(--text-secondary)] text-sm border-none p-0 focus:ring-0 focus:outline-none uppercase tracking-wide font-bold"
             />
             <i
-              class="pi pi-map-marker text-slate-600 group-focus-within:text-sky-400 transition-colors text-sm ml-2"
+              class="pi pi-map-marker text-[var(--text-secondary)] group-focus-within:text-sky-400 transition-colors text-sm ml-2"
             ></i>
           </div>
 
@@ -74,12 +74,12 @@ export interface DropdownOption {
 
             <div class="flex items-center justify-between">
               <span
-                class="text-white font-mono text-sm uppercase tracking-wide truncate"
+                class="text-[var(--text-heading)] text-sm uppercase tracking-wide truncate font-bold"
               >
                 {{ getSelectedLabel() }}
               </span>
               <i
-                class="pi pi-angle-down text-slate-500 text-xs transition-transform duration-300"
+                class="pi pi-angle-down text-[var(--text-secondary)] text-xs transition-transform duration-300"
                 [class.rotate-180]="isOpen"
                 [class.text-sky-400]="isOpen"
               ></i>
@@ -94,18 +94,18 @@ export interface DropdownOption {
 
           @if (isOpen) {
           <div
-            class="absolute top-full left-0 right-0 mt-1 bg-slate-950 border border-white/10 shadow-2xl z-50 max-h-60 overflow-y-auto custom-scrollbar animate-fade-in"
+            class="absolute top-full left-0 right-0 mt-1 bg-[var(--bg-dark)] border border-[var(--border-light)] shadow-2xl z-50 max-h-60 overflow-y-auto custom-scrollbar animate-fade-in"
           >
             <div
               (click)="selectOption('all')"
-              class="px-4 py-3 cursor-pointer border-b border-white/5 hover:bg-white/5 flex items-center justify-between group transition-colors"
+              class="px-4 py-3 cursor-pointer border-b border-[var(--border-light)] hover:bg-white/5 flex items-center justify-between group transition-colors"
             >
               <span
-                class="text-sm font-mono uppercase tracking-wide"
+                class="text-sm uppercase tracking-wide font-bold"
                 [class]="
                   selectedValue === 'all'
                     ? 'text-sky-400'
-                    : 'text-slate-400 group-hover:text-slate-200'
+                    : 'text-[var(--text-secondary)] group-hover:text-[var(--text-heading)]'
                 "
               >
                 Todos
@@ -118,14 +118,14 @@ export interface DropdownOption {
             @for (option of dropdownOptions; track option.value) {
             <div
               (click)="selectOption(option.value)"
-              class="px-4 py-3 cursor-pointer border-b border-white/5 hover:bg-white/5 flex items-center justify-between group transition-colors last:border-0"
+              class="px-4 py-3 cursor-pointer border-b border-[var(--border-light)] hover:bg-white/5 flex items-center justify-between group transition-colors last:border-0"
             >
               <span
-                class="text-sm font-mono uppercase tracking-wide"
+                class="text-sm uppercase tracking-wide font-bold"
                 [class]="
                   selectedValue === option.value
                     ? 'text-sky-400'
-                    : 'text-slate-400 group-hover:text-slate-200'
+                    : 'text-[var(--text-secondary)] group-hover:text-[var(--text-heading)]'
                 "
               >
                 {{ option.label }}
@@ -147,7 +147,7 @@ export interface DropdownOption {
 
         <button
           (click)="onSearch()"
-          class="w-full md:w-auto bg-white hover:bg-sky-400 text-slate-950 hover:text-white font-bold text-xs uppercase tracking-widest py-4 px-8 transition-all duration-300 flex items-center justify-center gap-2 group/btn"
+          class="w-full md:w-auto bg-[var(--btn-primary-bg)] hover:bg-sky-400 text-[var(--btn-primary-text)] hover:text-white font-bold text-xs uppercase tracking-widest py-4 px-8 transition-all duration-300 flex items-center justify-center gap-2 group/btn"
         >
           <span class="hidden md:inline">{{ buttonText || "Buscar" }}</span>
           <span class="md:hidden">Buscar</span>

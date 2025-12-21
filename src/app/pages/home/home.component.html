@@ -1,71 +1,71 @@
-<div
-  class="min-h-screen bg-slate-950 text-slate-300 font-sans overflow-x-hidden bg-grid pt-20"
->
-  <header
-    class="relative pt-20 pb-20 lg:pt-32 lg:pb-32 border-b border-white/10"
-  >
+<div class="min-h-screen bg-[var(--bg-dark)] text-[var(--text-secondary)] font-sans overflow-x-hidden bg-grid pt-20">
+  <header class="relative pt-20 pb-20 lg:pt-32 lg:pb-32 border-b border-[var(--border-light)] overflow-hidden">
     <div class="container mx-auto px-6 relative z-10">
-      <div class="flex flex-col lg:flex-row gap-12 items-start">
-        <div class="lg:w-2/3 reveal-on-scroll">
-          <div
-            class="inline-block px-3 py-1 border border-sky-500/30 text-sky-400 text-xs font-mono mb-6"
-          >
+      <div class="flex flex-col lg:flex-row gap-16 items-center">
+        <!-- Text Column -->
+        <div class="lg:w-1/2 reveal-on-scroll">
+          <div class="inline-block px-3 py-1 border border-sky-500/30 text-[var(--text-primary)] text-xs mb-6">
             EST. 2018 — LECHERÍA, VENEZUELA
           </div>
 
           <h1
-            class="text-5xl lg:text-7xl font-bold text-white uppercase tracking-tight leading-none mb-8"
-          >
+            class="text-5xl lg:text-7xl font-bold text-[var(--text-heading)] uppercase tracking-tight leading-none mb-8">
             Tu opción en <br />
-            <span
-              class="text-transparent bg-clip-text bg-gradient-to-r from-sky-400 to-blue-600"
-              >Bienes Raíces</span
-            >
+            <span class="text-transparent bg-clip-text bg-gradient-to-r from-sky-400 to-blue-600">Bienes Raíces</span>
           </h1>
 
-          <p
-            class="text-lg text-slate-400 max-w-xl mb-10 font-light border-l-2 border-sky-500 pl-6"
-          >
+          <p class="text-lg text-[var(--text-secondary)] max-w-xl mb-10 font-light border-l-2 border-sky-500 pl-6">
             Ofrecemos asesoría especializada en el complejo ámbito legal,
             inmobiliario y financiero.
           </p>
 
-          <div class="flex flex-col sm:flex-row gap-4">
-            <a
-              routerLink="/properties"
-              class="px-8 py-4 bg-white text-slate-950 font-bold uppercase text-sm hover:bg-sky-400 transition-colors text-center cursor-pointer"
-            >
+          <div class="flex flex-col sm:flex-row gap-4 mb-12">
+            <a routerLink="/properties"
+              class="px-8 py-4 bg-[var(--btn-primary-bg)] text-[var(--btn-primary-text)] font-bold uppercase text-sm hover:bg-sky-400 hover:text-white transition-colors text-center cursor-pointer">
               Ver Propiedades
             </a>
-            <a
-              routerLink="/contact"
-              class="px-8 py-4 border border-white/20 text-white font-bold uppercase text-sm hover:border-sky-400 hover:text-sky-400 transition-colors text-center cursor-pointer"
-            >
+            <a routerLink="/contact"
+              class="px-8 py-4 border border-[var(--btn-secondary-border)] text-[var(--btn-secondary-text)] font-bold uppercase text-sm hover:border-sky-400 hover:text-sky-400 transition-colors text-center cursor-pointer">
               Contactar
             </a>
           </div>
-        </div>
 
-        <div
-          class="lg:w-1/3 flex flex-col gap-6 reveal-on-scroll"
-          style="transition-delay: 200ms"
-        >
-          <div
-            class="border border-white/10 p-6 bg-white/5 hover:bg-white/10 transition-colors"
-          >
-            <div class="text-4xl font-bold text-white mb-1 font-mono">5+</div>
-            <div class="text-xs text-slate-500 uppercase tracking-widest">
-              Años de Experiencia Combinada
+          <!-- Stats Grid -->
+          <div class="grid grid-cols-2 gap-6 pt-8 border-t border-[var(--border-light)]">
+            <div class="p-6 bg-white/5 border border-[var(--border-light)] hover:bg-white/10 transition-colors">
+              <div class="text-4xl font-bold text-[var(--text-heading)] mb-1 font-mono">5+</div>
+              <div class="text-xs text-[var(--text-secondary)] uppercase tracking-widest">
+                Años de Experiencia
+              </div>
+            </div>
+            <div class="p-6 bg-white/5 border border-[var(--border-light)] hover:bg-white/10 transition-colors">
+              <div class="text-4xl font-bold text-[var(--text-heading)] mb-1 font-mono">
+                Sede
+              </div>
+              <div class="text-xs text-[var(--text-secondary)] uppercase tracking-widest">
+                Plaza Mayor
+              </div>
             </div>
           </div>
+        </div>
+
+        <!-- Image Column -->
+        <div class="lg:w-1/2 relative reveal-on-scroll group" style="transition-delay: 200ms">
           <div
-            class="border border-white/10 p-6 bg-white/5 hover:bg-white/10 transition-colors"
-          >
-            <div class="text-4xl font-bold text-white mb-1 font-mono">
-              Plaza Mayor
-            </div>
-            <div class="text-xs text-slate-500 uppercase tracking-widest">
-              Nuestra Sede Central
+            class="absolute -top-6 -right-6 w-32 h-32 border-t-2 border-r-2 border-sky-500 opacity-50 group-hover:opacity-100 transition-opacity">
+          </div>
+          <div
+            class="absolute -bottom-6 -left-6 w-32 h-32 border-b-2 border-l-2 border-sky-500 opacity-50 group-hover:opacity-100 transition-opacity">
+          </div>
+          <div class="relative h-[600px] w-full bg-slate-800 overflow-hidden">
+            <img src="https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?q=80&w=1000&auto=format&fit=crop"
+              alt="Luxury Home"
+              class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
+
+            <!-- Floating Badge -->
+            <div class="absolute bottom-8 right-8 bg-sky-500 p-6 text-white max-w-xs shadow-xl hidden md:block">
+              <p class="font-bold text-lg uppercase tracking-wider mb-2">Exclusividad</p>
+              <p class="text-xs opacity-90">Encontramos la propiedad perfecta que se adapta a tu estilo de vida.</p>
             </div>
           </div>
         </div>
@@ -73,63 +73,71 @@
     </div>
   </header>
 
-  <section class="border-b border-white/10">
+  <section class="border-b border-[var(--border-light)]">
     <div class="container mx-auto px-6">
-      <div
-        class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 divide-y md:divide-y-0 divide-white/10 lg:divide-x border-x border-white/10"
-      >
-        @for (service of services; track service.title) {
-        <div
-          class="group p-10 hover:bg-white/5 transition-colors relative reveal-on-scroll"
-        >
+      <div class="flex flex-col lg:flex-row border-x border-[var(--border-light)]">
+        <!-- Service Image Column -->
+        <div class="lg:w-1/3 relative group overflow-hidden min-h-[400px]">
+          <img src="https://images.unsplash.com/photo-1497366216548-37526070297c?q=80&w=1000&auto=format&fit=crop"
+            alt="Services" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
           <div
-            class="absolute top-0 left-0 w-3 h-3 border-l-2 border-t-2 border-sky-500 opacity-0 group-hover:opacity-100 scroll-target-opacity transition-opacity"
-          ></div>
-
-          <i
-            [class]="
-              service.icon +
-              ' text-3xl text-slate-500 group-hover:text-sky-400 scroll-target-color mb-6 transition-colors'
-            "
-          ></i>
-
-          <h3 class="text-lg font-bold text-white uppercase mb-3">
-            {{ service.title }}
-          </h3>
-          <p class="text-sm text-slate-400 leading-relaxed">
-            {{ service.desc }}
-          </p>
+            class="absolute inset-0 bg-gradient-to-t from-[var(--bg-dark)] via-transparent to-transparent opacity-90">
+          </div>
+          <div class="absolute bottom-8 left-8">
+            <h2 class="text-3xl font-bold text-white uppercase mb-2">Nuestros <br /><span
+                class="text-sky-400">Servicios</span></h2>
+            <div class="w-12 h-1 bg-sky-500"></div>
+          </div>
         </div>
-        }
+
+        <!-- Service Grid Column -->
+        <div
+          class="lg:w-2/3 grid grid-cols-1 md:grid-cols-2 divide-y md:divide-y-0 divide-white/10 border-t lg:border-t-0 lg:border-l border-[var(--border-light)]">
+          @for (service of services; track service.title) {
+          <div
+            class="group p-10 hover:bg-white/5 transition-colors relative reveal-on-scroll border-[var(--border-light)] border-b last:border-b-0 md:border-r md:[&:nth-child(2n)]:border-r-0 md:[&:nth-last-child(-n+2)]:border-b-0">
+            <div
+              class="absolute top-0 left-0 w-3 h-3 border-l-2 border-t-2 border-sky-500 opacity-0 group-hover:opacity-100 scroll-target-opacity transition-opacity">
+            </div>
+
+            <i [class]="
+                service.icon +
+                ' text-3xl text-[var(--text-secondary)] group-hover:text-sky-400 scroll-target-color mb-6 transition-colors'
+              "></i>
+
+            <h3 class="text-lg font-bold text-[var(--text-heading)] uppercase mb-3">
+              {{ service.title }}
+            </h3>
+            <p class="text-sm text-[var(--text-secondary)] leading-relaxed">
+              {{ service.desc }}
+            </p>
+          </div>
+          }
+        </div>
       </div>
     </div>
   </section>
 
-  <section class="py-24 border-b border-white/10 bg-slate-900/20">
+  <section class="py-24 border-b border-[var(--border-light)] bg-[var(--bg-section-alt)] bg-grid">
     <div class="container mx-auto px-6">
       <div class="flex flex-col lg:flex-row gap-16">
-        <div
-          class="w-full h-80 lg:w-1/2 lg:h-auto relative reveal-on-scroll group"
-        >
+        <div class="w-full h-80 lg:w-1/2 lg:h-auto relative reveal-on-scroll group">
           <div
-            class="absolute -top-4 -left-4 w-24 h-24 border-l-2 border-t-2 border-sky-500 opacity-50 group-hover:opacity-100 scroll-target-opacity transition-opacity"
-          ></div>
+            class="absolute -top-4 -left-4 w-24 h-24 border-l-2 border-t-2 border-sky-500 opacity-50 group-hover:opacity-100 scroll-target-opacity transition-opacity">
+          </div>
           <div
-            class="absolute -bottom-4 -right-4 w-24 h-24 border-r-2 border-b-2 border-sky-500 opacity-50 group-hover:opacity-100 scroll-target-opacity transition-opacity"
-          ></div>
+            class="absolute -bottom-4 -right-4 w-24 h-24 border-r-2 border-b-2 border-sky-500 opacity-50 group-hover:opacity-100 scroll-target-opacity transition-opacity">
+          </div>
 
           <div class="w-full h-full bg-slate-800 relative overflow-hidden">
-            <img
-              src="https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?q=80&w=1000&auto=format&fit=crop"
+            <img src="https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?q=80&w=1000&auto=format&fit=crop"
               alt="Edificio Fundación"
-              class="w-full h-full object-cover opacity-60 filter grayscale group-hover:grayscale-0 scroll-target-grayscale transition-all duration-700"
-            />
-            <div class="absolute inset-0 flex items-center justify-center">
-              <div class="text-center">
-                <div class="text-6xl font-bold text-white opacity-20">2018</div>
-                <div
-                  class="text-sm uppercase tracking-[0.5em] text-sky-400 font-bold"
-                >
+              class="w-full h-full object-cover opacity-60 transition-all duration-700 group-hover:scale-105" />
+            <div
+              class="absolute bottom-6 left-6 bg-[var(--bg-dark)]/90 backdrop-blur-sm p-6 border-l-4 border-sky-500 shadow-xl">
+              <div class="text-left">
+                <div class="text-4xl font-bold text-[var(--text-heading)] mb-1">2018</div>
+                <div class="text-xs uppercase tracking-[0.3em] text-sky-400 font-bold">
                   Fundación
                 </div>
               </div>
@@ -138,20 +146,16 @@
         </div>
 
         <div class="lg:w-1/2 flex flex-col justify-center reveal-on-scroll">
-          <h2
-            class="text-xs font-bold text-sky-500 uppercase tracking-widest mb-4"
-          >
+          <h2 class="text-xs font-bold text-sky-500 uppercase tracking-widest mb-4">
             Nuestra Identidad
           </h2>
-          <h3
-            class="text-3xl md:text-4xl font-bold text-white uppercase mb-8 leading-tight"
-          >
+          <h3 class="text-3xl md:text-4xl font-bold text-[var(--text-heading)] uppercase mb-8 leading-tight">
             Transparencia, Integridad y <br />Excelencia Profesional
           </h3>
 
-          <div class="space-y-6 text-slate-400">
+          <div class="space-y-6 text-[var(--text-secondary)]">
             <p>
-              <strong class="text-white">Dicasa Group, C.A.</strong> surgió con
+              <strong class="text-[var(--text-heading)]">Dicasa Group, C.A.</strong> surgió con
               un propósito claro: simplificar el complejo mercado inmobiliario
               venezolano.
             </p>
@@ -160,11 +164,11 @@
               clientes, cumpliendo con los más altos estándares éticos.
             </p>
 
-            <div class="pt-8 border-t border-white/10 mt-8">
+            <div class="pt-8 border-t border-[var(--border-light)] mt-8">
               <div class="flex items-center gap-4">
                 <div class="h-10 w-1 bg-sky-500"></div>
                 <div>
-                  <p class="text-white font-bold uppercase text-sm">
+                  <p class="text-[var(--text-heading)] font-bold uppercase text-sm">
                     Av. Daniel Camejo Octavio
                   </p>
                   <p class="text-xs">C.C. Plaza Mayor, Edif 6, Lechería.</p>
@@ -179,78 +183,58 @@
 
   <section class="py-24">
     <div class="container mx-auto px-6">
-      <div
-        class="flex justify-between items-end mb-12 border-b border-white/10 pb-6"
-      >
-        <h2 class="text-3xl font-bold text-white uppercase">
+      <div class="flex justify-between items-end mb-12 border-b border-[var(--border-light)] pb-6">
+        <h2 class="text-3xl font-bold text-[var(--text-heading)] uppercase">
           Oportunidades <span class="text-sky-500">Selectas</span>
         </h2>
-        <a
-          routerLink="/properties"
-          class="text-sm font-bold text-white uppercase hover:text-sky-400 transition-colors flex items-center gap-2"
-        >
+        <a routerLink="/properties"
+          class="text-sm font-bold text-[var(--text-heading)] uppercase hover:text-sky-400 transition-colors flex items-center gap-2">
           Ver Catálogo <i class="pi pi-arrow-right"></i>
         </a>
       </div>
 
       @if (loading) {
       <div class="flex justify-center py-20">
-        <div
-          class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-sky-500"
-        ></div>
+        <div class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-sky-500"></div>
       </div>
       } @else {
       <div
-        class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-px bg-white/10 border border-white/10"
-      >
+        class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-px bg-[var(--border-light)] border border-[var(--border-light)]">
         @for (prop of featuredProperties; track prop._id) {
-        <div
-          class="bg-slate-950 group relative overflow-hidden reveal-on-scroll cursor-pointer"
-          [routerLink]="['/properties', prop._id]"
-        >
+        <div class="bg-[var(--bg-dark)] group relative overflow-hidden reveal-on-scroll cursor-pointer"
+          [routerLink]="['/properties', prop._id]">
           <div class="h-80 relative overflow-hidden">
-            <img
-              [src]="
+            <img [src]="
                 prop.images && prop.images.length > 0
                   ? prop.images[0]
                   : 'assets/images/placeholder-property.png'
               "
-              class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 filter grayscale group-hover:grayscale-0 scroll-target-grayscale"
-              [alt]="prop.title"
-            />
-            <div
-              class="absolute top-4 left-4 bg-sky-500 text-slate-950 text-xs font-bold px-3 py-1 uppercase"
-            >
+              class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 scroll-target-grayscale"
+              [alt]="prop.title" />
+            <div class="absolute top-4 left-4 bg-sky-500 text-[var(--bg-dark)] text-xs font-bold px-3 py-1 uppercase">
               {{ prop.status === "sale" ? "En Venta" : "Alquiler" }}
             </div>
           </div>
 
-          <div
-            class="p-8 border-t border-white/10 group-hover:bg-white/5 transition-colors"
-          >
-            <h3 class="text-lg font-bold text-white uppercase mb-2 truncate">
+          <div class="p-8 border-t border-[var(--border-light)] group-hover:bg-[var(--bg-panel)] transition-colors">
+            <h3 class="text-lg font-bold text-[var(--text-heading)] uppercase mb-2 truncate">
               {{ prop.title }}
             </h3>
-            <p
-              class="text-xs text-sky-400 uppercase tracking-wider mb-4 truncate"
-            >
+            <p class="text-xs text-sky-400 uppercase tracking-wider mb-4 truncate">
               {{ prop.address.city }}, {{ prop.address.state }}
             </p>
 
             <div class="flex justify-between items-center">
-              <span class="text-2xl font-bold text-white font-mono"
-                >{{ prop.price | number }} $</span
-              >
-              <span
-                class="text-xs text-slate-500 border border-white/20 px-2 py-1"
-                >{{ prop.area }} M²</span
-              >
+              <span class="text-2xl font-bold text-[var(--text-heading)] font-mono">{{ prop.price | number }} $</span>
+              <span class="text-xs text-[var(--text-secondary)] border border-[var(--border-light)] px-2 py-1">{{
+                prop.area }}
+                M²</span>
             </div>
           </div>
 
           <div
-            class="absolute inset-0 border-2 border-sky-500 opacity-0 group-hover:opacity-100 scroll-target-border transition-opacity pointer-events-none"
-          ></div>
+            class="absolute inset-0 border-2 border-sky-500 opacity-0 group-hover:opacity-100 scroll-target-border transition-opacity pointer-events-none">
+          </div>
         </div>
         }
       </div>

@@ -8,6 +8,7 @@ import {
 import { CommonModule } from "@angular/common";
 import { Router, RouterLink, RouterLinkActive } from "@angular/router";
 import { AuthService } from "../../services/auth.service";
+import { ThemeService } from "../../services/theme.service";
 import { AvatarComponent } from "../../shared/avatar/avatar.component";
 
 interface NavLink {
@@ -27,6 +28,7 @@ export class HeaderComponent {
   private authService = inject(AuthService);
   private router = inject(Router);
   private eRef = inject(ElementRef);
+  public themeService = inject(ThemeService);
 
   public user = computed(() => this.authService.currentUser());
   public isMenuOpen = false;
@@ -36,7 +38,10 @@ export class HeaderComponent {
     return this.authService.isAdmin() || this.authService.isSuperAdmin();
   });
 
+  public isDarkMode = computed(() => this.themeService.isDarkMode());
+
   navLinks: NavLink[] = [
+    { path: '/', label: 'Inicio', exact: true },
     { path: "/properties", label: "Propiedades", exact: false },
     { path: "/contact", label: "Contacto", exact: false },
   ];
@@ -62,6 +67,10 @@ export class HeaderComponent {
     this.isMenuOpen = false;
     this.isProfileMenuOpen = false;
     this.router.navigate([path]);
+  }
+
+  toggleTheme(): void {
+    this.themeService.toggleTheme();
   }
 
   logout() {

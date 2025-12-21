@@ -1,37 +1,24 @@
-<form
-  [formGroup]="appointmentForm"
-  (ngSubmit)="onAppointmentSubmit()"
-  class="flex flex-col gap-6"
->
+<form [formGroup]="appointmentForm" (ngSubmit)="onAppointmentSubmit()" class="flex flex-col gap-6">
   <!-- Header del Formulario (Opcional, para dar contexto) -->
-  <div class="border-b border-white/10 pb-4 mb-2">
-    <p class="text-slate-500 text-xs mt-1 font-mono">
+  <div class="border-b border-[var(--border-light)] pb-4 mb-2">
+    <p class="text-[var(--text-secondary)] text-xs mt-1 font-mono">
       COMPLETE LOS DATOS PARA COORDINAR SU CITA
     </p>
   </div>
 
   <!-- Nombre -->
   <div class="group">
-    <label
-      for="name"
-      class="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2 group-focus-within:text-sky-500 transition-colors"
-    >
+    <label for="name"
+      class="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2 group-focus-within:text-sky-500 transition-colors">
       Nombre Completo
     </label>
     <div class="relative">
-      <input
-        type="text"
-        id="name"
-        formControlName="name"
-        placeholder="JUAN PEREZ..."
-        class="block w-full bg-white/5 border border-white/10 px-4 py-3 text-white placeholder-slate-600 focus:border-sky-500 focus:bg-slate-900 focus:ring-1 focus:ring-sky-500/20 focus:outline-none transition-all duration-300 font-mono text-sm"
-        [class.border-red-500]="name?.invalid && (name?.dirty || name?.touched)"
-      />
+      <input type="text" id="name" formControlName="name" placeholder="JUAN PEREZ..."
+        class="block w-full bg-[var(--bg-panel)] border border-[var(--border-light)] px-4 py-3 text-[var(--text-heading)] placeholder-[var(--text-secondary)] focus:border-sky-500 focus:bg-[var(--bg-dark)] focus:ring-1 focus:ring-sky-500/20 focus:outline-none transition-all duration-300 font-mono text-sm"
+        [class.border-red-500]="name?.invalid && (name?.dirty || name?.touched)" />
       <!-- Icono de Estado -->
       @if (name?.invalid && (name?.dirty || name?.touched)) {
-      <i
-        class="pi pi-exclamation-circle absolute right-4 top-3.5 text-red-500"
-      ></i>
+      <i class="pi pi-exclamation-circle absolute right-4 top-3.5 text-red-500"></i>
       }
     </div>
     @if (name?.invalid && (name?.dirty || name?.touched)) {
@@ -43,27 +30,18 @@
 
   <!-- Email -->
   <div class="group">
-    <label
-      for="email"
-      class="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2 group-focus-within:text-sky-500 transition-colors"
-    >
+    <label for="email"
+      class="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2 group-focus-within:text-sky-500 transition-colors">
       Correo Electrónico
     </label>
     <div class="relative">
-      <input
-        type="email"
-        id="email"
-        formControlName="email"
-        placeholder="CORREO@EJEMPLO.COM"
-        class="block w-full bg-white/5 border border-white/10 px-4 py-3 text-white placeholder-slate-600 focus:border-sky-500 focus:bg-slate-900 focus:ring-1 focus:ring-sky-500/20 focus:outline-none transition-all duration-300 font-mono text-sm"
+      <input type="email" id="email" formControlName="email" placeholder="CORREO@EJEMPLO.COM"
+        class="block w-full bg-[var(--bg-panel)] border border-[var(--border-light)] px-4 py-3 text-[var(--text-heading)] placeholder-[var(--text-secondary)] focus:border-sky-500 focus:bg-[var(--bg-dark)] focus:ring-1 focus:ring-sky-500/20 focus:outline-none transition-all duration-300 font-mono text-sm"
         [class.border-red-500]="
           email?.invalid && (email?.dirty || email?.touched)
-        "
-      />
+        " />
       @if (email?.invalid && (email?.dirty || email?.touched)) {
-      <i
-        class="pi pi-exclamation-circle absolute right-4 top-3.5 text-red-500"
-      ></i>
+      <i class="pi pi-exclamation-circle absolute right-4 top-3.5 text-red-500"></i>
       }
     </div>
     @if (email?.invalid && (email?.dirty || email?.touched)) {
@@ -75,10 +53,8 @@
 
   <!-- Teléfono -->
   <div class="group">
-    <label
-      for="phone"
-      class="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2 group-focus-within:text-sky-500 transition-colors"
-    >
+    <label for="phone"
+      class="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2 group-focus-within:text-sky-500 transition-colors">
       Teléfono de Contacto
     </label>
     <!--
@@ -87,24 +63,14 @@
        El input interno se vuelve transparente via CSS.
     -->
     <div
-      class="relative w-full bg-white/5 border border-white/10 focus-within:border-sky-500 focus-within:bg-slate-900 focus-within:ring-1 focus-within:ring-sky-500/20 transition-all duration-300"
-      [class.border-red-500]="phoneNumber?.invalid && phoneNumber?.touched"
-    >
-      <ngx-intl-tel-input
-        [cssClass]="
-          'w-full !bg-transparent !border-none !shadow-none !text-white font-mono text-sm !h-[46px] flex items-center'
-        "
-        [preferredCountries]="preferredCountries"
-        [enableAutoCountrySelect]="true"
-        [enablePlaceholder]="true"
-        [selectedCountryISO]="CountryISO.Venezuela"
-        [phoneValidation]="true"
-        [separateDialCode]="true"
-        [numberFormat]="phoneFormat"
-        name="phoneNumber"
-        formControlName="phoneNumber"
-        id="phoneNumber"
-      ></ngx-intl-tel-input>
+      class="relative w-full bg-[var(--bg-panel)] border border-[var(--border-light)] focus-within:border-sky-500 focus-within:bg-[var(--bg-dark)] focus-within:ring-1 focus-within:ring-sky-500/20 transition-all duration-300"
+      [class.border-red-500]="phoneNumber?.invalid && phoneNumber?.touched">
+      <ngx-intl-tel-input [cssClass]="
+          'w-full !bg-transparent !border-none !shadow-none !text-[var(--text-heading)] font-mono text-sm !h-[46px] flex items-center'
+        " [preferredCountries]="preferredCountries" [enableAutoCountrySelect]="true" [enablePlaceholder]="true"
+        [selectedCountryISO]="CountryISO.Venezuela" [phoneValidation]="true" [separateDialCode]="true"
+        [numberFormat]="phoneFormat" name="phoneNumber" formControlName="phoneNumber"
+        id="phoneNumber"></ngx-intl-tel-input>
     </div>
 
     @if (phoneNumber?.invalid && phoneNumber?.touched) {
@@ -118,13 +84,10 @@
   <div class="group">
     <div class="flex justify-between items-end mb-2">
       <label
-        class="block text-[10px] font-bold text-slate-400 uppercase tracking-widest group-focus-within:text-sky-500 transition-colors"
-      >
+        class="block text-[10px] font-bold text-slate-400 uppercase tracking-widest group-focus-within:text-sky-500 transition-colors">
         Fecha y Hora
       </label>
-      <span
-        class="text-[9px] text-slate-500 font-mono border border-white/10 px-2 py-0.5 rounded"
-      >
+      <span class="text-[9px] text-slate-500 font-mono border border-white/10 px-2 py-0.5 rounded">
         LUN-VIE | 08:00 - 18:00
       </span>
     </div>
@@ -134,23 +97,17 @@
        Igual que el teléfono, el DIV controla la estética.
     -->
     <div
-      class="relative bg-white/5 z-50 border border-white/10 hover:bg-white/10 focus-within:border-sky-500 focus-within:bg-slate-900 focus-within:ring-1 focus-within:ring-sky-500/20 transition-all duration-300"
+      class="relative bg-[var(--bg-panel)] z-50 border border-[var(--border-light)] hover:bg-[var(--bg-panel)]/80 focus-within:border-sky-500 focus-within:bg-[var(--bg-dark)] focus-within:ring-1 focus-within:ring-sky-500/20 transition-all duration-300"
       [class.border-red-500]="
         appointmentDate?.invalid &&
         (appointmentDate?.dirty || appointmentDate?.touched)
-      "
-    >
-      <app-custom-datepicker
-        formControlName="appointmentDate"
-        [minDate]="minDate"
-        [disabledDates]="occupiedDates"
-        placeholder="SELECCIONAR FECHA..."
-      ></app-custom-datepicker>
+      ">
+      <app-custom-datepicker formControlName="appointmentDate" [minDate]="minDate" [disabledDates]="occupiedDates"
+        placeholder="SELECCIONAR FECHA..."></app-custom-datepicker>
 
       <!-- Icono de Calendario superpuesto para dar feedback visual -->
       <div
-        class="absolute right-4 top-3 pointer-events-none text-slate-500 group-focus-within:text-sky-500 transition-colors"
-      >
+        class="absolute right-4 top-3 pointer-events-none text-slate-500 group-focus-within:text-sky-500 transition-colors">
         <i class="pi pi-calendar"></i>
       </div>
     </div>
@@ -166,21 +123,15 @@
 
   <!-- Mensaje -->
   <div class="group">
-    <label
-      for="message"
-      class="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2 group-focus-within:text-sky-500 transition-colors"
-    >
+    <label for="message"
+      class="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2 group-focus-within:text-sky-500 transition-colors">
       Mensaje Adicional
     </label>
-    <textarea
-      id="message"
-      formControlName="message"
-      rows="3"
-      class="block w-full bg-white/5 border border-white/10 px-4 py-3 text-white placeholder-slate-600 focus:border-sky-500 focus:bg-slate-900 focus:ring-1 focus:ring-sky-500/20 focus:outline-none transition-all duration-300 font-mono text-sm resize-none"
+    <textarea id="message" formControlName="message" rows="3"
+      class="block w-full bg-[var(--bg-panel)] border border-[var(--border-light)] px-4 py-3 text-[var(--text-heading)] placeholder-[var(--text-secondary)] focus:border-sky-500 focus:bg-[var(--bg-dark)] focus:ring-1 focus:ring-sky-500/20 focus:outline-none transition-all duration-300 font-mono text-sm resize-none"
       [class.border-red-500]="
         message?.invalid && (message?.dirty || message?.touched)
-      "
-    ></textarea>
+      "></textarea>
     @if (message?.invalid && (message?.dirty || message?.touched)) {
     <span class="text-[10px] text-red-500 font-mono mt-1 block tracking-wide">
       * MÍNIMO 10 CARACTERES
@@ -189,11 +140,8 @@
   </div>
 
   <!-- Botón Submit -->
-  <button
-    type="submit"
-    [disabled]="isSubmitting() || appointmentForm.invalid"
-    class="w-full py-4 mt-2 bg-sky-500 hover:bg-sky-400 text-slate-950 font-bold text-xs uppercase tracking-[0.2em] transition-all duration-300 shadow-[0_0_20px_rgba(14,165,233,0.3)] hover:shadow-[0_0_30px_rgba(56,189,248,0.5)] disabled:opacity-50 disabled:cursor-not-allowed disabled:shadow-none disabled:bg-slate-800 disabled:text-slate-500 flex justify-center items-center gap-3"
-  >
+  <button type="submit" [disabled]="isSubmitting() || appointmentForm.invalid"
+    class="w-full py-4 mt-2 bg-sky-500 hover:bg-sky-400 text-white font-bold text-xs uppercase tracking-[0.2em] transition-all duration-300 shadow-[0_0_20px_rgba(14,165,233,0.3)] hover:shadow-[0_0_30px_rgba(56,189,248,0.5)] disabled:opacity-50 disabled:cursor-not-allowed disabled:shadow-none disabled:bg-[var(--bg-panel)] disabled:text-[var(--text-secondary)] flex justify-center items-center gap-3">
     @if (isSubmitting()) {
     <i class="pi pi-spin pi-spinner"></i>
     <span>Procesando...</span>

@@ -1,11 +1,12 @@
-import { Component } from "@angular/core";
+import { Component, inject } from "@angular/core";
+import { ThemeService } from "../../services/theme.service";
 
 @Component({
   selector: "shared-screen-loader",
   standalone: true,
   template: `
     <div
-      class="fixed inset-0 bg-slate-950 z-[9999] flex items-center justify-center"
+      class="fixed inset-0 bg-[var(--bg-dark)] z-[9999] flex items-center justify-center transition-colors duration-200"
     >
       <!-- Background Grid (Very Subtle) -->
       <div class="absolute inset-0 bg-grid opacity-[0.03]"></div>
@@ -13,14 +14,22 @@ import { Component } from "@angular/core";
       <!-- Content -->
       <div class="relative z-10 flex flex-col items-center gap-8">
         <!-- Text Logo Only (Cleaner, Corporate) -->
+        @if (themeService.isDarkMode()) {
         <img
           src="assets/images/dicasa-800x260.png"
           alt="Dicasa Group"
-          class="h-8 md:h-10 w-auto brightness-0 invert opacity-90"
+          class="h-8 md:h-10 w-auto opacity-90 transition-all duration-200 brightness-0 invert"
         />
+        } @else {
+        <img
+          src="assets/images/dicasa-800x260.png"
+          alt="Dicasa Group"
+          class="h-8 md:h-10 w-auto opacity-90 transition-all duration-200"
+        />
+        }
 
         <!-- Ultra-thin Progress Line -->
-        <div class="w-32 h-[1px] bg-white/10 overflow-hidden">
+        <div class="w-32 h-[1px] bg-[var(--border-light)] overflow-hidden">
           <div
             class="h-full bg-sky-500 w-full origin-left animate-progress-line"
           ></div>
@@ -54,4 +63,6 @@ import { Component } from "@angular/core";
     `,
   ],
 })
-export class ScreenLoaderComponent { }
+export class ScreenLoaderComponent {
+  public themeService = inject(ThemeService);
+}

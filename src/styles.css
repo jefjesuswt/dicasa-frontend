@@ -4,18 +4,79 @@
 
 /* Oculta la scrollbar en Firefox y IE/Edge (versiones antiguas) */
 html {
-  scrollbar-width: none; /* Firefox */
-  -ms-overflow-style: none; /* IE y Edge */
+  scrollbar-width: none;
+  /* Firefox */
+  -ms-overflow-style: none;
+  /* IE y Edge */
+}
+
+/* Transición Global de Tema */
+body,
+header,
+footer,
+section,
+div,
+button,
+a,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p,
+span,
+i {
+  /* Include filter and transform for synchronized logo/icon transitions */
+  transition-property: background-color, border-color, color, fill, stroke, filter, transform, opacity, box-shadow;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 200ms;
 }
 
 /* Variables Globales del Tema Dicasa "Architectural" */
+
+/* Light Mode Variables (Default) */
 :root {
-  --color-primary: #38bdf8; /* sky-400 */
-  --color-primary-hover: #0ea5e9; /* sky-500 */
-  --color-secondary: #1e40af; /* blue-800 */
-  --bg-dark: #020617; /* slate-950 */
-  --bg-panel: rgba(255, 255, 255, 0.03);
-  --border-light: rgba(255, 255, 255, 0.1);
+  --color-primary: theme('colors.sky.400');
+  --color-primary-hover: theme('colors.sky.500');
+  --color-secondary: theme('colors.blue.800');
+  --bg-dark: theme('colors.sky.100');
+  --bg-panel: rgb(56 189 248 / 0.05);
+  /* sky-400 @ 5% */
+  --bg-section-alt: theme('colors.sky.100');
+  --border-light: rgb(0 0 0 / 0.1);
+  --text-primary: theme('colors.gray.600');
+  --text-secondary: theme('colors.gray.500');
+  --text-heading: theme('colors.gray.700');
+  --btn-primary-bg: theme('colors.gray.700');
+  --btn-primary-text: theme('colors.white');
+  --btn-secondary-bg: transparent;
+  --btn-secondary-text: theme('colors.gray.600');
+  --btn-secondary-border: rgb(75 85 99 / 0.3);
+  /* gray-600 @ 30% */
+}
+
+/* Dark Mode Variables */
+:root.dark {
+  --color-primary: theme('colors.sky.400');
+  --color-primary-hover: theme('colors.sky.500');
+  --color-secondary: theme('colors.blue.800');
+  --bg-dark: theme('colors.slate.950');
+  --bg-panel: rgb(255 255 255 / 0.03);
+  /* white @ 3% */
+  --bg-section-alt: rgb(255 255 255 / 0.02);
+  /* white @ 2% */
+  --border-light: rgb(255 255 255 / 0.1);
+  /* white @ 10% */
+  --text-primary: theme('colors.slate.200');
+  --text-secondary: theme('colors.slate.400');
+  --text-heading: theme('colors.white');
+  --btn-primary-bg: theme('colors.white');
+  --btn-primary-text: theme('colors.slate.950');
+  --btn-secondary-bg: transparent;
+  --btn-secondary-text: theme('colors.white');
+  --btn-secondary-border: rgb(255 255 255 / 0.2);
+  /* white @ 20% */
 }
 
 /* --- 2. UTILIDADES DE DISEÑO --- */
@@ -28,12 +89,15 @@ html {
 /* Fondo de Rejilla (Grid) Arquitectónico */
 .bg-grid {
   background-size: 40px 40px;
-  background-image: linear-gradient(
-      to right,
-      rgba(255, 255, 255, 0.03) 1px,
-      transparent 1px
-    ),
-    linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+  background-image: none;
+}
+
+.dark .bg-grid {
+  /* background-image: linear-gradient(to right,
+      var(--border-light) 1px,
+      transparent 1px),
+    linear-gradient(to bottom, var(--border-light) 1px, transparent 1px); */
+  background-image: none;
 }
 
 /* Texto con Gradiente Corporativo */
@@ -58,6 +122,7 @@ html {
 .hover-line {
   position: relative;
 }
+
 .hover-line::after {
   content: "";
   position: absolute;
@@ -68,6 +133,7 @@ html {
   background-color: var(--color-primary);
   transition: width 0.3s ease;
 }
+
 .hover-line:hover::after {
   width: 100%;
 }
@@ -92,9 +158,11 @@ html {
   .reveal-on-scroll.is-visible .scroll-target-grayscale {
     filter: grayscale(0) !important;
   }
+
   .reveal-on-scroll.is-visible .scroll-target-opacity {
     opacity: 1 !important;
   }
+
   .reveal-on-scroll.is-visible .scroll-target-border {
     opacity: 1 !important;
   }
@@ -105,6 +173,7 @@ html {
   .reveal-on-scroll.is-visible .scroll-target-opacity {
     opacity: 1 !important;
   }
+
   /* No forzamos grayscale(0) aquí para permitir que el hover CSS funcione */
 }
 
@@ -139,14 +208,16 @@ html {
   padding-left: 5rem !important;
 
   /* Placeholder más claro */
-  --placeholder-color: #64748b; /* slate-500 */
+  --placeholder-color: #64748b;
+  /* slate-500 */
 }
 
 /* Placeholder específico */
 .iti__tel-input::placeholder {
   color: var(--placeholder-color) !important;
   opacity: 1;
-  font-family: "Courier New", Courier, monospace; /* Font mono para consistencia */
+  font-family: "Courier New", Courier, monospace;
+  /* Font mono para consistencia */
   font-size: 0.875rem;
 }
 
@@ -165,7 +236,8 @@ html {
     0 4px 6px -2px rgba(0, 0, 0, 0.3);
 
   box-sizing: border-box;
-  border: 1px solid rgba(255, 255, 255, 0.1) !important; /* Borde fino blanco */
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  /* Borde fino blanco */
   border-radius: 0.25rem;
   margin-top: 0.5rem;
 
@@ -173,7 +245,8 @@ html {
   overflow-y: auto;
 
   /* --- CAMBIO CRÍTICO: Fondo Oscuro --- */
-  background-color: #020617 !important; /* slate-950 */
+  background-color: #020617 !important;
+  /* slate-950 */
   backdrop-filter: blur(10px);
 
   scrollbar-width: thin;
@@ -191,11 +264,15 @@ html {
   outline: none !important;
   padding-left: 0 !important;
 }
+
 .iti__arrow {
-  border-top-color: #94a3b8 !important; /* Flecha gris clara */
+  border-top-color: #94a3b8 !important;
+  /* Flecha gris clara */
 }
+
 .iti__arrow.iti__arrow--up {
-  border-bottom-color: #38bdf8 !important; /* Flecha azul al abrir */
+  border-bottom-color: #38bdf8 !important;
+  /* Flecha azul al abrir */
 }
 
 /* Items de la lista (Países) */
@@ -204,7 +281,8 @@ html {
   align-items: center !important;
   padding: 0.75rem 1rem;
   border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-  color: #e2e8f0 !important; /* Texto claro (slate-200) */
+  color: #e2e8f0 !important;
+  /* Texto claro (slate-200) */
   font-size: 0.875rem;
   transition: all 0.2s;
 }
@@ -212,14 +290,17 @@ html {
 /* Hover en los países */
 .iti__country:hover,
 .iti__country.iti__highlight {
-  background-color: rgba(56, 189, 248, 0.1) !important; /* Azul transparente */
-  color: #38bdf8 !important; /* Texto azul */
+  background-color: rgba(56, 189, 248, 0.1) !important;
+  /* Azul transparente */
+  color: #38bdf8 !important;
+  /* Texto azul */
 }
 
 /* Código de país (+58, +1) */
 .iti__dial-code {
   margin-left: auto;
-  color: #64748b !important; /* slate-500 */
+  color: #64748b !important;
+  /* slate-500 */
   font-family: "Courier New", Courier, monospace;
 }
 
@@ -227,9 +308,11 @@ html {
 .iti__country-list::-webkit-scrollbar {
   width: 6px;
 }
+
 .iti__country-list::-webkit-scrollbar-track {
   background: #020617;
 }
+
 .iti__country-list::-webkit-scrollbar-thumb {
   background-color: #334155;
   border-radius: 3px;
@@ -240,8 +323,8 @@ input:-webkit-autofill,
 input:-webkit-autofill:hover,
 input:-webkit-autofill:focus,
 input:-webkit-autofill:active {
-  -webkit-box-shadow: 0 0 0 30px #020617 inset !important;
-  -webkit-text-fill-color: white !important;
-  caret-color: white !important;
+  -webkit-box-shadow: 0 0 0 30px var(--bg-dark) inset !important;
+  -webkit-text-fill-color: var(--text-heading) !important;
+  caret-color: var(--text-heading) !important;
   transition: background-color 5000s ease-in-out 0s;
 }

@@ -1,94 +1,76 @@
 <header
-  class="fixed top-0 left-0 right-0 z-50 bg-slate-950/90 backdrop-blur-md border-b border-white/10 transition-all duration-300"
->
+  class="fixed top-0 left-0 right-0 z-50 bg-[var(--bg-dark)]/90 backdrop-blur-md border-b border-[var(--border-light)] transition-all duration-300">
   <nav class="container mx-auto px-6 h-20 flex justify-between items-center">
     <a routerLink="/" class="flex items-center gap-4 group">
       <div
-        class="h-10 w-10 bg-white/5 flex items-center justify-center border border-white/10 group-hover:border-sky-500/50 transition-colors"
-      >
-        <img
-          src="assets/images/dicasa-500x500.png"
-          alt="Dicasa Icon"
-          class="h-6 w-6 object-contain"
-        />
+        class="h-10 w-10 bg-white/5 flex items-center justify-center border border-black/10 group-hover:border-sky-500/50 transition-colors">
+        <img src="assets/images/dicasa-500x500.png" alt="Dicasa Icon" class="h-6 w-6 object-contain" />
       </div>
-      <img
-        src="assets/images/dicasa-800x260.png"
-        alt="Dicasa Group"
-        class="h-4 w-auto brightness-0 invert opacity-90 group-hover:opacity-100 transition-opacity"
-      />
+
+      <!-- LÓGICA CONDICIONAL DE LOGO -->
+      @if (isDarkMode()) {
+      <img src="assets/images/dicasa-800x260.png" alt="Dicasa Group"
+        class="h-4 w-auto transition-all duration-300 brightness-0 invert opacity-90 group-hover:opacity-100" />
+      } @else {
+      <img src="assets/images/dicasa-800x260.png" alt="Dicasa Group"
+        class="h-4 w-auto transition-all duration-300 opacity-90 group-hover:opacity-100" />
+      }
     </a>
 
     <div class="hidden md:flex items-center gap-8">
+      <!-- Theme Toggle Button (Left) -->
+      <button (click)="toggleTheme()"
+        class="h-9 w-9 flex items-center justify-center text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-white/5 transition-colors"
+        [attr.aria-label]="isDarkMode() ? 'Cambiar a modo claro' : 'Cambiar a modo oscuro'">
+        <i class="pi text-base" [class.pi-moon]="isDarkMode()" [class.pi-sun]="!isDarkMode()"></i>
+      </button>
+
       <div class="flex items-center gap-8">
         @for (link of navLinks; track link.path) {
-        <a
-          [routerLink]="link.path"
-          routerLinkActive="text-white"
+        <a [routerLink]="link.path" routerLinkActive="text-[var(--text-heading)]"
           [routerLinkActiveOptions]="{ exact: link.exact }"
-          class="relative text-xs font-medium uppercase tracking-widest text-slate-400 hover:text-white transition-colors py-2 group"
-        >
+          class="relative text-xs font-medium uppercase tracking-widest text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors py-2 group">
           {{ link.label }}
-          <span
-            class="absolute bottom-0 left-0 w-0 h-px bg-sky-500 transition-all duration-300 group-hover:w-full"
-            routerLinkActive="w-full"
-            [routerLinkActiveOptions]="{ exact: link.exact }"
-          ></span>
+          <span class="absolute bottom-0 left-0 w-0 h-px bg-sky-500 transition-all duration-300 group-hover:w-full"
+            routerLinkActive="w-full" [routerLinkActiveOptions]="{ exact: link.exact }"></span>
         </a>
         }
       </div>
 
-      <div class="h-5 w-px bg-white/10"></div>
+
 
       <div>
         @if (user()) {
         <div class="relative">
-          <button
-            (click)="toggleProfileMenu()"
-            class="flex items-center gap-3 text-slate-300 hover:text-white focus:outline-none group"
-          >
+          <button (click)="toggleProfileMenu()"
+            class="flex items-center gap-3 text-[var(--text-secondary)] hover:text-[var(--text-primary)] focus:outline-none group">
             <div class="text-right hidden lg:block">
-              <p
-                class="text-xs font-bold uppercase text-white leading-none mb-1"
-              >
+              <p class="text-xs font-bold uppercase text-[var(--text-primary)] leading-none mb-1">
                 {{ user()?.name?.split(' ')?.[0] }}
               </p>
-              <p
-                class="text-[9px] text-sky-500 font-mono leading-none tracking-wider"
-              >
+              <p class="text-[9px] text-sky-500 font-mono leading-none tracking-wider">
                 ONLINE
               </p>
             </div>
 
-            <shared-avatar
-              class="w-9 h-9 border border-white/10 group-hover:border-sky-500 transition-colors"
-              [src]="user()?.profileImageUrl"
-              [id]="user()?._id"
-            ></shared-avatar>
+            <shared-avatar class="w-9 h-9 border border-white/10 group-hover:border-sky-500 transition-colors"
+              [src]="user()?.profileImageUrl" [id]="user()?._id"></shared-avatar>
 
-            <i
-              class="pi pi-angle-down text-xs transition-transform duration-300"
-              [class.rotate-180]="isProfileMenuOpen"
-            ></i>
+            <i class="pi pi-angle-down text-xs transition-transform duration-300"
+              [class.rotate-180]="isProfileMenuOpen"></i>
           </button>
 
           <div
-            class="absolute right-0 mt-4 w-56 bg-slate-950 border border-white/10 shadow-2xl origin-top-right transition-all duration-200 z-50"
-            [class.opacity-0]="!isProfileMenuOpen"
-            [class.invisible]="!isProfileMenuOpen"
-            [class.scale-95]="!isProfileMenuOpen"
-            [class.opacity-100]="isProfileMenuOpen"
-            [class.visible]="isProfileMenuOpen"
-            [class.scale-100]="isProfileMenuOpen"
-          >
+            class="absolute right-0 mt-4 w-56 bg-[var(--bg-dark)] border border-[var(--border-light)] shadow-2xl origin-top-right transition-all duration-200 z-50"
+            [class.opacity-0]="!isProfileMenuOpen" [class.invisible]="!isProfileMenuOpen"
+            [class.scale-95]="!isProfileMenuOpen" [class.opacity-100]="isProfileMenuOpen"
+            [class.visible]="isProfileMenuOpen" [class.scale-100]="isProfileMenuOpen">
             <div
-              class="absolute -top-1 right-3 w-2 h-2 bg-slate-950 border-t border-l border-white/10 transform rotate-45"
-            ></div>
+              class="absolute -top-1 right-3 w-2 h-2 bg-[var(--bg-dark)] border-t border-l border-[var(--border-light)] transform rotate-45">
+            </div>
 
             <div class="p-4 border-b border-white/10">
-              <p
-                class="text-white text-xs font-bold truncate uppercase tracking-wide"
-              >
+              <p class="text-white text-xs font-bold truncate uppercase tracking-wide">
                 {{ user()?.name }}
               </p>
               <p class="text-slate-500 text-[10px] truncate">
@@ -98,81 +80,82 @@
 
             <div class="py-1">
               @if (isPrivilegedUser()) {
-              <button
-                (click)="closeMenusAndNavigate('/dashboard')"
-                class="flex items-center w-full px-4 py-2.5 text-xs font-medium uppercase tracking-wide text-slate-400 hover:text-white hover:bg-white/5 transition-colors"
-              >
+              <button (click)="closeMenusAndNavigate('/dashboard')"
+                class="flex items-center w-full px-4 py-2.5 text-xs font-medium uppercase tracking-wide text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-white/5 transition-colors">
                 Dashboard
               </button>
               }
-              <button
-                (click)="closeMenusAndNavigate('/profile')"
-                class="flex items-center w-full px-4 py-2.5 text-xs font-medium uppercase tracking-wide text-slate-400 hover:text-white hover:bg-white/5 transition-colors"
-              >
+              <button (click)="closeMenusAndNavigate('/profile')"
+                class="flex items-center w-full px-4 py-2.5 text-xs font-medium uppercase tracking-wide text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-white/5 transition-colors">
                 Mi Perfil
               </button>
             </div>
 
             <div class="border-t border-white/10 py-1">
-              <button
-                (click)="logout()"
-                class="flex items-center w-full px-4 py-2.5 text-xs font-medium uppercase tracking-wide text-red-400 hover:text-red-300 hover:bg-red-500/10 transition-colors"
-              >
+              <button (click)="logout()"
+                class="flex items-center w-full px-4 py-2.5 text-xs font-medium uppercase tracking-wide text-red-400 hover:text-red-300 hover:bg-red-500/10 transition-colors">
                 Cerrar Sesión
               </button>
             </div>
           </div>
         </div>
         } @else {
-        <a
-          routerLink="/auth/login"
-          class="h-9 px-5 flex items-center bg-sky-600 hover:bg-sky-500 text-white text-[10px] font-bold uppercase tracking-[0.15em] transition-colors shadow-lg shadow-sky-900/20"
-        >
+        <a routerLink="/auth/login"
+          class="h-9 px-5 flex items-center bg-sky-600 hover:bg-sky-500 text-white text-[10px] font-bold uppercase tracking-[0.15em] transition-colors shadow-lg shadow-sky-900/20">
           Iniciar Sesión
         </a>
         }
       </div>
     </div>
 
-    <button (click)="toggleMobileMenu()" class="md:hidden text-white p-2">
-      <i
-        class="pi"
-        [class.pi-bars]="!isMenuOpen"
-        [class.pi-times]="isMenuOpen"
-        style="font-size: 1.2rem"
-      ></i>
+    <button (click)="toggleMobileMenu()" class="md:hidden text-[var(--text-heading)] p-2">
+      <i class="pi" [class.pi-bars]="!isMenuOpen" [class.pi-times]="isMenuOpen" style="font-size: 1.2rem"></i>
     </button>
   </nav>
 
   <div
-    class="md:hidden bg-slate-950 border-b border-white/10 overflow-hidden transition-all duration-300"
-    [class.max-h-0]="!isMenuOpen"
-    [class.max-h-screen]="isMenuOpen"
-  >
+    class="md:hidden bg-[var(--bg-dark)] border-b border-[var(--border-light)] overflow-hidden transition-all duration-300"
+    [class.max-h-0]="!isMenuOpen" [class.max-h-screen]="isMenuOpen">
     <div class="flex flex-col">
       <div class="px-6 py-6 space-y-1">
         @for (link of navLinks; track link.path) {
-        <a
-          (click)="closeMenusAndNavigate(link.path)"
-          class="block py-3 text-sm font-medium uppercase tracking-widest text-slate-400 hover:text-white hover:pl-2 transition-all duration-300 border-l-2 border-transparent hover:border-sky-500"
-        >
+        <a (click)="closeMenusAndNavigate(link.path)"
+          class="block py-3 text-sm font-medium uppercase tracking-widest text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:pl-2 transition-all duration-300 border-l-2 border-transparent hover:border-sky-500">
           {{ link.label }}
         </a>
         }
+
+        <!-- Mobile Theme Toggle -->
+        <div class="px-6 pb-4">
+          <button (click)="toggleTheme()"
+            class="w-full relative h-12 bg-white/5 border border-white/10 flex items-center justify-between px-4 hover:bg-white/10 transition-all duration-300 overflow-hidden"
+            [attr.aria-label]="isDarkMode() ? 'Cambiar a modo claro' : 'Cambiar a modo oscuro'">
+            <div class="flex items-center gap-3 z-10">
+              <i class="transition-all duration-300" [class.pi-moon]="isDarkMode()" [class.pi-sun]="!isDarkMode()"
+                [class.text-sky-500]="true"></i>
+              <span class="text-xs font-bold uppercase tracking-widest text-[var(--text-secondary)]">
+                {{ isDarkMode() ? 'Modo Oscuro' : 'Modo Claro' }}
+              </span>
+            </div>
+            <div class="flex items-center gap-2 z-10">
+              <i class="pi pi-sun text-[10px] text-slate-600"></i>
+              <div class="w-8 h-4 bg-slate-800 border border-white/10 relative">
+                <div class="absolute top-0.5 h-3 w-3 bg-sky-500 transition-transform duration-300"
+                  [class.translate-x-0.5]="isDarkMode()" [class.translate-x-[18px]]="!isDarkMode()"></div>
+              </div>
+              <i class="pi pi-moon text-[10px] text-slate-600"></i>
+            </div>
+          </button>
+        </div>
       </div>
 
       <div class="bg-white/5 border-t border-white/10 p-6">
         @if (user()) {
         <div class="flex items-center gap-4 mb-6">
-          <shared-avatar
-            class="w-12 h-12 border border-white/10"
-            [src]="user()?.profileImageUrl"
-            [id]="user()?._id"
-          ></shared-avatar>
+          <shared-avatar class="w-12 h-12 border border-white/10" [src]="user()?.profileImageUrl"
+            [id]="user()?._id"></shared-avatar>
           <div class="overflow-hidden">
-            <p
-              class="text-white text-sm font-bold uppercase tracking-wide truncate"
-            >
+            <p class="text-white text-sm font-bold uppercase tracking-wide truncate">
               {{ user()?.name }}
             </p>
             <p class="text-slate-500 text-xs truncate">{{ user()?.email }}</p>
@@ -181,33 +164,25 @@
 
         <div class="space-y-2">
           @if (isPrivilegedUser()) {
-          <button
-            (click)="closeMenusAndNavigate('/dashboard')"
-            class="w-full text-left py-2 text-xs font-bold uppercase tracking-widest text-slate-300 hover:text-white transition-colors"
-          >
+          <button (click)="closeMenusAndNavigate('/dashboard')"
+            class="w-full text-left py-2 text-xs font-bold uppercase tracking-widest text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors">
             <i class="pi pi-objects-column mr-2 text-sky-500"></i> Dashboard
           </button>
           }
-          <button
-            (click)="closeMenusAndNavigate('/profile')"
-            class="w-full text-left py-2 text-xs font-bold uppercase tracking-widest text-slate-300 hover:text-white transition-colors"
-          >
+          <button (click)="closeMenusAndNavigate('/profile')"
+            class="w-full text-left py-2 text-xs font-bold uppercase tracking-widest text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors">
             <i class="pi pi-user mr-2 text-sky-500"></i> Mi Perfil
           </button>
-          <button
-            (click)="logout()"
-            class="w-full text-left py-2 text-xs font-bold uppercase tracking-widest text-red-400 hover:text-red-300 transition-colors mt-2"
-          >
+          <button (click)="logout()"
+            class="w-full text-left py-2 text-xs font-bold uppercase tracking-widest text-red-400 hover:text-red-300 transition-colors mt-2">
             <i class="pi pi-power-off mr-2"></i> Cerrar Sesión
           </button>
         </div>
 
         } @else {
         <div class="text-center">
-          <a
-            (click)="closeMenusAndNavigate('/auth/login')"
-            class="block w-full py-3 bg-sky-600 text-white text-center font-bold uppercase tracking-widest text-xs hover:bg-sky-500 transition-colors"
-          >
+          <a (click)="closeMenusAndNavigate('/auth/login')"
+            class="block w-full py-3 bg-sky-600 text-white text-center font-bold uppercase tracking-widest text-xs hover:bg-sky-500 transition-colors">
             Iniciar Sesión
           </a>
         </div>

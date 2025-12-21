@@ -1,23 +1,23 @@
 <div class="relative w-full font-mono text-sm group">
   <div (click)="toggleCalendar()"
-    class="flex items-center justify-between w-full bg-white/5 border border-white/10 px-4 py-3 text-white cursor-pointer hover:bg-white/10 transition-colors"
+    class="flex items-center justify-between w-full bg-[var(--bg-panel)] border border-[var(--border-light)] px-4 py-3 text-[var(--text-heading)] cursor-pointer hover:bg-[var(--bg-panel)]/80 transition-colors"
     [class.opacity-50]="isDisabled">
-    <span [class.text-slate-500]="!selectedDate()" class="uppercase tracking-widest text-xs">
+    <span [class.text-[var(--text-secondary)]]="!selectedDate()" class="uppercase tracking-widest text-xs">
       {{ selectedDate() ? formatDate(selectedDate()) : placeholder }}
     </span>
-    <i class="pi pi-calendar text-slate-500 group-hover:text-sky-500 transition-colors"></i>
+    <i class="pi pi-calendar text-[var(--text-secondary)] group-hover:text-sky-500 transition-colors"></i>
   </div>
 
   @if (isOpen()) {
-  <div class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-[9990] md:hidden" (click)="closeCalendar()"></div>
+  <div class="fixed inset-0 bg-[var(--bg-dark)]/80 backdrop-blur-sm z-[9990] md:hidden" (click)="closeCalendar()"></div>
 
   <div
-    class="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[90%] max-w-[320px] z-[9999] md:absolute md:top-full md:left-0 md:translate-x-0 md:translate-y-0 md:w-full md:max-w-none bg-[#020617] border border-white/20 shadow-[0_0_50px_rgba(0,0,0,0.9)] md:shadow-[0_10px_40px_-10px_rgba(0,0,0,0.8)] p-4 animate-fadeIn rounded-sm">
-    <div class="flex justify-between items-center mb-4 pb-2 border-b border-white/10">
+    class="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[90%] max-w-[320px] z-[9999] md:absolute md:top-full md:left-0 md:translate-x-0 md:translate-y-0 md:w-full md:max-w-none bg-[var(--bg-dark)] border border-[var(--border-light)] shadow-[0_0_50px_rgba(0,0,0,0.9)] md:shadow-[0_10px_40px_-10px_rgba(0,0,0,0.8)] p-4 animate-fadeIn rounded-sm">
+    <div class="flex justify-between items-center mb-4 pb-2 border-b border-[var(--border-light)]">
       <button type="button" (click)="changeMonth(-1)" class="p-2 hover:text-sky-400 transition-colors">
         <i class="pi pi-chevron-left text-xs"></i>
       </button>
-      <span class="font-bold uppercase tracking-widest text-white text-xs">
+      <span class="font-bold uppercase tracking-widest text-[var(--text-heading)] text-xs">
         {{ currentViewDate() | date : "MMMM yyyy" : "" : "es-VE" }}
       </span>
       <button type="button" (click)="changeMonth(1)" class="p-2 hover:text-sky-400 transition-colors">
@@ -27,17 +27,17 @@
 
     <div class="grid grid-cols-7 gap-1 mb-2 text-center">
       @for(day of ['DO','LU','MA','MI','JU','VI','SA']; track day) {
-      <span class="text-[9px] text-slate-500 font-bold">{{ day }}</span>
+      <span class="text-[9px] text-[var(--text-secondary)] font-bold">{{ day }}</span>
       }
     </div>
 
     <div class="grid grid-cols-7 gap-1">
       @for(day of daysInMonth(); track $index) { @if(day) {
       <button type="button" (click)="selectDate(day)" [disabled]="isDateDisabled(day)"
-        class="h-8 w-full flex items-center justify-center text-xs border border-transparent hover:border-sky-500/50 hover:bg-white/5 transition-all relative rounded-sm"
+        class="h-8 w-full flex items-center justify-center text-xs border border-transparent hover:border-sky-500/50 hover:bg-[var(--bg-panel)] transition-all relative rounded-sm"
         [class.bg-sky-500]="
           selectedDate()?.toDateString() === day.toDateString()
-        " [class.text-slate-950]="
+        " [class.text-[var(--btn-primary-text)]]="
           selectedDate()?.toDateString() === day.toDateString()
         " [class.font-bold]="
           selectedDate()?.toDateString() === day.toDateString()
@@ -50,34 +50,37 @@
       } }
     </div>
 
-    <div class="mt-4 pt-4 border-t border-white/10 flex justify-between items-center">
-      <span class="text-[10px] text-slate-400 uppercase tracking-widest">Hora</span>
+    <div class="mt-4 pt-4 border-t border-[var(--border-light)] flex justify-between items-center">
+      <span class="text-[10px] text-[var(--text-secondary)] uppercase tracking-widest">Hora</span>
 
-      <div class="flex items-center gap-2 bg-white/5 border border-white/10 px-3 py-1 rounded-sm">
+      <div
+        class="flex items-center gap-2 bg-[var(--bg-panel)] border border-[var(--border-light)] px-3 py-1 rounded-sm">
         <div class="flex flex-col items-center">
           <button type="button" (click)="updateTime('hour', 1)"
-            class="text-[8px] text-slate-400 hover:text-sky-400 py-0.5">
+            class="text-[8px] text-[var(--text-secondary)] hover:text-sky-400 py-0.5">
             <i class="pi pi-chevron-up"></i>
           </button>
-          <span class="font-bold text-white w-5 text-center text-sm font-mono">{{ selectedHour() | number : "2.0"
+          <span class="font-bold text-[var(--text-heading)] w-5 text-center text-sm font-mono">{{ selectedHour() |
+            number : "2.0"
             }}</span>
           <button type="button" (click)="updateTime('hour', -1)"
-            class="text-[8px] text-slate-400 hover:text-sky-400 py-0.5">
+            class="text-[8px] text-[var(--text-secondary)] hover:text-sky-400 py-0.5">
             <i class="pi pi-chevron-down"></i>
           </button>
         </div>
 
-        <span class="text-slate-500 pb-0.5">:</span>
+        <span class="text-[var(--text-secondary)] pb-0.5">:</span>
 
         <div class="flex flex-col items-center">
           <button type="button" (click)="updateTime('minute', 30)"
-            class="text-[8px] text-slate-400 hover:text-sky-400 py-0.5">
+            class="text-[8px] text-[var(--text-secondary)] hover:text-sky-400 py-0.5">
             <i class="pi pi-chevron-up"></i>
           </button>
-          <span class="font-bold text-white w-5 text-center text-sm font-mono">{{ selectedMinute() | number : "2.0"
+          <span class="font-bold text-[var(--text-heading)] w-5 text-center text-sm font-mono">{{ selectedMinute() |
+            number : "2.0"
             }}</span>
           <button type="button" (click)="updateTime('minute', -30)"
-            class="text-[8px] text-slate-400 hover:text-sky-400 py-0.5">
+            class="text-[8px] text-[var(--text-secondary)] hover:text-sky-400 py-0.5">
             <i class="pi pi-chevron-down"></i>
           </button>
         </div>
@@ -85,7 +88,7 @@
     </div>
 
     @if (unavailableHours().length > 0) {
-    <div class="mt-4 pt-4 border-t border-white/10">
+    <div class="mt-4 pt-4 border-t border-[var(--border-light)]">
       <span class="text-[10px] text-red-400 uppercase tracking-widest block mb-2">
         Horas No Disponibles:
       </span>
@@ -100,7 +103,7 @@
     }
 
     <button type="button" (click)="closeCalendar()"
-      class="w-full mt-5 bg-white/5 hover:bg-sky-500 hover:text-slate-950 text-sky-500 border border-white/10 text-[10px] font-bold uppercase tracking-[0.2em] py-3 transition-all active:scale-[0.98]">
+      class="w-full mt-5 bg-[var(--bg-panel)] hover:bg-sky-500 hover:text-slate-950 text-sky-500 border border-[var(--border-light)] text-[10px] font-bold uppercase tracking-[0.2em] py-3 transition-all active:scale-[0.98]">
       Listo
     </button>
   </div>

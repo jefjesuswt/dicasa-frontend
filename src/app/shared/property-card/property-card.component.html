@@ -1,23 +1,15 @@
-<div
-  class="group relative flex flex-col h-full bg-slate-900 border border-white/10 hover:border-sky-500/50 transition-all duration-500 overflow-hidden"
->
-  <div class="relative h-64 overflow-hidden bg-slate-950">
-    <img
-      [src]="property.images[0] || '/assets/images/placeholder-property.png'"
-      [alt]="property.title"
-      class="w-full h-full object-cover transition-all duration-700 filter grayscale opacity-80 group-hover:grayscale-0 group-hover:opacity-100 group-hover:scale-105 scroll-target-grayscale"
-      (error)="onImageError($event)"
-    />
+<a [routerLink]="['/properties', property._id]"
+  class="group relative flex flex-col h-full bg-[var(--bg-dark)] border border-[var(--border-light)] hover:border-sky-500/50 transition-all duration-500 overflow-hidden">
+  <div class="relative h-64 overflow-hidden bg-[var(--bg-dark)]">
+    <img [src]="property.images[0] || '/assets/images/placeholder-property.png'" [alt]="property.title"
+      class="w-full h-full object-cover transition-all duration-700 group-hover:scale-105"
+      (error)="onImageError($event)" />
 
-    <div
-      class="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-transparent opacity-90"
-    ></div>
+    <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-transparent opacity-90"></div>
 
     <div class="absolute top-4 left-4">
-      <span
-        class="text-[10px] font-bold uppercase tracking-widest px-3 py-1 border backdrop-blur-sm"
-        [class]="getStatusClass(property.status)"
-      >
+      <span class="text-[10px] font-bold uppercase tracking-widest px-3 py-1 border backdrop-blur-sm"
+        [class]="getStatusClass(property.status)">
         {{ getStatusText(property.status) }}
       </span>
     </div>
@@ -25,106 +17,80 @@
     <div class="absolute bottom-4 left-4 right-4">
       <p class="text-2xl font-mono font-bold text-white tracking-tight">
         @if (property.status === 'sale' || property.status === 'sold') { ${{
-          property.price | number
+        property.price | number
         }}
         } @else { ${{ property.price | number
-        }}<span class="text-sm text-slate-400">/mes</span>
+        }}<span class="text-sm text-slate-300">/mes</span>
         }
       </p>
       <div class="flex items-center gap-2 mt-1">
         <i class="pi pi-map-marker text-sky-500 text-xs"></i>
-        <p
-          class="text-xs text-slate-300 uppercase tracking-wide line-clamp-1 font-medium"
-        >
+        <p class="text-xs text-slate-300 uppercase tracking-wide line-clamp-1 font-medium">
           {{ property.address.address }}
         </p>
       </div>
     </div>
   </div>
 
-  <div class="p-6 flex flex-col flex-grow border-t border-white/5">
+  <div class="p-6 flex flex-col flex-grow border-t border-[var(--border-light)]">
     <h3
-      class="text-sm font-bold text-white uppercase tracking-wider mb-6 line-clamp-2 leading-relaxed h-[3rem]"
-    >
+      class="text-sm font-bold text-[var(--text-heading)] uppercase tracking-wider mb-6 line-clamp-2 leading-relaxed h-[3rem]">
       {{ property.title }}
     </h3>
 
     <div
-      class="mt-auto grid divide-x divide-white/10 border border-white/10 bg-white/5"
-    >
+      class="mt-auto grid divide-x divide-[var(--border-light)] border border-[var(--border-light)] bg-[var(--bg-panel)]">
       @if (property.type === 'land') {
-      <div
-        class="p-3 flex flex-col items-center justify-center text-center col-span-3"
-      >
-        <i
-          class="pi pi-globe text-slate-500 mb-1 text-lg group-hover:text-sky-400 transition-colors"
-        ></i>
-        <span class="text-xs text-slate-400 uppercase tracking-wider font-mono"
-          >Área Total</span
-        >
-        <span class="text-sm font-bold text-white font-mono"
-          >{{ property.area | number }} m²</span
-        >
+      <div class="p-3 flex flex-col items-center justify-center text-center col-span-3">
+        <i class="pi pi-globe text-[var(--text-secondary)] mb-1 text-lg group-hover:text-sky-400 transition-colors"></i>
+        <span class="text-xs text-[var(--text-secondary)] uppercase tracking-wider font-mono">Área Total</span>
+        <span class="text-sm font-bold text-[var(--text-heading)] font-mono">{{ property.area | number }} m²</span>
       </div>
       } @else {
-      <div class="grid grid-cols-3 divide-x divide-white/10 w-full">
-        <div
-          class="p-3 flex flex-col items-center justify-center text-center group/icon"
-        >
+      <div class="grid grid-cols-3 divide-x divide-[var(--border-light)] w-full">
+        <div class="p-3 flex flex-col items-center justify-center text-center group/icon">
           @if (property.type === 'commercial') {
           <i
-            class="pi pi-briefcase text-slate-500 mb-1 group-hover/icon:text-sky-400 transition-colors"
-          ></i>
-          <span class="text-[10px] text-slate-500 uppercase">Tipo</span>
-          <span class="text-xs font-bold text-white">Comm.</span>
+            class="pi pi-briefcase text-[var(--text-secondary)] mb-1 group-hover/icon:text-sky-400 transition-colors"></i>
+          <span class="text-[10px] text-[var(--text-secondary)] uppercase">Tipo</span>
+          <span class="text-xs font-bold text-[var(--text-heading)]">Comm.</span>
           } @else {
-          <i
-            class="pi pi-home text-slate-500 mb-1 group-hover/icon:text-sky-400 transition-colors"
-          ></i>
-          <span class="text-[10px] text-slate-500 uppercase">Hab.</span>
-          <span class="text-xs font-bold text-white font-mono">{{
+          <i class="pi pi-home text-[var(--text-secondary)] mb-1 group-hover/icon:text-sky-400 transition-colors"></i>
+          <span class="text-[10px] text-[var(--text-secondary)] uppercase">Hab.</span>
+          <span class="text-xs font-bold text-[var(--text-heading)] font-mono">{{
             property.bedrooms || 0
-          }}</span>
+            }}</span>
           }
         </div>
 
-        <div
-          class="p-3 flex flex-col items-center justify-center text-center group/icon"
-        >
-          <i
-            class="pi pi-user text-slate-500 mb-1 group-hover/icon:text-sky-400 transition-colors"
-          ></i>
-          <span class="text-[10px] text-slate-500 uppercase">Baños</span>
-          <span class="text-xs font-bold text-white font-mono">{{
+        <div class="p-3 flex flex-col items-center justify-center text-center group/icon">
+          <i class="pi pi-user text-[var(--text-secondary)] mb-1 group-hover/icon:text-sky-400 transition-colors"></i>
+          <span class="text-[10px] text-[var(--text-secondary)] uppercase">Baños</span>
+          <span class="text-xs font-bold text-[var(--text-heading)] font-mono">{{
             property.bathrooms || 0
-          }}</span>
+            }}</span>
         </div>
 
-        <div
-          class="p-3 flex flex-col items-center justify-center text-center group/icon"
-        >
+        <div class="p-3 flex flex-col items-center justify-center text-center group/icon">
           <i
-            class="pi pi-th-large text-slate-500 mb-1 group-hover/icon:text-sky-400 transition-colors"
-          ></i>
-          <span class="text-[10px] text-slate-500 uppercase">M²</span>
-          <span class="text-xs font-bold text-white font-mono">{{
+            class="pi pi-th-large text-[var(--text-secondary)] mb-1 group-hover/icon:text-sky-400 transition-colors"></i>
+          <span class="text-[10px] text-[var(--text-secondary)] uppercase">M²</span>
+          <span class="text-xs font-bold text-[var(--text-heading)] font-mono">{{
             property.area | number
-          }}</span>
+            }}</span>
         </div>
       </div>
       }
     </div>
   </div>
 
-  <a
-    [routerLink]="['/properties', property._id]"
-    class="block w-full py-4 bg-slate-950 border-t border-white/10 text-center hover:bg-sky-500 hover:text-slate-950 transition-all duration-300 group/btn relative overflow-hidden"
-  >
+  <div
+    class="relative z-20 block w-full py-4 bg-[var(--bg-dark)] border-t border-[var(--border-light)] text-center hover:bg-sky-500 hover:text-slate-950 transition-all duration-300 group/btn relative overflow-hidden">
     <span class="relative z-10 text-xs font-bold uppercase tracking-[0.2em]">
       Ver Detalles...
     </span>
     <div
-      class="absolute inset-0 bg-sky-400 transform translate-y-full group-hover/btn:translate-y-0 transition-transform duration-300 ease-out"
-    ></div>
-  </a>
-</div>
+      class="absolute inset-0 bg-sky-400 transform translate-y-full group-hover/btn:translate-y-0 transition-transform duration-300 ease-out">
+    </div>
+  </div>
+</a>

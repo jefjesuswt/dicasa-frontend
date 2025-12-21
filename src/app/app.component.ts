@@ -32,7 +32,7 @@ import { ToastComponent } from "./components/toast/toast.component";
     @if (authService.authStatus() === AuthStatus.checking) {
     <shared-screen-loader />
     } @if (authService.authStatus() !== AuthStatus.checking) {
-    <div class="min-h-screen flex flex-col bg-slate-950">
+    <div class="min-h-screen flex flex-col bg-[var(--bg-dark)] transition-colors duration-200">
       <app-header></app-header>
 
       <main class="flex-1 relative">
@@ -52,7 +52,7 @@ export class AppComponent implements OnInit {
 
   public AuthStatus = AuthStatus;
 
-  constructor() {}
+  constructor() { }
 
   ngOnInit() {
     this.scrollTopService.enable();

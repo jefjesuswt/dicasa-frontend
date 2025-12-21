@@ -72,27 +72,45 @@ export class AuthService {
     this._currentUser.set(updatedUser);
   }
 
-  setCurrentUser = ({ user, token }: AuthResponse) => {
+  /**
+   * Establece el usuario actual y guarda el token según la preferencia "Recordarme".
+   * @param authResponse Respuesta del login con usuario y token
+   * @param rememberMe Si es true, usa localStorage. Si es false, usa sessionStorage.
+   */
+  setCurrentUser = (
+    { user, token }: AuthResponse,
+    rememberMe: boolean = true
+  ) => {
     this._currentUser.set(user);
     this._authStatus.set(AuthStatus.authenticated);
 
-    // Protección de LocalStorage
     if (isPlatformBrowser(this.platformId)) {
-      localStorage.setItem("accessToken", token.accessToken);
+      const storage = rememberMe ? localStorage : sessionStorage;
+
+      // Limpiamos el otro storage para evitar duplicados/conflictos
+      const otherStorage = rememberMe ? sessionStorage : localStorage;
+      otherStorage.removeItem("accessToken");
+      otherStorage.removeItem("refreshToken");
+
+      storage.setItem("accessToken", token.accessToken);
       if (token.refreshToken) {
-        localStorage.setItem("refreshToken", token.refreshToken);
+        storage.setItem("refreshToken", token.refreshToken);
       }
     }
 
     this.clearTempEmailForFlow();
   };
 
-  login(email: string, password: string): Observable<boolean> {
+  login(
+    email: string,
+    password: string,
+    rememberMe: boolean = false
+  ): Observable<boolean> {
     const url = `${this.apiUrl}/login`;
     const body = { email, password };
     return this.http.post<AuthResponse>(url, body).pipe(
       tap(({ user, token }) => {
-        this.setCurrentUser({ user, token });
+        this.setCurrentUser({ user, token }, rememberMe);
       }),
       map(() => true),
       catchError((error) => {
@@ -149,15 +167,19 @@ export class AuthService {
   }
 
   checkAuthStatus(): Observable<boolean> {
-    // 1. Si estamos en el SERVIDOR, retornamos false inmediatamente.
-    // Esto evita el error "localStorage is not defined".
     if (!isPlatformBrowser(this.platformId)) {
       return of(false);
     }
 
-    // 2. Lógica normal del NAVEGADOR
     const url = `${this.apiUrl}/checkToken`;
-    const token = localStorage.getItem("accessToken");
+    // Buscar primero en localStorage, luego en sessionStorage
+    let token = localStorage.getItem("accessToken");
+    let usedStorage: Storage = localStorage;
+
+    if (!token) {
+      token = sessionStorage.getItem("accessToken");
+      usedStorage = sessionStorage;
+    }
 
     if (!token) {
       this.clearAuthData();
@@ -166,15 +188,14 @@ export class AuthService {
 
     return this.http.get<AuthResponse>(url).pipe(
       map(({ user, token }) => {
-        this.setCurrentUser({ user, token });
+        // Mantenemos la sesión donde se encontró (localStorage o sessionStorage)
+        // Checkeamos si venía de localStorage para mantener "rememberMe = true"
+        const cameFromLocal = usedStorage === localStorage;
+        this.setCurrentUser({ user, token }, cameFromLocal);
         return true;
       }),
       catchError(() => {
-        this._authStatus.set(AuthStatus.unauthenticated);
-        this._currentUser.set(null);
-        // Seguro borrar porque ya validamos isPlatformBrowser arriba
-        localStorage.removeItem("accessToken");
-        localStorage.removeItem("refreshToken");
+        this.clearAuthData();
         return of(false);
       })
     );
@@ -185,7 +206,9 @@ export class AuthService {
 
     return this.http.get<AuthResponse>(url).pipe(
       tap(({ user, token }) => {
-        this.setCurrentUser({ user, token });
+        // Por defecto en confirmación, asumimos persistencia (true) o lo que prefieras.
+        // Usualmente tras confirmar email se loguea persistente.
+        this.setCurrentUser({ user, token }, true);
       }),
       map(() => true),
       catchError((error) => handleApiError(error))
@@ -211,10 +234,11 @@ export class AuthService {
     this._authStatus.set(AuthStatus.unauthenticated);
     this.clearTempEmailForFlow();
 
-    // Protección de LocalStorage
     if (isPlatformBrowser(this.platformId)) {
       localStorage.removeItem("accessToken");
       localStorage.removeItem("refreshToken");
+      sessionStorage.removeItem("accessToken");
+      sessionStorage.removeItem("refreshToken");
     }
   }
 

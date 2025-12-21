@@ -1,22 +1,20 @@
-<footer class="border-t border-white/10 bg-slate-950 pt-16 pb-8 text-slate-400">
+<footer class="border-t border-[var(--border-light)] bg-[var(--bg-dark)] pt-16 pb-8 text-[var(--text-secondary)]">
   <div class="container mx-auto px-6">
     <!-- GRUPO PRINCIPAL DE 4 COLUMNAS -->
     <div class="grid grid-cols-1 md:grid-cols-12 gap-12 mb-16">
       <!-- COL 1: LOGO & MISIÓN (col-span-5) -->
       <div class="col-span-1 md:col-span-5">
         <div class="flex items-center gap-3 mb-6">
-          <img
-            src="assets/images/dicasa-500x500.png"
-            alt="Icon"
-            class="h-10 w-10 object-contain"
-          />
-          <img
-            src="assets/images/dicasa-800x260.png"
-            alt="Logo Texto"
-            class="h-6 w-auto brightness-0 invert"
-          />
+          <img src="assets/images/dicasa-500x500.png" alt="Icon" class="h-10 w-10 object-contain" />
+
+          @if (isDarkMode()) {
+          <img src="assets/images/dicasa-800x260.png" alt="Logo Texto"
+            class="h-6 w-auto transition-all duration-300 brightness-0 invert" />
+          } @else {
+          <img src="assets/images/dicasa-800x260.png" alt="Logo Texto" class="h-6 w-auto transition-all duration-300" />
+          }
         </div>
-        <p class="text-sm max-w-md leading-relaxed text-slate-500">
+        <p class="text-sm max-w-md leading-relaxed text-[var(--text-secondary)]">
           Asesoría integral y de calidad. Nos esforzamos por contribuir al
           desarrollo y bienestar de la comunidad a través de la excelencia
           inmobiliaria.
@@ -25,14 +23,12 @@
 
       <!-- COL 2: CONTACTO (col-span-4) -->
       <div class="col-span-1 md:col-span-4">
-        <h4 class="text-white font-bold uppercase mb-6 text-sm">Contacto</h4>
+        <h4 class="text-[var(--text-heading)] font-bold uppercase mb-6 text-sm">Contacto</h4>
         <ul class="space-y-4 text-sm">
           <li class="flex items-start gap-3">
             <i class="pi pi-map-marker mt-1 text-sky-500"></i>
-            <span
-              >C.C. Plaza Mayor, Edif 6, P1, Of. 6b-121<br />Lechería,
-              Anzoátegui.</span
-            >
+            <span>C.C. Plaza Mayor, Edif 6, P1, Of. 6b-121<br />Lechería,
+              Anzoátegui.</span>
           </li>
           <li class="flex items-center gap-3">
             <i class="pi pi-envelope text-sky-500"></i>
@@ -43,20 +39,15 @@
 
       <!-- COL 3: NAVEGACIÓN (col-span-3) -->
       <div class="col-span-1 md:col-span-3">
-        <h4 class="text-white font-bold uppercase mb-6 text-sm">Navegación</h4>
+        <h4 class="text-[var(--text-heading)] font-bold uppercase mb-6 text-sm">Navegación</h4>
         <ul class="space-y-4 text-sm">
           <li>
-            <a
-              routerLink="/properties"
-              class="hover:text-white transition-colors"
-              >Nuestras Propiedades</a
-            >
+            <a routerLink="/properties" class="hover:text-[var(--text-heading)] transition-colors">Nuestras
+              Propiedades</a>
           </li>
 
           <li>
-            <a routerLink="/contact" class="hover:text-white transition-colors"
-              >Nosotros</a
-            >
+            <a routerLink="/contact" class="hover:text-[var(--text-heading)] transition-colors">Nosotros</a>
           </li>
         </ul>
       </div>
@@ -64,8 +55,7 @@
 
     <!-- SECCIÓN DE COPYRIGHT Y AUTORÍA (FLEXBOX INFERIOR) -->
     <div
-      class="border-t border-white/10 pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-xs uppercase tracking-wider text-slate-600"
-    >
+      class="border-t border-[var(--border-light)] pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-xs uppercase tracking-wider text-[var(--text-secondary)]">
       <!-- COPYRIGHT (Order 2 / 1) -->
       <!-- Corregido el texto de Copyright para reflejar la URL de Instagram de Dicasa -->
       <div class="order-2 md:order-1 text-center md:text-left">
@@ -74,30 +64,20 @@
       </div>
 
       <!-- AUTORÍA Y LINKS PERSONALES (Order 1 / 2) -->
-      <div
-        class="order-1 md:order-2 flex flex-col sm:flex-row items-center gap-4 text-slate-500"
-      >
+      <div class="order-1 md:order-2 flex flex-col sm:flex-row items-center gap-4 text-[var(--text-secondary)]">
         <span class="text-[10px] font-mono tracking-widest">
           ENGINEERING & DESIGN: JEFFREY JIMENEZ
         </span>
-        <div class="flex gap-4 text-slate-500">
+        <div class="flex gap-4 text-[var(--text-secondary)]">
           <!-- GitHub -->
-          <a
-            href="https://github.com/jefjesuswt/"
-            target="_blank"
-            class="hover:text-sky-500 transition-colors"
-            title="GitHub"
-          >
+          <a href="https://github.com/jefjesuswt/" target="_blank" class="hover:text-sky-500 transition-colors"
+            title="GitHub">
             <i class="pi pi-github text-base"></i>
           </a>
 
           <!-- Portfolio -->
-          <a
-            href="https://jj-dev.netlify.app/"
-            target="_blank"
-            class="hover:text-sky-500 transition-colors"
-            title="Portfolio"
-          >
+          <a href="https://jj-dev.netlify.app/" target="_blank" class="hover:text-sky-500 transition-colors"
+            title="Portfolio">
             <i class="pi pi-globe text-base"></i>
           </a>
         </div>

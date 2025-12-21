@@ -1,5 +1,6 @@
-import { ChangeDetectionStrategy, Component } from "@angular/core";
+import { ChangeDetectionStrategy, Component, inject, computed } from "@angular/core";
 import { RouterLink } from "@angular/router";
+import { ThemeService } from "../../services/theme.service";
 
 @Component({
   selector: "app-footer",
@@ -8,4 +9,7 @@ import { RouterLink } from "@angular/router";
   changeDetection: ChangeDetectionStrategy.OnPush,
   styleUrls: ["./footer.component.css"],
 })
-export class FooterComponent {}
+export class FooterComponent {
+  private themeService = inject(ThemeService);
+  public isDarkMode = computed(() => this.themeService.isDarkMode());
+}

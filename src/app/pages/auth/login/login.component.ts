@@ -49,6 +49,7 @@ export class LoginComponent implements AfterViewInit, OnDestroy {
   loginForm: FormGroup = this.fb.group({
     email: ["", [Validators.required, Validators.email]],
     password: ["", [Validators.required, Validators.minLength(6)]],
+    rememberMe: [false],
   });
 
   onSubmit() {
@@ -61,10 +62,10 @@ export class LoginComponent implements AfterViewInit, OnDestroy {
       return;
     }
     this.loading = true;
-    const { email, password } = this.loginForm.value;
+    const { email, password, rememberMe } = this.loginForm.value;
 
     this.authService
-      .login(email, password)
+      .login(email, password, rememberMe)
       .pipe(finalize(() => (this.loading = false)))
       .subscribe({
         next: () => {
