@@ -1,4 +1,6 @@
 @import "tailwindcss";
+@plugin "@tailwindcss/typography";
+
 
 /* Oculta la scrollbar en Firefox y IE/Edge (versiones antiguas) */
 html {

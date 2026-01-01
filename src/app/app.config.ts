@@ -14,7 +14,11 @@ import {
   provideHttpClient,
   withFetch,
   withInterceptors,
+  HttpClient,
 } from "@angular/common/http";
+
+import { provideMarkdown } from 'ngx-markdown';
+
 import { PreloadStrategyService } from "./services/preload-strategy.service";
 import { authInterceptor } from "./interceptors/auth.interceptor";
 import { provideAnimationsAsync } from "@angular/platform-browser/animations/async";
@@ -52,6 +56,8 @@ export const appConfig: ApplicationConfig = {
       },
     }),
     provideHttpClient(withFetch(), withInterceptors([authInterceptor])),
+    provideMarkdown({ loader: HttpClient }),
+
     // provideHotToastConfig({
     //   position: "bottom-center",
     // }),
