@@ -88,13 +88,6 @@ export class PropertyDetailsComponent implements OnInit {
      Usamos bordes definidos y fondos sólidos semitransparentes
      en lugar de efectos "glow" difusos.
   */
-  private statusClasses: Record<string, string> = {
-    sale: "bg-emerald-950/50 text-emerald-400 border-emerald-500/50",
-    rent: "bg-sky-950/50 text-sky-400 border-sky-500/50",
-    sold: "bg-slate-800 text-slate-400 border-slate-600 line-through",
-    rented: "bg-purple-950/50 text-purple-400 border-purple-500/50",
-  };
-
   private typeLabels: Record<string, string> = {
     apartment: "Apartamento",
     house: "Casa",
@@ -105,13 +98,6 @@ export class PropertyDetailsComponent implements OnInit {
 
   getStatusLabel(status: string): string {
     return this.statusLabels[status] || "No disponible";
-  }
-
-  getStatusClass(status: string): string {
-    return (
-      this.statusClasses[status] ||
-      "bg-slate-800 text-slate-400 border-slate-600"
-    );
   }
 
   getTypeLabel(type: string): string {

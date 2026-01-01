@@ -15,6 +15,7 @@ import { AvatarComponent } from "../../../shared/avatar/avatar.component";
 })
 export class DashboardUserCardComponent {
   @Input({ required: true }) user!: User;
+  @Input() canDelete = true;
 
   @Output() edit = new EventEmitter<User>();
   @Output() delete = new EventEmitter<User>();
@@ -26,21 +27,27 @@ export class DashboardUserCardComponent {
     class: string;
     icon: string;
   } {
-    if (roles.includes(UserRole.SUPERADMIN)) {
+    if (roles.includes(UserRole.ADMIN)) {
       return {
-        label: "SUPER ADMIN",
+        label: "ADMIN (IT)",
         class: "text-red-400 border-red-500/30 bg-red-500/10",
         icon: "pi-shield",
       };
-    } else if (roles.includes(UserRole.ADMIN)) {
+    } else if (roles.includes(UserRole.MANAGER)) {
       return {
-        label: "ADMINISTRADOR",
+        label: "GERENTE",
         class: "text-sky-400 border-sky-500/30 bg-sky-500/10",
         icon: "pi-star",
       };
+    } else if (roles.includes(UserRole.AGENT)) {
+      return {
+        label: "VENDEDOR",
+        class: "text-purple-400 border-purple-500/30 bg-purple-500/10",
+        icon: "pi-briefcase",
+      };
     }
     return {
-      label: "USUARIO",
+      label: "CLIENTE",
       class: "text-slate-400 border-white/10 bg-white/5",
       icon: "pi-user",
     };
@@ -53,11 +60,14 @@ export class DashboardUserCardComponent {
   }
 
   get hoverBorderClass(): string {
-    if (this.user.roles.includes(UserRole.SUPERADMIN)) {
+    if (this.user.roles.includes(UserRole.ADMIN)) {
       return "hover:border-red-500/30";
     }
-    if (this.user.roles.includes(UserRole.ADMIN)) {
+    if (this.user.roles.includes(UserRole.MANAGER)) {
       return "hover:border-sky-500/30";
+    }
+    if (this.user.roles.includes(UserRole.AGENT)) {
+      return "hover:border-purple-500/30";
     }
     return "hover:border-slate-500/30";
   }
@@ -67,6 +77,8 @@ export class DashboardUserCardComponent {
   }
 
   onDelete() {
-    this.delete.emit(this.user);
+    if (this.canDelete) {
+      this.delete.emit(this.user);
+    }
   }
 }

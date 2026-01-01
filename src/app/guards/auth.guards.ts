@@ -71,7 +71,11 @@ export const flowGuard: CanActivateFn = (): Observable<boolean | UrlTree> => {
   );
 };
 
-export const adminOrSuperAdminGuard: CanActivateFn = (): Observable<
+/**
+ * Guard para MANAGER o ADMIN.
+ * Usado para: Dashboard principal, gestión de usuarios, citas, propiedades.
+ */
+export const managerOrAdminGuard: CanActivateFn = (): Observable<
   boolean | UrlTree
 > => {
   const authService = inject(AuthService);
@@ -83,7 +87,7 @@ export const adminOrSuperAdminGuard: CanActivateFn = (): Observable<
     map((status) => {
       if (
         status === AuthStatus.authenticated &&
-        (authService.isAdmin() || authService.isSuperAdmin())
+        authService.canAccessDashboard()
       ) {
         return true;
       }
@@ -93,7 +97,11 @@ export const adminOrSuperAdminGuard: CanActivateFn = (): Observable<
   );
 };
 
-export const superAdminGuard: CanActivateFn = (): Observable<
+/**
+ * Guard solo para ADMIN (IT/Sistema).
+ * Usado para: Action logs, configuración del sistema.
+ */
+export const adminGuard: CanActivateFn = (): Observable<
   boolean | UrlTree
 > => {
   const authService = inject(AuthService);
@@ -103,7 +111,29 @@ export const superAdminGuard: CanActivateFn = (): Observable<
     filter((status) => status !== AuthStatus.checking),
     take(1),
     map((status) => {
-      if (status === AuthStatus.authenticated && authService.isSuperAdmin()) {
+      if (status === AuthStatus.authenticated && authService.isAdmin()) {
+        return true;
+      }
+      return router.createUrlTree(["/"]);
+    })
+  );
+};
+
+/**
+ * Guard para cualquier miembro del staff (AGENT, MANAGER, ADMIN).
+ * Usado para: Perfil - mis propiedades asignadas.
+ */
+export const staffGuard: CanActivateFn = (): Observable<
+  boolean | UrlTree
+> => {
+  const authService = inject(AuthService);
+  const router = inject(Router);
+
+  return toObservable(authService.authStatus).pipe(
+    filter((status) => status !== AuthStatus.checking),
+    take(1),
+    map((status) => {
+      if (status === AuthStatus.authenticated && authService.isStaff()) {
         return true;
       }
       return router.createUrlTree(["/"]);

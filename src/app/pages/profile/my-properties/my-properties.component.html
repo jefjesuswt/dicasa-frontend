@@ -1,14 +1,14 @@
 <div class="animate-fade-in">
   <div
-    class="flex flex-col md:flex-row justify-between items-end mb-8 border-b border-white/10 pb-6"
+    class="flex flex-col md:flex-row justify-between items-end mb-8 border-b border-[var(--border-light)] pb-6"
   >
     <div>
       <h2
-        class="text-xl text-white font-light uppercase tracking-[0.15em] mb-2"
+        class="text-xl text-[var(--text-heading)] font-light uppercase tracking-[0.15em] mb-2"
       >
         Gestión de Activos
       </h2>
-      <p class="text-slate-500 text-sm font-light">
+      <p class="text-[var(--text-secondary)] text-sm font-light">
         Administra tu portafolio de propiedades publicadas.
       </p>
     </div>
@@ -18,7 +18,7 @@
       <div class="text-[10px] font-bold text-sky-500 uppercase tracking-widest">
         Total Propiedades
       </div>
-      <div class="text-2xl font-mono text-white">
+      <div class="text-2xl font-mono text-[var(--text-heading)]">
         {{ properties().length | number : "2.0" }}
       </div>
     </div>
@@ -28,9 +28,9 @@
   @switch (loadState()) { @case ('loading') {
   <div class="flex flex-col items-center justify-center py-24 opacity-50">
     <div
-      class="w-12 h-12 border-2 border-white/10 border-t-sky-500 animate-spin mb-4"
+      class="w-12 h-12 border-2 border-[var(--border-light)] border-t-sky-500 animate-spin mb-4"
     ></div>
-    <span class="text-[10px] font-mono uppercase tracking-widest text-slate-400"
+    <span class="text-[10px] font-mono uppercase tracking-widest text-[var(--text-secondary)]"
       >Cargando Inventario...</span
     >
   </div>
@@ -45,15 +45,15 @@
   <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
     @for (prop of properties(); track prop._id) {
     <div
-      class="group bg-white/5 border border-white/10 hover:border-sky-500/30 transition-all duration-300 flex flex-col"
+      class="group bg-[var(--bg-panel)] border border-[var(--border-light)] hover:border-sky-500/30 transition-all duration-300 flex flex-col"
     >
       <div
-        class="relative h-56 overflow-hidden bg-black border-b border-white/10"
+        class="relative h-56 overflow-hidden bg-black border-b border-[var(--border-light)]"
       >
         <img
           [src]="prop.images[0] || '/assets/images/placeholder-property.png'"
           alt="{{ prop.title }}"
-          class="w-full h-full object-cover opacity-70 grayscale group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-500 transform group-hover:scale-105"
+          class="w-full h-full object-cover transition-transform duration-500 transform group-hover:scale-105"
           (error)="onImageError($event)"
         />
 
@@ -67,7 +67,7 @@
         </div>
 
         <div
-          class="absolute bottom-0 left-0 bg-slate-950/80 px-3 py-1 border-t border-r border-white/10 text-[10px] font-mono text-slate-400"
+          class="absolute bottom-0 left-0 bg-[var(--bg-dark)]/80 px-3 py-1 border-t border-r border-[var(--border-light)] text-[10px] font-mono text-[var(--text-secondary)]"
         >
           REF: {{ prop._id | slice : 0 : 6 }}...
         </div>
@@ -76,7 +76,7 @@
       <div class="p-5 flex-1 flex flex-col justify-between">
         <div>
           <h3
-            class="text-base font-bold text-white uppercase tracking-tight mb-2 truncate"
+            class="text-base font-bold text-[var(--text-heading)] uppercase tracking-tight mb-2 truncate"
             title="{{ prop.title }}"
           >
             {{ prop.title }}
@@ -84,7 +84,7 @@
 
           <div class="flex flex-col gap-1 mb-4">
             <div
-              class="flex items-center gap-2 text-xs text-slate-500 font-mono"
+              class="flex items-center gap-2 text-xs text-[var(--text-secondary)] font-mono"
             >
               <i class="pi pi-map-marker text-[10px]"></i>
               <span class="truncate"
@@ -93,7 +93,7 @@
             </div>
 
             <div
-              class="flex items-center gap-2 text-sm font-mono text-white mt-1"
+              class="flex items-center gap-2 text-sm font-mono text-[var(--text-heading)] mt-1"
             >
               <span class="text-sky-500">$</span>
               {{ prop.price | number }}
@@ -102,12 +102,12 @@
         </div>
 
         <div
-          class="pt-4 border-t border-white/5 flex items-center justify-between gap-3"
+          class="pt-4 border-t border-[var(--border-light)] flex items-center justify-between gap-3"
         >
           <a
             [routerLink]="['/properties', prop._id]"
             target="_blank"
-            class="flex-1 flex items-center justify-center gap-2 py-2 border border-white/10 hover:bg-white/5 text-xs font-bold uppercase tracking-widest text-slate-400 hover:text-white transition-colors"
+            class="flex-1 flex items-center justify-center gap-2 py-2 border border-[var(--border-light)] hover:bg-[var(--bg-dark)] text-xs font-bold uppercase tracking-widest text-[var(--text-secondary)] hover:text-[var(--text-heading)] transition-colors"
           >
             <i class="pi pi-external-link text-[10px]"></i> Ver
           </a>
@@ -118,17 +118,17 @@
   </div>
   } @else {
   <div
-    class="border border-dashed border-white/10 bg-white/5 p-12 flex flex-col items-center justify-center text-center"
+    class="border border-dashed border-[var(--border-light)] bg-[var(--bg-panel)] p-12 flex flex-col items-center justify-center text-center"
   >
     <div
-      class="w-16 h-16 rounded-full bg-slate-900 border border-white/10 flex items-center justify-center mb-4 text-slate-600"
+      class="w-16 h-16 rounded-full bg-[var(--bg-dark)] border border-[var(--border-light)] flex items-center justify-center mb-4 text-[var(--text-secondary)]"
     >
       <i class="pi pi-folder-open text-2xl"></i>
     </div>
-    <h3 class="text-white font-bold uppercase tracking-widest mb-2">
+    <h3 class="text-[var(--text-heading)] font-bold uppercase tracking-widest mb-2">
       Sin Propiedades
     </h3>
-    <p class="text-slate-500 text-sm font-light max-w-xs mb-6">
+    <p class="text-[var(--text-secondary)] text-sm font-light max-w-xs mb-6">
       No tienes propiedades asignadas a tu perfil actualmente.
     </p>
     <a

@@ -40,11 +40,11 @@ export class StatisticsComponent implements OnInit {
     },
     scales: {
       x: {
-        grid: { color: "rgba(255,255,255,0.02)" },
+        grid: { color: "rgba(100, 116, 139, 0.1)" },
         ticks: { color: "#64748b", font: { size: 10 } },
       },
       y: {
-        grid: { color: "rgba(255,255,255,0.05)" },
+        grid: { color: "rgba(100, 116, 139, 0.1)" },
         ticks: { color: "#64748b" },
       },
     },
@@ -57,7 +57,7 @@ export class StatisticsComponent implements OnInit {
     scales: {
       x: { grid: { display: false }, ticks: { color: "#94a3b8" } },
       y: {
-        grid: { color: "rgba(255,255,255,0.05)" },
+        grid: { color: "rgba(100, 116, 139, 0.1)" },
         ticks: { color: "#64748b" },
         beginAtZero: true,
       },

@@ -8,7 +8,7 @@ import {
   AbstractControl,
 } from "@angular/forms";
 import { ActivatedRoute, Router } from "@angular/router";
-import { HotToastService } from "@ngxpert/hot-toast";
+import { ToastService } from "../../../services/toast.service"; // REPLACED: HotToastService
 import { finalize, switchMap, tap } from "rxjs/operators";
 import { Observable, of } from "rxjs";
 
@@ -35,7 +35,7 @@ export class PropertyFormComponent implements OnInit {
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private propertyService = inject(PropertyService);
-  private toast = inject(HotToastService);
+  private toast = inject(ToastService);
   private location = inject(LocationService);
   private usersService = inject(UsersService);
 
@@ -105,7 +105,7 @@ export class PropertyFormComponent implements OnInit {
         },
         error: (errMessage) => {
           this.initialLoading = false;
-          this.toast.error(`Error al cargar la propiedad: ${errMessage}`);
+          this.toast.error("Error", `Error al cargar la propiedad: ${errMessage}`);
         },
       });
   }
@@ -179,7 +179,7 @@ export class PropertyFormComponent implements OnInit {
           }
         },
         error: (err) => {
-          this.toast.error(`Error al cargar ciudades: ${err.message}`);
+          this.toast.error("Error", `Error al cargar ciudades: ${err.message}`);
           this.cities = [];
         },
       });
@@ -228,16 +228,16 @@ export class PropertyFormComponent implements OnInit {
 
   onSubmit(): void {
     if (this.propertyForm.invalid) {
-      this.toast.error("Por favor, revisa los campos del formulario.");
+      this.toast.error("Formulario Inválido", "Por favor, revisa los campos del formulario.");
       this.propertyForm.markAllAsTouched();
       return;
     }
 
-    if (
-      this.existingImageUrls.length === 0 &&
-      this.selectedFiles.length === 0
-    ) {
+    const hasImages = this.selectedFiles.length > 0 || this.existingImageUrls.length > 0;
+
+    if (!hasImages) {
       this.toast.error(
+        "Imagen Requerida",
         "Debes seleccionar al menos una imagen para la propiedad."
       );
       return;
@@ -284,13 +284,14 @@ export class PropertyFormComponent implements OnInit {
       .subscribe({
         next: (savedProperty) => {
           this.toast.success(
+            "Éxito",
             `Propiedad ${this.isEditMode ? "actualizada" : "creada"} con éxito!`
           );
           this.router.navigate(["/dashboard/properties"]);
         },
         error: (errMessage) => {
           // Handle potential upload errors caught by upload$ OR form submission errors
-          this.toast.error(`Error al guardar: ${errMessage}`);
+          this.toast.error("Error", `Error al guardar: ${errMessage}`);
           // Ensure loading states are reset on error
           this.isUploadingImages = false;
           this.isSaving = false;

@@ -2,7 +2,7 @@ import { Routes } from "@angular/router";
 import {
   authGuard,
   unauthGuard,
-  adminOrSuperAdminGuard,
+  managerOrAdminGuard,
 } from "./guards/auth.guards";
 
 export const routes: Routes = [
@@ -52,7 +52,7 @@ export const routes: Routes = [
       import("./pages/dashboard/dashboard.routes").then(
         (m) => m.DASHBOARD_ROUTES
       ),
-    canActivate: [authGuard, adminOrSuperAdminGuard],
+    canActivate: [authGuard, managerOrAdminGuard],
     data: { preload: false },
   },
   { path: "**", redirectTo: "" },

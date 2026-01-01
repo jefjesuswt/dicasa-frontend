@@ -50,7 +50,7 @@ export class PropertiesComponent implements OnInit, OnDestroy {
   searchQuery: string = "";
   selectedType: string = "all";
   currentStatus: string = "all";
-  statusList: PropertyStatus[] = ["sale", "rent", "sold", "rented"];
+  statusList: PropertyStatus[] = ["sale", "rent"];
 
   public propertyTypeOptions: DropdownOption[] = [
     { value: "apartment", label: "Apartamento" },
@@ -130,7 +130,7 @@ export class PropertiesComponent implements OnInit, OnDestroy {
     };
 
     this.propertyService
-      .getProperties(params)
+      .getPublicProperties(params)
       .pipe(finalize(() => (this.loading = false)))
       .subscribe({
         next: (response: PaginatedProperties) => {

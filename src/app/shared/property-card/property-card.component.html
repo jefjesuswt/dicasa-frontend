@@ -1,5 +1,5 @@
 <a [routerLink]="['/properties', property._id]"
-  class="group relative flex flex-col h-full bg-[var(--bg-dark)] border border-[var(--border-light)] hover:border-sky-500/50 transition-all duration-500 overflow-hidden">
+  class="group relative flex flex-col h-full bg-[var(--bg-dark)] border-2 border-[var(--border-light)] hover:border-sky-500/50 transition-all duration-500 overflow-hidden">
   <div class="relative h-64 overflow-hidden bg-[var(--bg-dark)]">
     <img [src]="property.images[0] || '/assets/images/placeholder-property.png'" [alt]="property.title"
       class="w-full h-full object-cover transition-all duration-700 group-hover:scale-105"
@@ -7,15 +7,9 @@
 
     <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-transparent opacity-90"></div>
 
-    <div class="absolute top-4 left-4">
-      <span class="text-[10px] font-bold uppercase tracking-widest px-3 py-1 border backdrop-blur-sm"
-        [class]="getStatusClass(property.status)">
-        {{ getStatusText(property.status) }}
-      </span>
-    </div>
 
     <div class="absolute bottom-4 left-4 right-4">
-      <p class="text-2xl font-mono font-bold text-white tracking-tight">
+      <p class="text-2xl font-bold text-white tracking-tight">
         @if (property.status === 'sale' || property.status === 'sold') { ${{
         property.price | number
         }}
@@ -33,6 +27,13 @@
   </div>
 
   <div class="p-6 flex flex-col flex-grow border-t border-[var(--border-light)]">
+    <div class="mb-2">
+      <span class="text-xs font-bold uppercase tracking-widest"
+        [class]="getStatusClass(property.status)">
+        {{ getStatusText(property.status) }}
+      </span>
+    </div>
+
     <h3
       class="text-sm font-bold text-[var(--text-heading)] uppercase tracking-wider mb-6 line-clamp-2 leading-relaxed h-[3rem]">
       {{ property.title }}
@@ -43,8 +44,8 @@
       @if (property.type === 'land') {
       <div class="p-3 flex flex-col items-center justify-center text-center col-span-3">
         <i class="pi pi-globe text-[var(--text-secondary)] mb-1 text-lg group-hover:text-sky-400 transition-colors"></i>
-        <span class="text-xs text-[var(--text-secondary)] uppercase tracking-wider font-mono">Área Total</span>
-        <span class="text-sm font-bold text-[var(--text-heading)] font-mono">{{ property.area | number }} m²</span>
+        <span class="text-xs text-[var(--text-secondary)] uppercase tracking-wider">Área Total</span>
+        <span class="text-sm font-bold text-[var(--text-heading)]">{{ property.area | number }} m²</span>
       </div>
       } @else {
       <div class="grid grid-cols-3 divide-x divide-[var(--border-light)] w-full">
@@ -57,7 +58,7 @@
           } @else {
           <i class="pi pi-home text-[var(--text-secondary)] mb-1 group-hover/icon:text-sky-400 transition-colors"></i>
           <span class="text-[10px] text-[var(--text-secondary)] uppercase">Hab.</span>
-          <span class="text-xs font-bold text-[var(--text-heading)] font-mono">{{
+          <span class="text-xs font-bold text-[var(--text-heading)]">{{
             property.bedrooms || 0
             }}</span>
           }
@@ -66,7 +67,7 @@
         <div class="p-3 flex flex-col items-center justify-center text-center group/icon">
           <i class="pi pi-user text-[var(--text-secondary)] mb-1 group-hover/icon:text-sky-400 transition-colors"></i>
           <span class="text-[10px] text-[var(--text-secondary)] uppercase">Baños</span>
-          <span class="text-xs font-bold text-[var(--text-heading)] font-mono">{{
+          <span class="text-xs font-bold text-[var(--text-heading)]">{{
             property.bathrooms || 0
             }}</span>
         </div>
@@ -75,7 +76,7 @@
           <i
             class="pi pi-th-large text-[var(--text-secondary)] mb-1 group-hover/icon:text-sky-400 transition-colors"></i>
           <span class="text-[10px] text-[var(--text-secondary)] uppercase">M²</span>
-          <span class="text-xs font-bold text-[var(--text-heading)] font-mono">{{
+          <span class="text-xs font-bold text-[var(--text-heading)]">{{
             property.area | number
             }}</span>
         </div>
@@ -85,7 +86,7 @@
   </div>
 
   <div
-    class="relative z-20 block w-full py-4 bg-[var(--bg-dark)] border-t border-[var(--border-light)] text-center hover:bg-sky-500 hover:text-slate-950 transition-all duration-300 group/btn relative overflow-hidden">
+    class="relative z-20 block w-full py-4 bg-[var(--bg-dark)] border-t border-[var(--border-light)] text-center text-blue-800 dark:text-sky-400 hover:bg-sky-500 hover:text-slate-950 transition-all duration-300 group/btn relative overflow-hidden">
     <span class="relative z-10 text-xs font-bold uppercase tracking-[0.2em]">
       Ver Detalles...
     </span>

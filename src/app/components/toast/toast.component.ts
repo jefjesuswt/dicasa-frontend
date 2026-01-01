@@ -12,7 +12,7 @@ import { ToastService, ToastType } from "../../services/toast.service";
     >
       @for (toast of toastService.toasts(); track toast.id) {
       <div
-        class="pointer-events-auto relative overflow-hidden bg-slate-950/90 backdrop-blur-md border border-white/10 p-5 shadow-2xl animate-slide-in"
+        class="pointer-events-auto relative overflow-hidden bg-[var(--bg-panel)] backdrop-blur-md border border-[var(--border-light)] p-5 shadow-2xl animate-slide-in"
         [ngClass]="getBorderClass(toast.type)"
       >
         <div
@@ -31,14 +31,14 @@ import { ToastService, ToastType } from "../../services/toast.service";
             >
               {{ toast.title }}
             </h4>
-            <p class="text-slate-300 text-xs font-mono leading-relaxed">
+            <p class="text-[var(--text-secondary)] text-xs leading-relaxed">
               {{ toast.message }}
             </p>
           </div>
 
           <button
             (click)="toastService.remove(toast.id)"
-            class="text-slate-500 hover:text-white transition-colors"
+            class="text-[var(--text-secondary)] hover:text-[var(--text-heading)] transition-colors"
           >
             <i class="pi pi-times text-xs"></i>
           </button>
@@ -90,7 +90,7 @@ export class ToastComponent {
       case "warning":
         return "border-l-2 border-l-yellow-500";
       default:
-        return "border-l-2 border-l-slate-500";
+        return "border-l-2 border-l-[var(--text-secondary)]";
     }
   }
 
@@ -103,7 +103,7 @@ export class ToastComponent {
       case "warning":
         return "pi pi-exclamation-triangle text-yellow-500";
       default:
-        return "pi pi-info-circle text-slate-500";
+        return "pi pi-info-circle text-[var(--text-secondary)]";
     }
   }
 
@@ -116,7 +116,7 @@ export class ToastComponent {
       case "warning":
         return "text-yellow-500";
       default:
-        return "text-slate-500";
+        return "text-[var(--text-secondary)]";
     }
   }
 }

@@ -2,9 +2,11 @@ import { Component, inject, OnInit } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { Router } from "@angular/router";
 import { finalize } from "rxjs";
-import { HotToastService } from "@ngxpert/hot-toast";
+// import { HotToastService } from "@ngxpert/hot-toast"; // REMOVED
+import { ToastService } from "../../../services/toast.service";
 
 import { UsersService } from "../../../services/users.service";
+import { AuthService } from "../../../services/auth.service";
 import { User } from "../../../interfaces/users";
 import { DialogComponent } from "../../../shared/dialog/dialog.component";
 import { UserRole } from "../../../interfaces/users/roles.enum";
@@ -39,8 +41,11 @@ import { FormsModule } from "@angular/forms";
 })
 export class UserListComponent implements OnInit {
   private usersService = inject(UsersService);
+  private authService = inject(AuthService);
   private router = inject(Router);
-  private toast = inject(HotToastService);
+  private toast = inject(ToastService);
+
+  public currentUser = this.authService.currentUser;
 
   public users: User[] = [];
   public showInactive = false;
@@ -59,9 +64,10 @@ export class UserListComponent implements OnInit {
   public currentQueryParams: QueryUserParams = {};
 
   public userRoleOptions: DropdownOption[] = [
-    { value: UserRole.SUPERADMIN, label: "Super Admin" },
-    { value: UserRole.ADMIN, label: "Admin" },
-    { value: UserRole.USER, label: "Usuario" },
+    { value: UserRole.ADMIN, label: "Admin (IT)" },
+    { value: UserRole.MANAGER, label: "Gerente" },
+    { value: UserRole.AGENT, label: "Vendedor" },
+    { value: UserRole.USER, label: "Cliente" },
   ];
 
   public statusBadgeClass: Record<string, string> = {
@@ -119,35 +125,41 @@ export class UserListComponent implements OnInit {
   }
 
   getRoleBadgeClass(roles: UserRole[]): string {
-    const role = roles.includes(UserRole.SUPERADMIN)
-      ? UserRole.SUPERADMIN
-      : roles.includes(UserRole.ADMIN)
+    const role = roles.includes(UserRole.ADMIN)
       ? UserRole.ADMIN
-      : roles.length > 0
-      ? roles[0]
-      : "USER";
+      : roles.includes(UserRole.MANAGER)
+        ? UserRole.MANAGER
+        : roles.includes(UserRole.AGENT)
+          ? UserRole.AGENT
+          : roles.length > 0
+            ? roles[0]
+            : "USER";
 
     const roleClasses: Record<string, string> = {
-      USER: "bg-gray-100 text-gray-800",
-      ADMIN: "bg-blue-100 text-blue-800",
-      SUPERADMIN: "bg-red-100 text-red-800",
+      ADMIN: "text-red-500",
+      MANAGER: "text-sky-500",
+      AGENT: "text-purple-500",
+      USER: "text-[var(--text-secondary)]",
     };
-    return roleClasses[role] || "bg-gray-100 text-gray-800";
+    return roleClasses[role] || "text-[var(--text-secondary)]";
   }
 
   getRoleLabel(roles: UserRole[]): string {
-    const role = roles.includes(UserRole.SUPERADMIN)
-      ? UserRole.SUPERADMIN
-      : roles.includes(UserRole.ADMIN)
+    const role = roles.includes(UserRole.ADMIN)
       ? UserRole.ADMIN
-      : roles.length > 0
-      ? roles[0]
-      : "USER";
+      : roles.includes(UserRole.MANAGER)
+        ? UserRole.MANAGER
+        : roles.includes(UserRole.AGENT)
+          ? UserRole.AGENT
+          : roles.length > 0
+            ? roles[0]
+            : "USER";
 
     const roleLabels: Record<string, string> = {
-      USER: "Usuario",
-      ADMIN: "Admin",
-      SUPERADMIN: "Super Admin",
+      ADMIN: "Admin (IT)",
+      MANAGER: "Gerente",
+      AGENT: "Vendedor",
+      USER: "Cliente",
     };
     return roleLabels[role] || role;
   }
@@ -166,6 +178,10 @@ export class UserListComponent implements OnInit {
   }
 
   openDeleteDialog(user: User): void {
+    if (!this.canDeleteUser(user)) {
+      this.toast.error("Acción Denegada", "No tienes permisos para eliminar este usuario.");
+      return;
+    }
     this.userToDelete = user;
     this.isDeleteDialogOpen = true;
   }
@@ -179,21 +195,54 @@ export class UserListComponent implements OnInit {
   confirmDelete(): void {
     if (!this.userToDelete) return;
 
+    if (!this.canDeleteUser(this.userToDelete)) {
+      this.toast.error("Acción Denegada", "No tienes permisos para eliminar este usuario.");
+      this.closeDeleteDialog();
+      return;
+    }
+
     this.isDeleting = true;
     this.usersService
       .deleteUser(this.userToDelete._id)
       .pipe(finalize(() => (this.isDeleting = false)))
       .subscribe({
         next: () => {
-          this.toast.success("Usuario eliminado con éxito.");
+          this.toast.success("Éxito", "Usuario eliminado correctamente.");
           this.closeDeleteDialog();
           this.loadUsers();
         },
         error: (errMessage) => {
-          this.toast.error(`Error al eliminar usuario: ${errMessage}`);
+          this.toast.error("Error", `No se pudo eliminar: ${errMessage}`);
           console.error("Error deleting user:", errMessage);
           this.isDeleting = false;
         },
       });
+  }
+
+  canDeleteUser(user: User): boolean {
+    const currentUser = this.currentUser();
+    if (!currentUser) return false;
+
+    // 1. No se puede borrar a sí mismo
+    if (String(user._id) === String(currentUser._id)) return false;
+
+    // 2. Manager no puede borrar Admin
+    const isTargetAdmin = user.roles.includes(UserRole.ADMIN);
+    const isCurrentManager = currentUser.roles.includes(UserRole.MANAGER);
+    const isCurrentAdmin = currentUser.roles.includes(UserRole.ADMIN);
+
+    // Si soy Manager y el target es Admin -> NO
+    if (isCurrentManager && isTargetAdmin && !isCurrentAdmin) return false;
+
+    // DEBUG: Log if checking self
+    // if (user.email === currentUser.email) {
+    //   console.log('Checking self deletion:', {
+    //     userId: user._id,
+    //     currentUserId: currentUser._id,
+    //     match: user._id === currentUser._id
+    //   });
+    // }
+
+    return true;
   }
 }

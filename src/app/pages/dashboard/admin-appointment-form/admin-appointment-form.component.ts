@@ -7,7 +7,7 @@ import {
   Validators,
 } from "@angular/forms";
 import { ActivatedRoute, Router, RouterModule } from "@angular/router";
-import { HotToastService } from "@ngxpert/hot-toast";
+import { ToastService } from "../../../services/toast.service"; // REPLACED: HotToastService
 import { finalize, switchMap, tap } from "rxjs/operators";
 import { Observable, of, concat } from "rxjs";
 
@@ -43,7 +43,7 @@ export class AdminAppointmentFormComponent implements OnInit {
   private router = inject(Router);
   private appointmentsService = inject(AppointmentsService);
   private usersService = inject(UsersService);
-  private toast = inject(HotToastService);
+  private toast = inject(ToastService);
 
   appointmentForm!: FormGroup;
 
@@ -58,7 +58,7 @@ export class AdminAppointmentFormComponent implements OnInit {
   statusOptions: StatusOption[] = [
     { label: "Pendiente", value: AppointmentStatus.PENDING },
     { label: "Contactado", value: AppointmentStatus.CONTACTED },
-    { label: "Confirmada", value: AppointmentStatus.CONFIRMED },
+    { label: "Completada", value: AppointmentStatus.COMPLETED },
     { label: "Cancelada", value: AppointmentStatus.CANCELLED },
   ];
 
@@ -87,7 +87,7 @@ export class AdminAppointmentFormComponent implements OnInit {
           } else {
             this.isEditMode = false;
             this.pageTitle = "Crear Cita";
-            this.toast.error("No se proporcionó ID de la cita para editar.");
+            this.toast.error("Error", "No se proporcionó ID de la cita para editar.");
             this.router.navigate(["/dashboard/appointments"]);
             return of(null);
           }
@@ -106,7 +106,7 @@ export class AdminAppointmentFormComponent implements OnInit {
         error: (errMessage) => {
           console.error("Error en la cadena de ngOnInit:", errMessage);
           this.initialLoading = false;
-          this.toast.error(`Error al cargar datos: ${errMessage}`);
+          this.toast.error("Error", `Error al cargar datos: ${errMessage}`);
           this.router.navigate(["/dashboard/appointments"]);
         },
       });
@@ -141,7 +141,7 @@ export class AdminAppointmentFormComponent implements OnInit {
       !this.appointmentId ||
       !this.appointmentData
     ) {
-      this.toast.error("Por favor, revisa los campos del formulario.");
+      this.toast.error("Formulario Inválido", "Por favor, revisa los campos del formulario.");
       this.appointmentForm.markAllAsTouched();
       return;
     }
@@ -183,7 +183,7 @@ export class AdminAppointmentFormComponent implements OnInit {
     }
 
     if (saveActions$.length === 0) {
-      this.toast.info("No se detectaron cambios.");
+      this.toast.info("Información", "No se detectaron cambios.");
       this.isSaving = false;
       this.appointmentForm.markAsPristine();
       return;
@@ -193,12 +193,12 @@ export class AdminAppointmentFormComponent implements OnInit {
       .pipe(finalize(() => (this.isSaving = false)))
       .subscribe({
         complete: () => {
-          this.toast.success("¡Cita actualizada con éxito!");
+          this.toast.success("Éxito", "¡Cita actualizada con éxito!");
           this.router.navigate(["/dashboard/appointments"]);
         },
         error: (errMessage) => {
           console.error("Error al guardar:", errMessage);
-          this.toast.error(`Error al guardar: ${errMessage}`);
+          this.toast.error("Error", `Error al guardar: ${errMessage}`);
         },
       });
   }

@@ -35,7 +35,7 @@ export class HeaderComponent {
   public isProfileMenuOpen = false;
 
   public isPrivilegedUser = computed(() => {
-    return this.authService.isAdmin() || this.authService.isSuperAdmin();
+    return this.authService.canAccessDashboard();
   });
 
   public isDarkMode = computed(() => this.themeService.isDarkMode());

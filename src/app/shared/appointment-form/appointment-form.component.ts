@@ -15,6 +15,7 @@ import {
   ValidationErrors,
 } from "@angular/forms";
 import { CommonModule } from "@angular/common";
+import { Router } from "@angular/router";
 import { catchError, finalize } from "rxjs/operators";
 import { EMPTY } from "rxjs";
 import { DatePickerModule } from "primeng/datepicker";
@@ -175,6 +176,7 @@ export class AppointmentFormComponent implements OnInit {
   private appointmentsService = inject(AppointmentsService);
   private authService = inject(AuthService);
   private toast = inject(ToastService);
+  private router = inject(Router);
 
   searchCountryField = [SearchCountryField.Iso2, SearchCountryField.Name];
   preferredCountries: CountryISO[] = [
@@ -383,5 +385,13 @@ export class AppointmentFormComponent implements OnInit {
   }
   get appointmentDate() {
     return this.appointmentForm.get("appointmentDate");
+  }
+
+  get isAuthenticated(): boolean {
+    return this.authService.isAuthenticated();
+  }
+
+  goToLogin(): void {
+    this.router.navigate(["/auth/login"]);
   }
 }

@@ -4,7 +4,9 @@ import { PropertyService } from "../../../services/property.service";
 import { Property } from "../../../interfaces/properties";
 import { finalize } from "rxjs";
 import { CommonModule } from "@angular/common";
-import { HotToastService } from "@ngxpert/hot-toast";
+import { FormsModule } from "@angular/forms";
+// import { HotToastService } from "@ngxpert/hot-toast";
+import { ToastService } from "../../../services/toast.service";
 import { DialogComponent } from "../../../shared/dialog/dialog.component";
 import { QueryPropertiesParams } from "../../../interfaces/properties/query-property.interface";
 import { PaginatedProperties } from "../../../interfaces/properties/paginated-properties.interface";
@@ -15,27 +17,31 @@ import {
 } from "../../../shared/search-bar/search-bar.component";
 import { PropertyStatus } from "../../../interfaces/properties/property-status.enum";
 import { DashboardPropertyCardComponent } from "../../../components/dashboard/dashboard-property-card/dashboard-property-card.component";
+import { ToggleSwitch } from "primeng/toggleswitch";
 
 @Component({
   selector: "dashboard-property-list",
   imports: [
     CommonModule,
+    FormsModule,
     DashboardPropertyCardComponent,
     DialogComponent,
     SearchBarComponent,
+    ToggleSwitch,
   ],
   templateUrl: "./property-list.component.html",
 })
 export class PropertyListComponent implements OnInit {
   private propertyService = inject(PropertyService);
   private router = inject(Router);
-  private toast = inject(HotToastService);
+  private toast = inject(ToastService);
 
   public Math = Math;
 
   public properties: Property[] = [];
   public loading = true;
   public error: string | null = null;
+  public showDeleted = false;
 
   // filter
   searchQuery: string = "";
@@ -75,6 +81,7 @@ export class PropertyListComponent implements OnInit {
         this.currentStatus === "all"
           ? undefined
           : (this.currentStatus as PropertyStatus),
+      includeDeleted: this.showDeleted ? true : undefined,
     };
 
     this.loading = true;
@@ -119,14 +126,28 @@ export class PropertyListComponent implements OnInit {
     this.loadProperties();
   }
 
+  onDeletedToggleChange(): void {
+    this.currentPage = 1;
+    this.loadProperties();
+  }
+
+  onPageChange(page: number): void {
+    const totalPages = Math.ceil(this.totalProperties / this.rowsPerPage);
+    if (page < 1 || page > totalPages || page === this.currentPage) {
+      return;
+    }
+    this.currentPage = page;
+    this.loadProperties();
+  }
+
   getStatusBadgeClass(status: string): string {
     const statusClasses: Record<string, string> = {
-      sale: "bg-blue-100 text-blue-800",
-      rent: "bg-purple-100 text-purple-800",
-      sold: "bg-green-100 text-green-800",
-      rented: "bg-yellow-100 text-yellow-800",
+      sale: "text-sky-600 dark:text-sky-400",
+      rent: "text-purple-600 dark:text-purple-400",
+      sold: "text-emerald-600 dark:text-emerald-400",
+      rented: "text-amber-600 dark:text-amber-400",
     };
-    return statusClasses[status] || "bg-gray-100 text-gray-800";
+    return statusClasses[status] || "text-slate-600 dark:text-slate-400";
   }
 
   getStatusLabel(status: string): string {
@@ -150,11 +171,6 @@ export class PropertyListComponent implements OnInit {
     return typeLabels[type] || type;
   }
 
-  onPageChange(event: { page: number; rows: number }): void {
-    this.currentPage = event.page + 1;
-    this.rowsPerPage = event.rows;
-    this.loadProperties();
-  }
 
   viewProperty(id: string): void {
     this.router.navigate(["/properties", id]);
@@ -184,13 +200,13 @@ export class PropertyListComponent implements OnInit {
       .pipe(finalize(() => (this.isDeleting = false)))
       .subscribe({
         next: () => {
-          this.toast.success("Propiedad eliminada con éxito.");
+          this.toast.success("Correcto", "Propiedad eliminada con éxito.");
           this.closeDeleteDialog();
           this.loadProperties();
         },
         error: (errMessage) => {
           console.error("Error deleting property", errMessage);
-          this.toast.error(`Error al eliminar: ${errMessage}`);
+          this.toast.error("Error", `Error al eliminar: ${errMessage}`);
 
           this.isDeleting = false;
         },

@@ -16,15 +16,15 @@ export class PropertyCardComponent {
   getStatusClass(status: string): string {
     switch (status) {
       case "sale":
-        return "bg-emerald-500/10 text-emerald-400 border-emerald-500/20";
+        return "text-emerald-500 dark:text-emerald-400";
       case "rent":
-        return "bg-sky-500/10 text-sky-400 border-sky-500/20";
+        return "text-sky-500 dark:text-sky-400";
       case "sold":
-        return "bg-red-500/10 text-red-400 border-red-500/20";
+        return "text-slate-500 dark:text-slate-400 line-through";
       case "rented":
-        return "bg-purple-500/10 text-purple-400 border-purple-500/20";
+        return "text-purple-500 dark:text-purple-400";
       default:
-        return "bg-slate-500/10 text-slate-400 border-slate-500/20";
+        return "text-slate-500 dark:text-slate-400";
     }
   }
 

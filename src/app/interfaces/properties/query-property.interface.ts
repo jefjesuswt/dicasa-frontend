@@ -5,9 +5,10 @@ export interface QueryPropertiesParams {
   state?: string;
   city?: string;
   type?: string;
-  status?: string;
+  status?: string | string[];
   minPrice?: number;
   maxPrice?: number;
   bedrooms?: number;
   featured?: boolean;
+  includeDeleted?: boolean;
 }

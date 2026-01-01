@@ -1,4 +1,4 @@
-<div class="relative w-full font-mono text-sm group">
+<div class="relative w-full text-sm group">
   <div (click)="toggleCalendar()"
     class="flex items-center justify-between w-full bg-[var(--bg-panel)] border border-[var(--border-light)] px-4 py-3 text-[var(--text-heading)] cursor-pointer hover:bg-[var(--bg-panel)]/80 transition-colors"
     [class.opacity-50]="isDisabled">
@@ -60,7 +60,7 @@
             class="text-[8px] text-[var(--text-secondary)] hover:text-sky-400 py-0.5">
             <i class="pi pi-chevron-up"></i>
           </button>
-          <span class="font-bold text-[var(--text-heading)] w-5 text-center text-sm font-mono">{{ selectedHour() |
+          <span class="font-bold text-[var(--text-heading)] w-5 text-center text-sm">{{ selectedHour() |
             number : "2.0"
             }}</span>
           <button type="button" (click)="updateTime('hour', -1)"
@@ -76,7 +76,7 @@
             class="text-[8px] text-[var(--text-secondary)] hover:text-sky-400 py-0.5">
             <i class="pi pi-chevron-up"></i>
           </button>
-          <span class="font-bold text-[var(--text-heading)] w-5 text-center text-sm font-mono">{{ selectedMinute() |
+          <span class="font-bold text-[var(--text-heading)] w-5 text-center text-sm">{{ selectedMinute() |
             number : "2.0"
             }}</span>
           <button type="button" (click)="updateTime('minute', -30)"
@@ -94,7 +94,7 @@
       </span>
       <div class="flex flex-wrap gap-2">
         @for (date of unavailableHours(); track $index) {
-        <span class="text-[10px] bg-red-500/10 text-red-400 border border-red-500/20 px-2 py-1 rounded font-mono">
+        <span class="text-[10px] bg-red-500/10 text-red-400 border border-red-500/20 px-2 py-1 rounded">
           {{ formatHour(date) }}
         </span>
         }

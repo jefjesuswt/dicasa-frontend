@@ -24,14 +24,14 @@
         {{ property.title }}
       </h3>
       <p
-        class="text-xs text-sky-500 font-mono mb-2 truncate flex items-center gap-1"
+        class="text-xs text-sky-500 mb-2 truncate flex items-center gap-1"
       >
         <i class="pi pi-map-marker text-[10px]"></i>
         {{ property.address.city || "SIN UBICACIÓN" }}
       </p>
 
       <div
-        class="text-xs text-slate-400 font-mono border-l-2 border-white/10 pl-2"
+        class="text-xs text-slate-400 border-l-2 border-white/10 pl-2"
       >
         @if (property.type === 'house' || property.type === 'apartment' ||
         property.type === 'villa') {
@@ -58,7 +58,7 @@
         class="text-[10px] uppercase tracking-widest text-slate-500 block mb-1"
         >Precio</span
       >
-      <span class="text-xs font-bold text-white font-mono">
+      <span class="text-xs font-bold text-white">
         {{ property.price | currency : "USD" : "symbol" : "1.0-0" }}
       </span>
     </div>

@@ -38,6 +38,7 @@ export class AuthService {
     // CORRECCIÓN CRÍTICA: Solo intentamos chequear auth si estamos en el navegador.
     // El servidor (Node.js) no tiene token ni localStorage.
     if (isPlatformBrowser(this.platformId)) {
+      // 2. Verificación REAL con el backend (en segundo plano)
       this.checkAuthStatus().subscribe();
     } else {
       // En el servidor, asumimos directamente que no está autenticado
@@ -219,14 +220,47 @@ export class AuthService {
     return this.authStatus() === AuthStatus.authenticated;
   }
 
+  /**
+   * Verifica si el usuario tiene el rol ADMIN (IT/Sistema).
+   * Este es el rol con más privilegios.
+   */
   isAdmin(): boolean {
     const user = this.currentUser();
     return user ? user.roles.includes(UserRole.ADMIN) : false;
   }
 
-  isSuperAdmin(): boolean {
+  /**
+   * Verifica si el usuario tiene el rol MANAGER (Gerente).
+   * Puede gestionar propiedades, citas, agentes.
+   */
+  isManager(): boolean {
     const user = this.currentUser();
-    return user ? user.roles.includes(UserRole.SUPERADMIN) : false;
+    return user ? user.roles.includes(UserRole.MANAGER) : false;
+  }
+
+  /**
+   * Verifica si el usuario tiene el rol AGENT (Vendedor).
+   * Puede gestionar sus propiedades y citas asignadas.
+   */
+  isAgent(): boolean {
+    const user = this.currentUser();
+    return user ? user.roles.includes(UserRole.AGENT) : false;
+  }
+
+  /**
+   * Verifica si el usuario puede acceder al dashboard administrativo.
+   * Solo MANAGER y ADMIN tienen acceso.
+   */
+  canAccessDashboard(): boolean {
+    return this.isManager() || this.isAdmin();
+  }
+
+  /**
+   * Verifica si el usuario es parte del staff (empleado).
+   * AGENT, MANAGER o ADMIN.
+   */
+  isStaff(): boolean {
+    return this.isAgent() || this.isManager() || this.isAdmin();
   }
 
   private clearAuthData() {

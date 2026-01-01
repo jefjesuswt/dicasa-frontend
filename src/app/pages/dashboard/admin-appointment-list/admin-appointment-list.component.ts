@@ -1,8 +1,9 @@
 import { Component, inject, OnInit } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { Router, RouterModule } from "@angular/router";
+import { FormsModule } from "@angular/forms";
 import { finalize } from "rxjs";
-import { HotToastService } from "@ngxpert/hot-toast";
+import { ToastService } from "../../../services/toast.service"; // REPLACED: HotToastService
 
 import {
   Appointment,
@@ -19,6 +20,7 @@ import {
   SearchParams,
 } from "../../../shared/search-bar/search-bar.component";
 import { DashboardAppointmentCardComponent } from "../../../components/dashboard/dashboard-appointment-card/dashboard-appointment-card.component";
+import { ToggleSwitch } from "primeng/toggleswitch";
 
 @Component({
   selector: "dashboard-appointment-list",
@@ -26,21 +28,24 @@ import { DashboardAppointmentCardComponent } from "../../../components/dashboard
   imports: [
     CommonModule,
     RouterModule,
+    FormsModule,
     DialogComponent,
     SearchBarComponent,
     DashboardAppointmentCardComponent,
+    ToggleSwitch,
   ],
   templateUrl: "./admin-appointment-list.component.html",
 })
 export class AdminAppointmentListComponent implements OnInit {
   private appointmentsService = inject(AppointmentsService);
   private router = inject(Router);
-  private toast = inject(HotToastService);
+  private toast = inject(ToastService);
 
   public appointments: Appointment[] = [];
   public loading = true;
   public error: string | null = null;
   public Math = Math;
+  public showDeleted = false;
 
   public totalAppointments = 0;
   public currentPage = 1;
@@ -52,22 +57,22 @@ export class AdminAppointmentListComponent implements OnInit {
   public isDeleting = false;
 
   statusSeverity: Record<AppointmentStatus, string> = {
-    [AppointmentStatus.PENDING]: "bg-yellow-100 text-yellow-800",
-    [AppointmentStatus.CONTACTED]: "bg-blue-100 text-blue-800",
-    [AppointmentStatus.CONFIRMED]: "bg-green-100 text-green-800",
-    [AppointmentStatus.CANCELLED]: "bg-red-100 text-red-800",
+    [AppointmentStatus.PENDING]: "text-amber-500",
+    [AppointmentStatus.CONTACTED]: "text-sky-500",
+    [AppointmentStatus.COMPLETED]: "text-emerald-500",
+    [AppointmentStatus.CANCELLED]: "text-red-500",
   };
   statusLabels: Record<AppointmentStatus, string> = {
     [AppointmentStatus.PENDING]: "Pendiente",
     [AppointmentStatus.CONTACTED]: "Contactado",
-    [AppointmentStatus.CONFIRMED]: "Confirmada",
+    [AppointmentStatus.COMPLETED]: "Completada",
     [AppointmentStatus.CANCELLED]: "Cancelada",
   };
 
   public statusOptions: DropdownOption[] = [
     { value: AppointmentStatus.PENDING, label: "Pendiente" },
     { value: AppointmentStatus.CONTACTED, label: "Contactado" },
-    { value: AppointmentStatus.CONFIRMED, label: "Confirmada" },
+    { value: AppointmentStatus.COMPLETED, label: "Completada" },
     { value: AppointmentStatus.CANCELLED, label: "Cancelada" },
   ];
 
@@ -80,6 +85,7 @@ export class AdminAppointmentListComponent implements OnInit {
       ...this.currentQueryParams,
       page: this.currentPage,
       limit: this.rowsPerPage,
+      includeDeleted: this.showDeleted ? true : undefined,
     };
 
     this.loading = true;
@@ -110,6 +116,11 @@ export class AdminAppointmentListComponent implements OnInit {
     this.loadAppointments();
   }
 
+  onDeletedToggleChange(): void {
+    this.currentPage = 1;
+    this.loadAppointments();
+  }
+
   onPageChange(page: number) {
     const totalPages = Math.ceil(this.totalAppointments / this.rowsPerPage);
     if (page < 1 || page > totalPages || page === this.currentPage) {
@@ -120,7 +131,7 @@ export class AdminAppointmentListComponent implements OnInit {
   }
 
   getStatusBadgeClass(status: AppointmentStatus): string {
-    return this.statusSeverity[status] || "bg-gray-100 text-gray-800";
+    return this.statusSeverity[status] || "text-[var(--text-secondary)]";
   }
 
   getStatusLabel(status: AppointmentStatus): string {
@@ -154,12 +165,12 @@ export class AdminAppointmentListComponent implements OnInit {
       .pipe(finalize(() => (this.isDeleting = false)))
       .subscribe({
         next: () => {
-          this.toast.success("Cita eliminada con éxito.");
+          this.toast.success("Correcto", "Cita eliminada con éxito.");
           this.closeDeleteDialog();
           this.loadAppointments();
         },
         error: (errMessage) => {
-          this.toast.error(`Error al eliminar la cita: ${errMessage}`);
+          this.toast.error("Error", `Error al eliminar la cita: ${errMessage}`);
           this.isDeleting = false;
         },
       });

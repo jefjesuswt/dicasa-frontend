@@ -29,7 +29,7 @@ import { RouterModule } from "@angular/router";
           activar tu cuenta.
         </p>
 
-        <div class="text-sm text-[var(--text-secondary)] font-mono mt-4">
+        <div class="text-sm text-[var(--text-secondary)] mt-4">
           (REVISA TU CARPETA DE SPAM SI NO LO ENCUENTRAS)
         </div>
 

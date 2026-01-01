@@ -1,4 +1,4 @@
-import { Component, OnInit, inject, signal } from "@angular/core";
+import { Component, OnInit, inject, signal, computed } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { Router, RouterModule } from "@angular/router";
 import { catchError } from "rxjs/operators";
@@ -12,6 +12,14 @@ import {
 import { AvatarComponent } from "../../../shared/avatar/avatar.component";
 
 type LoadState = "loading" | "loaded" | "error";
+type ViewMode = "list" | "calendar";
+
+interface CalendarDay {
+  date: Date;
+  isCurrentMonth: boolean;
+  isToday: boolean;
+  appointments: Appointment[];
+}
 
 @Component({
   selector: "app-my-schedules",
@@ -26,10 +34,49 @@ export class MyAppointmentsComponent implements OnInit {
   appointments = signal<Appointment[]>([]);
   loadState = signal<LoadState>("loading");
 
+  // Calendar State
+  viewMode = signal<ViewMode>("list");
+  currentDate = signal<Date>(new Date());
+
+  weekDays = ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'];
+
+  calendarDays = computed(() => {
+    const year = this.currentDate().getFullYear();
+    const month = this.currentDate().getMonth();
+    const firstDayOfMonth = new Date(year, month, 1);
+    const lastDayOfMonth = new Date(year, month + 1, 0);
+
+    const days: CalendarDay[] = [];
+
+    // Padding days from previous month
+    const startDayOfWeek = firstDayOfMonth.getDay(); // 0 (Sunday) to 6 (Saturday)
+    const prevMonthLastDay = new Date(year, month, 0).getDate();
+
+    for (let i = startDayOfWeek - 1; i >= 0; i--) {
+      const date = new Date(year, month - 1, prevMonthLastDay - i);
+      days.push(this.createCalendarDay(date, false));
+    }
+
+    // Days of current month
+    for (let i = 1; i <= lastDayOfMonth.getDate(); i++) {
+        const date = new Date(year, month, i);
+        days.push(this.createCalendarDay(date, true));
+    }
+
+    // Padding days for next month to complete the grid (up to 42 cells typically for 6 rows)
+    const remainingCells = 42 - days.length;
+    for (let i = 1; i <= remainingCells; i++) {
+        const date = new Date(year, month + 1, i);
+        days.push(this.createCalendarDay(date, false));
+    }
+
+    return days;
+  });
+
   statusLabels: Record<AppointmentStatus, string> = {
     [AppointmentStatus.PENDING]: "Pendiente",
     [AppointmentStatus.CONTACTED]: "Contactado",
-    [AppointmentStatus.CONFIRMED]: "Confirmada",
+    [AppointmentStatus.COMPLETED]: "Completada",
     [AppointmentStatus.CANCELLED]: "Cancelada",
   };
 
@@ -39,7 +86,7 @@ export class MyAppointmentsComponent implements OnInit {
       "text-yellow-500 border-yellow-500/30 bg-yellow-500/10",
     [AppointmentStatus.CONTACTED]:
       "text-sky-400 border-sky-500/30 bg-sky-500/10",
-    [AppointmentStatus.CONFIRMED]:
+    [AppointmentStatus.COMPLETED]:
       "text-emerald-400 border-emerald-500/30 bg-emerald-500/10",
     [AppointmentStatus.CANCELLED]:
       "text-red-500 border-red-500/30 bg-red-500/10",
@@ -72,12 +119,43 @@ export class MyAppointmentsComponent implements OnInit {
       });
   }
 
+  setViewMode(mode: ViewMode) {
+    this.viewMode.set(mode);
+  }
+
+  changeMonth(delta: number) {
+    const current = this.currentDate();
+    this.currentDate.set(new Date(current.getFullYear(), current.getMonth() + delta, 1));
+  }
+
+  isSameDate(d1: Date, d2: Date): boolean {
+    return d1.getFullYear() === d2.getFullYear() &&
+           d1.getMonth() === d2.getMonth() &&
+           d1.getDate() === d2.getDate();
+  }
+
+  private createCalendarDay(date: Date, isCurrentMonth: boolean): CalendarDay {
+    const today = new Date();
+    // Filter appointments for this specific day
+    const dayAppointments = this.appointments().filter(app => {
+        const appDate = new Date(app.appointmentDate);
+        return this.isSameDate(appDate, date);
+    });
+
+    return {
+        date,
+        isCurrentMonth,
+        isToday: this.isSameDate(date, today),
+        appointments: dayAppointments
+    };
+  }
+
   getStatusLabel(status: AppointmentStatus): string {
     return this.statusLabels[status] || status;
   }
 
   getStatusClass(status: AppointmentStatus): string {
-    return this.statusClasses[status] || "text-slate-400 border-slate-500/30";
+    return this.statusClasses[status] || "text-[var(--text-secondary)] border-[var(--border-light)]";
   }
 
   onImageError(event: Event) {

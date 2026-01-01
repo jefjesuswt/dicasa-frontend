@@ -27,11 +27,11 @@
               class="pi pi-user text-[var(--text-secondary)] group-focus-within:text-sky-500 transition-colors text-xs"></i>
           </div>
           <input id="name" name="name" type="text" formControlName="name" autocomplete="name" required
-            class="w-full pl-10 pr-4 py-3 bg-transparent placeholder-[var(--text-secondary)] text-[var(--text-heading)] focus:outline-none font-mono text-sm"
+            class="w-full pl-10 pr-4 py-3 bg-transparent placeholder-[var(--text-secondary)] text-[var(--text-heading)] focus:outline-none text-sm"
             placeholder="NOMBRE COMPLETO" />
         </div>
         @if (name?.invalid && (name?.dirty || name?.touched)) {
-        <p class="mt-1 text-[10px] text-red-500 font-mono">
+        <p class="mt-1 text-[10px] text-red-500">
           * NOMBRE REQUERIDO
         </p>
         }
@@ -45,11 +45,11 @@
               class="pi pi-envelope text-[var(--text-secondary)] group-focus-within:text-sky-500 transition-colors text-xs"></i>
           </div>
           <input id="email-address" name="email" type="email" formControlName="email" autocomplete="email" required
-            class="w-full pl-10 pr-4 py-3 bg-transparent placeholder-[var(--text-secondary)] text-[var(--text-heading)] focus:outline-none font-mono text-sm"
+            class="w-full pl-10 pr-4 py-3 bg-transparent placeholder-[var(--text-secondary)] text-[var(--text-heading)] focus:outline-none text-sm"
             placeholder="CORREO ELECTRÓNICO" />
         </div>
         @if (email?.invalid && (email?.dirty || email?.touched)) {
-        <p class="mt-1 text-[10px] text-red-500 font-mono">
+        <p class="mt-1 text-[10px] text-red-500">
           * INGRESA UN CORREO VÁLIDO
         </p>
         }
@@ -59,14 +59,14 @@
         <div
           class="relative w-full bg-[var(--bg-panel)] border border-[var(--border-light)] focus-within:border-sky-500 focus-within:bg-[var(--bg-dark)] transition-colors">
           <ngx-intl-tel-input [cssClass]="
-              'w-full !bg-transparent !border-none !shadow-none !text-[var(--text-heading)] font-mono text-sm !h-[46px] flex items-center'
+              'w-full !bg-transparent !border-none !shadow-none !text-[var(--text-heading)] text-sm !h-[46px] flex items-center'
             " [preferredCountries]="preferredCountries" [enableAutoCountrySelect]="true" [enablePlaceholder]="true"
             [selectedCountryISO]="CountryISO.Venezuela" [phoneValidation]="true" [separateDialCode]="true"
             [numberFormat]="phoneFormat" name="phoneNumber" formControlName="phoneNumber" id="phoneNumber"
             placeholder="TELÉFONO DE CONTACTO"></ngx-intl-tel-input>
         </div>
         @if (phoneNumber?.invalid && phoneNumber?.touched) {
-        <p class="mt-1 text-[10px] text-red-500 font-mono">
+        <p class="mt-1 text-[10px] text-red-500">
           * TELÉFONO INVÁLIDO O REQUERIDO
         </p>
         }
@@ -81,11 +81,11 @@
           </div>
           <input id="password" name="password" type="password" formControlName="password" autocomplete="new-password"
             required
-            class="w-full pl-10 pr-4 py-3 bg-transparent placeholder-[var(--text-secondary)] text-[var(--text-heading)] focus:outline-none font-mono text-sm"
+            class="w-full pl-10 pr-4 py-3 bg-transparent placeholder-[var(--text-secondary)] text-[var(--text-heading)] focus:outline-none text-sm"
             placeholder="CONTRASEÑA (MÍNIMO 6 CARACTERES)" />
         </div>
         @if (password?.invalid && (password?.dirty || password?.touched)) {
-        <p class="mt-1 text-[10px] text-red-500 font-mono">
+        <p class="mt-1 text-[10px] text-red-500">
           * MÍNIMO 6 CARACTERES
         </p>
         }
@@ -100,12 +100,12 @@
           </div>
           <input id="confirm-password" name="confirmPassword" type="password" formControlName="confirmPassword"
             autocomplete="new-password" required
-            class="w-full pl-10 pr-4 py-3 bg-transparent placeholder-[var(--text-secondary)] text-[var(--text-heading)] focus:outline-none font-mono text-sm"
+            class="w-full pl-10 pr-4 py-3 bg-transparent placeholder-[var(--text-secondary)] text-[var(--text-heading)] focus:outline-none text-sm"
             placeholder="CONFIRMAR CONTRASEÑA" />
         </div>
         @if ((confirmPassword?.invalid || registerForm.hasError('mismatch')) &&
         (confirmPassword?.dirty || confirmPassword?.touched)) {
-        <p class="mt-1 text-[10px] text-red-500 font-mono">
+        <p class="mt-1 text-[10px] text-red-500">
           * LAS CONTRASEÑAS NO COINCIDEN
         </p>
         }
@@ -119,7 +119,7 @@
           <span>REGISTRAR Y ACTIVAR CUENTA</span>
           } @else {
           <i class="pi pi-spin pi-spinner"></i>
-          <span class="font-mono">PROCESANDO...</span>
+          <span>PROCESANDO...</span>
           }
         </button>
       </div>

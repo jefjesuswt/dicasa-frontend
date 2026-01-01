@@ -26,7 +26,7 @@ import { CommonModule } from "@angular/common";
             Verificando Credenciales
           </h2>
           <p
-            class="text-sm text-[var(--text-secondary)] font-mono uppercase tracking-wider animate-pulse"
+            class="text-sm text-[var(--text-secondary)] uppercase tracking-wider animate-pulse"
           >
             [ ESTABLECIENDO CONEXIÓN SEGURA ]
           </p>
@@ -45,7 +45,7 @@ import { CommonModule } from "@angular/common";
             Tu acceso ha sido confirmado. Serás redirigido al panel principal.
           </p>
           <div
-            class="mt-6 text-sm text-sky-500 font-mono uppercase tracking-wider"
+            class="mt-6 text-sm text-sky-500 uppercase tracking-wider"
           >
             [ REDIRECCIONANDO EN 2 SEG... ]
           </div>

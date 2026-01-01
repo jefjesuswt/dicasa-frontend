@@ -9,7 +9,7 @@
 
     <div class="flex items-center gap-2 text-slate-400">
       <i class="pi pi-calendar text-[10px]"></i>
-      <span class="text-xs font-mono">
+      <span class="text-xs">
         {{ appointment.appointmentDate | date : "dd/MM" }}
         <span class="text-sky-500">{{
           appointment.appointmentDate | date : "HH:mm"
@@ -33,7 +33,7 @@
           title="{{ appointment.name }}">
           {{ appointment.name }}
         </h3>
-        <p class="text-xs text-slate-500 truncate font-mono flex items-center gap-1">
+        <p class="text-xs text-slate-500 truncate flex items-center gap-1">
           <i class="pi pi-envelope text-[10px]"></i>
           {{ appointment.email }}
         </p>
@@ -54,7 +54,7 @@
           </span>
         </a>
         } @else {
-        <span class="text-xs text-slate-500 font-mono italic flex items-center gap-2">
+        <span class="text-xs text-slate-500 italic flex items-center gap-2">
           <i class="pi pi-exclamation-circle text-amber-500/50"></i> Propiedad no disponible
         </span>
         }
@@ -63,11 +63,11 @@
       <div>
         <span class="text-[10px] text-slate-600 uppercase tracking-widest block mb-1">Agente Responsable</span>
         @if (appointment.agent) {
-        <span class="text-xs text-slate-400 font-mono truncate block">
+        <span class="text-xs text-slate-400 truncate block">
           {{ appointment.agent.name }}
         </span>
         } @else {
-        <span class="text-xs text-red-500/50 italic font-mono uppercase">
+        <span class="text-xs text-red-500/50 italic uppercase">
           Sin asignar
         </span>
         }

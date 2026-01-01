@@ -1,6 +1,6 @@
 import { Routes } from "@angular/router";
 import { ProfileComponent } from "./profile/profile.component";
-import { adminOrSuperAdminGuard } from "../../guards/auth.guards";
+import { staffGuard } from "../../guards/auth.guards";
 
 export const PROFILE_ROUTES: Routes = [
   {
@@ -25,7 +25,7 @@ export const PROFILE_ROUTES: Routes = [
           import("./my-properties/my-properties.component").then(
             (m) => m.MyPropertiesComponent
           ),
-        canActivate: [adminOrSuperAdminGuard],
+        canActivate: [staffGuard], // AGENT, MANAGER, ADMIN pueden ver sus propiedades
       },
       {
         path: "",

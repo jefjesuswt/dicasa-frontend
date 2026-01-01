@@ -16,7 +16,7 @@
         Ingresa el código de 6 dígitos que enviamos a tu correo electrónico:
       </p>
       <span
-        class="font-mono text-[var(--text-heading)] text-xs font-bold block mt-3 px-4 py-2 border border-[var(--border-light)] bg-[var(--bg-dark)]/50">
+        class="text-[var(--text-heading)] text-xs font-bold block mt-3 px-4 py-2 border border-[var(--border-light)] bg-[var(--bg-dark)]/50">
         {{ obfuscatedEmail }}
       </span>
       }
@@ -37,12 +37,12 @@
 
           <input id="code" name="code" type="text" inputmode="numeric" pattern="[0-9]*" maxlength="6"
             formControlName="code"
-            class="w-full pl-10 pr-4 py-3 text-center bg-transparent placeholder-[var(--text-secondary)] text-[var(--text-heading)] focus:outline-none font-mono text-xl tracking-[0.5em]"
+            class="w-full pl-10 pr-4 py-3 text-center bg-transparent placeholder-[var(--text-secondary)] text-[var(--text-heading)] focus:outline-none text-xl tracking-[0.5em]"
             placeholder="000000" />
         </div>
 
         @if (code?.invalid && code?.touched) {
-        <div class="mt-1 text-[10px] text-red-500 font-mono text-center">
+        <div class="mt-1 text-[10px] text-red-500 text-center">
           * CÓDIGO REQUERIDO, 6 DÍGITOS NUMÉRICOS
         </div>
         }
@@ -56,7 +56,7 @@
           <span>VERIFICAR CÓDIGO</span>
           } @else {
           <i class="pi pi-spin pi-spinner"></i>
-          <span class="font-mono">VERIFICANDO...</span>
+          <span>VERIFICANDO...</span>
           }
         </button>
       </div>

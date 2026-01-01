@@ -8,7 +8,7 @@ import {
 } from "@angular/forms";
 import { ActivatedRoute, Router } from "@angular/router";
 import { finalize, Observable, of } from "rxjs";
-import { HotToastService } from "@ngxpert/hot-toast";
+import { ToastService } from "../../../services/toast.service"; // REPLACED: HotToastService
 
 import {
   NgxIntlTelInputModule,
@@ -38,7 +38,7 @@ export class UserFormComponent implements OnInit {
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private usersService = inject(UsersService);
-  private toast = inject(HotToastService);
+  private toast = inject(ToastService);
 
   userForm!: FormGroup;
   isEditMode = false;
@@ -94,7 +94,8 @@ export class UserFormComponent implements OnInit {
         phoneNumber: [null, [Validators.required]],
         rolesGroup: this.fb.group({
           isAdmin: [false],
-          isSuperAdmin: [{ value: false, disabled: true }],
+          isManager: [false],
+          isAgent: [false],
         }),
 
         password: [""],
@@ -134,7 +135,7 @@ export class UserFormComponent implements OnInit {
           this.patchForm(user);
         },
         error: (errMessage) => {
-          this.toast.error(`Error al cargar usuario: ${errMessage}`);
+          this.toast.error("Error", `Error al cargar usuario: ${errMessage}`);
           this.router.navigate(["/dashboard/users"]);
         },
       });
@@ -164,7 +165,8 @@ export class UserFormComponent implements OnInit {
       phoneNumber: numberToPatch,
       rolesGroup: {
         isAdmin: user.roles.includes(UserRole.ADMIN),
-        isSuperAdmin: user.roles.includes(UserRole.SUPERADMIN),
+        isManager: user.roles.includes(UserRole.MANAGER),
+        isAgent: user.roles.includes(UserRole.AGENT),
       },
     });
     this.userForm.markAsPristine();
@@ -172,7 +174,7 @@ export class UserFormComponent implements OnInit {
 
   onSubmit(): void {
     if (this.userForm.invalid) {
-      this.toast.error("Por favor, revisa los campos del formulario.");
+      this.toast.error("Formulario Inválido", "Por favor, revisa los campos del formulario.");
       this.userForm.markAllAsTouched();
       if (this.phoneNumber?.invalid) {
         this.phoneNumber.markAsTouched();
@@ -184,7 +186,7 @@ export class UserFormComponent implements OnInit {
     const internationalPhoneNumber = phoneValueObject?.internationalNumber;
 
     if (!internationalPhoneNumber) {
-      this.toast.error("Número de teléfono inválido o incompleto.");
+      this.toast.error("Teléfono Inválido", "Número de teléfono inválido o incompleto.");
       this.phoneNumber?.setErrors({ invalidNumberFormat: true });
       this.phoneNumber?.markAsTouched();
       return;
@@ -194,12 +196,18 @@ export class UserFormComponent implements OnInit {
     const formValue = this.userForm.value;
 
     const finalRoles: UserRole[] = [];
+
+    // Determinar el rol basado en la selección (mutuamente excluyentes excepto USER)
     if (formValue.rolesGroup.isAdmin) {
       finalRoles.push(UserRole.ADMIN);
-      finalRoles.push(UserRole.USER);
-    } else {
-      finalRoles.push(UserRole.USER);
+    } else if (formValue.rolesGroup.isManager) {
+      finalRoles.push(UserRole.MANAGER);
+    } else if (formValue.rolesGroup.isAgent) {
+      finalRoles.push(UserRole.AGENT);
     }
+
+    // Todos los usuarios tienen el rol USER como base
+    finalRoles.push(UserRole.USER);
     const uniqueRoles = [...new Set(finalRoles)];
 
     let action$: Observable<User>;
@@ -228,12 +236,13 @@ export class UserFormComponent implements OnInit {
     action$.pipe(finalize(() => (this.isSaving = false))).subscribe({
       next: (savedUser) => {
         this.toast.success(
+          "Éxito",
           `Usuario ${this.isEditMode ? "actualizado" : "creado"} con éxito.`
         );
         this.router.navigate(["/dashboard/users"]);
       },
       error: (errMessage) => {
-        this.toast.error(`Error al guardar usuario: ${errMessage}`);
+        this.toast.error("Error", `Error al guardar usuario: ${errMessage}`);
       },
     });
   }

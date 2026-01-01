@@ -1,0 +1,231 @@
+<div class="min-h-screen bg-[var(--bg-dark)] text-[var(--text-primary)] font-sans selection:bg-sky-500/30 pb-12">
+    <!-- Header -->
+    <div class="sticky top-0 z-30 bg-[var(--bg-dark)]/90 backdrop-blur-md border-b border-[var(--border-light)]">
+        <div class="px-6 py-4 md:px-12 flex flex-col md:flex-row justify-between items-center gap-4">
+            <div>
+                <h1 class="text-xl md:text-2xl font-light text-[var(--text-heading)] tracking-wide uppercase">
+                    Registro de <span class="font-bold text-sky-500">Acciones</span>
+                </h1>
+                <p class="text-[10px] text-[var(--text-secondary)] uppercase tracking-[0.2em] mt-1">
+                    Historial de Auditoría del Sistema
+                </p>
+            </div>
+
+            <div class="flex items-center gap-3 bg-[var(--bg-panel)] px-4 py-2 rounded-full border border-[var(--border-light)]">
+                <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                <span class="text-xs text-[var(--text-primary)] uppercase">{{ totalLogs }} Registros</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="px-6 md:px-12 py-8 animate-fade-in">
+        <!-- Filters Section -->
+        <div class="bg-[var(--bg-panel)] border border-[var(--border-light)] p-6 rounded-sm mb-6">
+            <h3 class="text-xs font-bold text-[var(--text-heading)] uppercase tracking-widest mb-4 flex items-center gap-2">
+                <i class="pi pi-filter"></i> Filtros de Búsqueda
+            </h3>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <!-- Filter by Action -->
+                <div>
+                    <label class="text-[10px] text-[var(--text-secondary)] uppercase tracking-widest block mb-2">Acción</label>
+                    <input type="text" [(ngModel)]="filterAction" placeholder="e.g., UPDATE_PROPERTY"
+                        class="w-full bg-[var(--bg-dark)] border border-[var(--border-light)] px-4 py-2 text-sm text-[var(--text-primary)] placeholder:text-[var(--text-secondary)] focus:border-sky-500 focus:outline-none transition-colors" />
+                </div>
+
+                <!-- Filter by User ID -->
+                <div>
+                    <label class="text-[10px] text-[var(--text-secondary)] uppercase tracking-widest block mb-2">Usuario ID</label>
+                    <input type="text" [(ngModel)]="filterUserId" placeholder="ID de usuario"
+                        class="w-full bg-[var(--bg-dark)] border border-[var(--border-light)] px-4 py-2 text-sm text-[var(--text-primary)] font-mono placeholder:text-[var(--text-secondary)] focus:border-sky-500 focus:outline-none transition-colors" />
+                </div>
+
+                <!-- Actions -->
+                <div class="flex items-end gap-2">
+                    <button (click)="applyFilters()"
+                        class="flex-1 bg-sky-600 hover:bg-sky-500 text-white text-xs font-bold uppercase tracking-wider px-6 py-3 transition-colors">
+                        <i class="pi pi-search mr-2"></i> Buscar
+                    </button>
+                    <button (click)="clearFilters()"
+                        class="px-4 py-3 border border-[var(--border-light)] text-[var(--text-secondary)] hover:text-[var(--text-heading)] hover:border-[var(--border-light)] transition-colors text-xs">
+                        <i class="pi pi-times"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Loading State -->
+        @if (loading()) {
+        <div class="h-[50vh] flex flex-col items-center justify-center gap-4">
+            <i class="pi pi-spin pi-spinner text-3xl text-sky-600"></i>
+            <span class="text-xs text-[var(--text-secondary)] uppercase">Cargando Registros...</span>
+        </div>
+        } @else {
+
+        <!-- Logs Table -->
+        <div class="bg-[var(--bg-dark)] border border-[var(--border-light)] rounded-sm overflow-hidden">
+            <div class="px-6 py-4 border-b border-[var(--border-light)] bg-[var(--bg-panel)] flex justify-between items-center">
+                <h3 class="text-xs font-bold text-[var(--text-heading)] uppercase tracking-widest flex items-center gap-2">
+                    <i class="pi pi-list"></i> Logs de Auditoría
+                </h3>
+                <span class="text-[10px] text-[var(--text-secondary)]">Página {{ currentPage }} de {{ totalPages }}</span>
+            </div>
+
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse">
+                    <thead class="bg-[var(--bg-panel)] text-[10px] text-[var(--text-secondary)] uppercase tracking-wider">
+                        <tr>
+                            <th class="px-6 py-3 font-medium">Fecha</th>
+                            <th class="px-6 py-3 font-medium">Usuario</th>
+                            <th class="px-6 py-3 font-medium">Acción</th>
+                            <th class="px-6 py-3 font-medium">Recurso</th>
+                            <th class="px-6 py-3 font-medium text-right">ID Log</th>
+                        </tr>
+                    </thead>
+                    <tbody class="text-xs text-[var(--text-secondary)] divide-y divide-[var(--border-light)]">
+                        @for (log of logs(); track $index) {
+                        <tr class="hover:bg-[var(--bg-panel)] transition-colors">
+                            <td class="px-6 py-3 text-[var(--text-secondary)] whitespace-nowrap">
+                                {{ log.createdAt | date : "dd/MM/yyyy HH:mm" }}
+                            </td>
+
+                            <!-- Usuario Column -->
+                            <td class="px-6 py-3">
+                                @if (log.user) {
+                                <div class="flex flex-col">
+                                    <span class="text-[var(--text-heading)] font-medium">
+                                        {{ log.user.name }}
+                                    </span>
+                                    <span class="text-[10px] text-[var(--text-secondary)]">
+                                        {{ log.user.email }}
+                                    </span>
+                                </div>
+                                } @else if (log.userName) {
+                                <span class="text-white font-medium">
+                                    {{ log.userName }}
+                                </span>
+                                } @else {
+                                <span class="bg-[var(--bg-panel)] px-2 py-1 rounded text-[10px] text-sky-400">
+                                    {{ log.userId | slice : 0 : 8 }}...
+                                </span>
+                                }
+                            </td>
+
+                            <!-- Acción Column -->
+                            <td class="px-6 py-3">
+                                <span
+                                    [class]="'px-2 py-1 rounded text-[10px] font-medium uppercase tracking-wider ' + getActionBadgeClass(log.action)">
+                                    {{ log.action }}
+                                </span>
+                            </td>
+
+                            <!-- Recurso Column -->
+                            <td class="px-6 py-3">
+                                @if (log.resource) {
+                                @switch (log.resource.type) {
+                                @case ('property') {
+                                <a [routerLink]="['/properties', log.resource._id]"
+                                    class="text-sky-400 hover:text-sky-300 transition-colors flex items-center gap-1 group">
+                                    <i class="pi pi-home text-[10px]"></i>
+                                    <span class="truncate max-w-[200px]">{{ log.resource.title }}</span>
+                                    <i
+                                        class="pi pi-external-link text-[8px] opacity-0 group-hover:opacity-100 transition-opacity"></i>
+                                </a>
+                                }
+                                @case ('appointment') {
+                                <a [routerLink]="['/dashboard/appointments', log.resource._id]"
+                                    class="text-emerald-400 hover:text-emerald-300 transition-colors flex items-center gap-1 group">
+                                    <i class="pi pi-calendar text-[10px]"></i>
+                                    <span class="truncate max-w-[200px]">{{ log.resource.title }}</span>
+                                    <i
+                                        class="pi pi-external-link text-[8px] opacity-0 group-hover:opacity-100 transition-opacity"></i>
+                                </a>
+                                }
+                                @case ('user') {
+                                <a [routerLink]="['/dashboard/users', log.resource._id]"
+                                    class="text-purple-400 hover:text-purple-300 transition-colors flex items-center gap-1 group">
+                                    <i class="pi pi-user text-[10px]"></i>
+                                    <span class="truncate max-w-[200px]">{{ log.resource.title }}</span>
+                                    <i
+                                        class="pi pi-external-link text-[8px] opacity-0 group-hover:opacity-100 transition-opacity"></i>
+                                </a>
+                                }
+                                @default {
+                                <div class="flex items-center gap-1 text-[var(--text-secondary)]">
+                                    <i class="pi pi-question-circle text-[10px]"></i>
+                                    <span class="truncate max-w-[200px]">{{ log.resource.title || 'Desconocido'
+                                        }}</span>
+                                </div>
+                                }
+                                }
+                                } @else if (log.resourceId) {
+                                <div class="flex items-center gap-1 text-[var(--text-secondary)] italic">
+                                    <i class="pi pi-trash text-[10px]"></i>
+                                    <span class="text-[10px]">Recurso eliminado</span>
+                                    <span class="bg-[var(--bg-panel)] px-2 py-1 rounded text-[10px]">
+                                        {{ log.resourceId | slice : 0 : 8 }}...
+                                    </span>
+                                </div>
+                                } @else {
+                                <span class="text-[var(--text-secondary)] text-[10px]">N/A</span>
+                                }
+                            </td>
+
+                            <!-- ID Log Column -->
+                            <td class="px-6 py-3 text-right text-[var(--text-secondary)]">
+                                {{ log._id | slice : 0 : 6 }}
+                            </td>
+                        </tr>
+                        } @empty {
+                        <tr>
+                            <td colspan="5" class="px-6 py-8 text-center text-[var(--text-secondary)] italic">
+                                No se encontraron registros.
+                            </td>
+                        </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Pagination -->
+            @if (totalPages > 1) {
+            <div
+                class="px-6 py-4 border-t border-[var(--border-light)] bg-[var(--bg-panel)] flex flex-col sm:flex-row justify-between items-center gap-4">
+                <div class="text-xs text-[var(--text-secondary)]">
+                    Mostrando <span class="text-[var(--text-heading)] font-bold">{{ (currentPage - 1) * itemsPerPage + 1 }}</span> -
+                    <span class="text-[var(--text-heading)] font-bold">{{ currentPage * itemsPerPage > totalLogs ? totalLogs :
+                        currentPage * itemsPerPage }}</span>
+                    de <span class="text-[var(--text-heading)] font-bold">{{ totalLogs }}</span>
+                </div>
+
+                <div class="flex items-center gap-2">
+                    <button (click)="goToPage(currentPage - 1)" [disabled]="currentPage === 1"
+                        class="h-10 px-6 border border-[var(--border-light)] text-xs font-bold uppercase tracking-widest text-[var(--text-secondary)] hover:bg-[var(--bg-panel)] hover:text-[var(--text-heading)] hover:border-sky-500/50 disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:border-white/10 disabled:hover:bg-transparent transition-all">
+                        <i class="pi pi-chevron-left mr-2"></i> Anterior
+                    </button>
+
+                    <div class="hidden sm:flex items-center gap-1">
+                        @for (page of [].constructor(totalPages); track $index; let i = $index) {
+                        @if (i + 1 === currentPage || i + 1 === 1 || i + 1 === totalPages || (i + 1 >= currentPage - 1
+                        && i + 1 <= currentPage + 1)) { <button (click)="goToPage(i + 1)"
+                            [class.bg-sky-500]="currentPage === i + 1" [class.text-white]="currentPage === i + 1"
+                            class="h-10 w-10 border border-[var(--border-light)] text-xs font-bold text-[var(--text-secondary)] hover:bg-[var(--bg-panel)] hover:text-[var(--text-heading)] transition-all">
+                            {{ i + 1 }}
+                            </button>
+                            } @else if (i + 1 === currentPage - 2 || i + 1 === currentPage + 2) {
+                            <span class="text-[var(--text-secondary)] px-2">...</span>
+                            }
+                            }
+                    </div>
+
+                    <button (click)="goToPage(currentPage + 1)" [disabled]="currentPage === totalPages"
+                        class="h-10 px-6 border border-[var(--border-light)] text-xs font-bold uppercase tracking-widest text-[var(--text-secondary)] hover:bg-[var(--bg-panel)] hover:text-[var(--text-heading)] hover:border-sky-500/50 disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:border-white/10 disabled:hover:bg-transparent transition-all">
+                        Siguiente <i class="pi pi-chevron-right ml-2"></i>
+                    </button>
+                </div>
+            </div>
+            }
+        </div>
+        }
+    </div>
+</div>

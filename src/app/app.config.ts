@@ -8,7 +8,7 @@ import {
   withPreloading,
   withViewTransitions,
 } from "@angular/router";
-import { provideHotToastConfig } from "@ngxpert/hot-toast";
+// import { provideHotToastConfig } from "@ngxpert/hot-toast";
 import { routes } from "./app.routes";
 import {
   provideHttpClient,
@@ -52,9 +52,9 @@ export const appConfig: ApplicationConfig = {
       },
     }),
     provideHttpClient(withFetch(), withInterceptors([authInterceptor])),
-    provideHotToastConfig({
-      position: "bottom-center",
-    }),
+    // provideHotToastConfig({
+    //   position: "bottom-center",
+    // }),
     provideAnimationsAsync(),
     provideClientHydration(withEventReplay()),
   ],

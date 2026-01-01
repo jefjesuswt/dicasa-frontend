@@ -76,7 +76,9 @@ export class HomeComponent implements OnInit, OnDestroy {
     this.loading = true;
     this.propertyService.getFeaturedProperties().subscribe({
       next: (properties) => {
-        this.featuredProperties = properties.slice(0, 3);
+        this.featuredProperties = properties
+          .filter(p => p.status === 'sale' || p.status === 'rent')
+          .slice(0, 3);
         this.loading = false;
 
         // Reiniciamos animaciones

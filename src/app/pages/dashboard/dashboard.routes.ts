@@ -1,5 +1,5 @@
 import { Routes } from "@angular/router";
-import { superAdminGuard } from "../../guards/auth.guards";
+import { managerOrAdminGuard, adminGuard } from "../../guards/auth.guards";
 
 export const DASHBOARD_ROUTES: Routes = [
   {
@@ -37,7 +37,7 @@ export const DASHBOARD_ROUTES: Routes = [
           import("./user-list/user-list.component").then(
             (m) => m.UserListComponent
           ),
-        canActivate: [superAdminGuard],
+        canActivate: [managerOrAdminGuard],
       },
       {
         path: "users/new",
@@ -45,7 +45,7 @@ export const DASHBOARD_ROUTES: Routes = [
           import("./user-form/user-form.component").then(
             (m) => m.UserFormComponent
           ),
-        canActivate: [superAdminGuard],
+        canActivate: [managerOrAdminGuard],
       },
       {
         path: "users/edit/:id",
@@ -53,7 +53,7 @@ export const DASHBOARD_ROUTES: Routes = [
           import("./user-form/user-form.component").then(
             (m) => m.UserFormComponent
           ),
-        canActivate: [superAdminGuard],
+        canActivate: [managerOrAdminGuard],
       },
       {
         path: "appointments",
@@ -61,7 +61,7 @@ export const DASHBOARD_ROUTES: Routes = [
           import(
             "./admin-appointment-list/admin-appointment-list.component"
           ).then((m) => m.AdminAppointmentListComponent),
-        canActivate: [superAdminGuard],
+        canActivate: [managerOrAdminGuard],
       },
       {
         path: "appointments/new",
@@ -69,7 +69,7 @@ export const DASHBOARD_ROUTES: Routes = [
           import(
             "./admin-appointment-form/admin-appointment-form.component"
           ).then((m) => m.AdminAppointmentFormComponent),
-        canActivate: [superAdminGuard],
+        canActivate: [managerOrAdminGuard],
       },
       {
         path: "appointments/edit/:id",
@@ -77,15 +77,23 @@ export const DASHBOARD_ROUTES: Routes = [
           import(
             "./admin-appointment-form/admin-appointment-form.component"
           ).then((m) => m.AdminAppointmentFormComponent),
-        canActivate: [superAdminGuard],
+        canActivate: [managerOrAdminGuard],
       },
       {
         path: "statistics",
         loadComponent: () =>
           import(
-            "../../components/dashboard/statistics/statistics.component"
+            "./statistics/statistics.component"
           ).then((m) => m.StatisticsComponent),
-        canActivate: [superAdminGuard], // Protegido solo para SuperAdmin
+        canActivate: [managerOrAdminGuard], // MANAGER y ADMIN pueden ver estadísticas
+      },
+      {
+        path: "action-logs",
+        loadComponent: () =>
+          import(
+            "./action-logs/action-logs.component"
+          ).then((m) => m.ActionLogsComponent),
+        canActivate: [adminGuard], // Solo ADMIN (IT) puede ver logs de acciones
       },
     ],
   },

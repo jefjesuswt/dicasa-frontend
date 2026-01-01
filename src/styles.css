@@ -1,13 +1,22 @@
 @import "tailwindcss";
 
-@import "primeicons/primeicons.css";
-
 /* Oculta la scrollbar en Firefox y IE/Edge (versiones antiguas) */
 html {
   scrollbar-width: none;
   /* Firefox */
   -ms-overflow-style: none;
   /* IE y Edge */
+  -ms-overflow-style: none;
+  /* IE y Edge */
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }
 
 /* Transición Global de Tema */
@@ -28,7 +37,8 @@ p,
 span,
 i {
   /* Include filter and transform for synchronized logo/icon transitions */
-  transition-property: background-color, border-color, color, fill, stroke, filter, transform, opacity, box-shadow;
+  transition-property: background-color, border-color, color, fill, stroke,
+    filter, transform, opacity, box-shadow;
   transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
   transition-duration: 200ms;
 }
@@ -37,54 +47,73 @@ i {
 
 /* Light Mode Variables (Default) */
 :root {
-  --color-primary: theme('colors.sky.400');
-  --color-primary-hover: theme('colors.sky.500');
-  --color-secondary: theme('colors.blue.800');
-  --bg-dark: theme('colors.sky.100');
+  --color-primary: theme("colors.sky.400");
+  --color-primary-hover: theme("colors.sky.500");
+  --color-secondary: theme("colors.blue.800");
+  --bg-dark: theme("colors.sky.100");
   --bg-panel: rgb(56 189 248 / 0.05);
   /* sky-400 @ 5% */
-  --bg-section-alt: theme('colors.sky.100');
+  --bg-section-alt: theme("colors.sky.100");
   --border-light: rgb(0 0 0 / 0.1);
-  --text-primary: theme('colors.gray.600');
-  --text-secondary: theme('colors.gray.500');
-  --text-heading: theme('colors.gray.700');
-  --btn-primary-bg: theme('colors.gray.700');
-  --btn-primary-text: theme('colors.white');
+  --text-primary: theme("colors.gray.600");
+  --text-secondary: theme("colors.gray.500");
+  --text-heading: theme("colors.gray.700");
+  --btn-primary-bg: theme("colors.gray.700");
+  --btn-primary-text: theme("colors.white");
   --btn-secondary-bg: transparent;
-  --btn-secondary-text: theme('colors.gray.600');
+  --btn-secondary-text: theme("colors.gray.600");
   --btn-secondary-border: rgb(75 85 99 / 0.3);
   /* gray-600 @ 30% */
+
+  /* Tooltip Specifics */
+  --tooltip-bg: #ffffff;
+  --tooltip-border: theme("colors.slate.200");
+  --tooltip-text: theme("colors.slate.700");
+  --tooltip-text-secondary: theme("colors.slate.500");
+  --tooltip-hover-bg: theme("colors.slate.50");
+
+  /* Calendar Specifics */
+  --calendar-text: theme("colors.slate.950");
+  --calendar-bg-current: theme("colors.slate.50");
+  --calendar-bg-dim: #ffffff;
 }
 
 /* Dark Mode Variables */
 :root.dark {
-  --color-primary: theme('colors.sky.400');
-  --color-primary-hover: theme('colors.sky.500');
-  --color-secondary: theme('colors.blue.800');
-  --bg-dark: theme('colors.slate.950');
+  --color-primary: theme("colors.sky.400");
+  --color-primary-hover: theme("colors.sky.500");
+  --color-secondary: theme("colors.blue.800");
+  --bg-dark: theme("colors.slate.950");
   --bg-panel: rgb(255 255 255 / 0.03);
   /* white @ 3% */
   --bg-section-alt: rgb(255 255 255 / 0.02);
   /* white @ 2% */
   --border-light: rgb(255 255 255 / 0.1);
   /* white @ 10% */
-  --text-primary: theme('colors.slate.200');
-  --text-secondary: theme('colors.slate.400');
-  --text-heading: theme('colors.white');
-  --btn-primary-bg: theme('colors.white');
-  --btn-primary-text: theme('colors.slate.950');
+  --text-primary: theme("colors.slate.200");
+  --text-secondary: theme("colors.slate.400");
+  --text-heading: theme("colors.white");
+  --btn-primary-bg: theme("colors.white");
+  --btn-primary-text: theme("colors.slate.950");
   --btn-secondary-bg: transparent;
-  --btn-secondary-text: theme('colors.white');
+  --btn-secondary-text: theme("colors.white");
   --btn-secondary-border: rgb(255 255 255 / 0.2);
   /* white @ 20% */
+
+  /* Tooltip Specifics */
+  --tooltip-bg: #0f172a; /* slate-900 */
+  --tooltip-border: theme("colors.slate.700");
+  --tooltip-text: theme("colors.slate.100");
+  --tooltip-text-secondary: theme("colors.slate.400");
+  --tooltip-hover-bg: theme("colors.slate.800");
+
+  /* Calendar Specifics */
+  --calendar-text: #ffffff;
+  --calendar-bg-current: theme("colors.slate.800");
+  --calendar-bg-dim: theme("colors.slate.900");
 }
 
 /* --- 2. UTILIDADES DE DISEÑO --- */
-
-/* Tipografía Técnica */
-.font-mono {
-  font-family: "Courier New", Courier, monospace;
-}
 
 /* Fondo de Rejilla (Grid) Arquitectónico */
 .bg-grid {
@@ -114,6 +143,52 @@ i {
   background: var(--bg-panel);
   border: 1px solid var(--border-light);
   backdrop-filter: blur(8px);
+}
+
+/* Calendar Solid Grid */
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  background-color: var(--tooltip-bg);
+  border: 1px solid var(--tooltip-border);
+  border-radius: 0.5rem;
+  overflow: hidden; /* Ensures borders don't leak */
+}
+
+.calendar-cell {
+  border-right: 1px solid var(--tooltip-border);
+  border-bottom: 1px solid var(--tooltip-border);
+}
+
+.calendar-cell:nth-child(7n) {
+  border-right: none;
+}
+
+/* Logic implies we have headers (7) + days (variable).
+   To handle border-bottom correctly for dynamic grid is tricky with nth-last-child
+   if total count varies.
+   Instead, we can just let internal borders be and outer border handle the edge.
+   Actually, standard way is: border-right and border-bottom on ALL cells,
+   then remove right on 7n, and bottom on last row.
+   But last row is hard to target dynamically in CSS Grid without subgrid or js.
+   Simpler: Use gap-px with a SOLID background color for the container
+   that matches the border color, and solid background for cells.
+   The User explicitly hated the 'gap-px' trick?
+   "quiero que el calendario sea un calendario cuadrado, con bordes bien definidos"
+   The gap-px IS the best way to get perfect 1px borders.
+   Maybe the previous colors were just too subtle (glassy).
+   Let's try gap-px again but with HIGH CONTRAST colors.
+   Container BG = Border Color (e.g., slate-200 / slate-800).
+   Cell BG = Solid Cell Color (white / slate-950).
+   This creates perfect borders.
+*/
+.calendar-solid-container {
+  background-color: var(--tooltip-border);
+  border: 1px solid var(--tooltip-border);
+  gap: 1px;
+}
+.calendar-solid-cell {
+  background-color: var(--tooltip-bg);
 }
 
 /* --- 3. ANIMACIONES E INTERACCIONES --- */
@@ -216,8 +291,6 @@ i {
 .iti__tel-input::placeholder {
   color: var(--placeholder-color) !important;
   opacity: 1;
-  font-family: "Courier New", Courier, monospace;
-  /* Font mono para consistencia */
   font-size: 0.875rem;
 }
 
@@ -301,7 +374,6 @@ i {
   margin-left: auto;
   color: #64748b !important;
   /* slate-500 */
-  font-family: "Courier New", Courier, monospace;
 }
 
 /* Scrollbar del dropdown */
@@ -327,4 +399,43 @@ input:-webkit-autofill:active {
   -webkit-text-fill-color: var(--text-heading) !important;
   caret-color: var(--text-heading) !important;
   transition: background-color 5000s ease-in-out 0s;
+}
+
+/* --- PRIMENG OVERRIDES --- */
+
+/* ToggleSwitch */
+.p-toggleswitch .p-toggleswitch-slider {
+  background-color: theme("colors.slate.200") !important;
+  border: 1px solid theme("colors.slate.300") !important;
+}
+
+.dark .p-toggleswitch .p-toggleswitch-slider {
+  background-color: theme("colors.slate.800") !important;
+  border: 1px solid theme("colors.slate.700") !important;
+}
+
+.p-toggleswitch.p-toggleswitch-checked .p-toggleswitch-slider {
+  background-color: var(--color-primary) !important;
+  border-color: var(--color-primary-hover) !important;
+}
+
+.p-toggleswitch .p-toggleswitch-slider:before {
+  background-color: #ffffff !important;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.dark
+  .p-toggleswitch:not(.p-toggleswitch-checked)
+  .p-toggleswitch-slider:before {
+  background-color: theme("colors.slate.400") !important;
+}
+
+.p-toggleswitch:not(.p-toggleswitch-checked):hover .p-toggleswitch-slider {
+  background-color: theme("colors.slate.300") !important;
+}
+
+.dark
+  .p-toggleswitch:not(.p-toggleswitch-checked):hover
+  .p-toggleswitch-slider {
+  background-color: theme("colors.slate.700") !important;
 }

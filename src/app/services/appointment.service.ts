@@ -19,7 +19,7 @@ import { PaginatedAppointmentResponse } from "../interfaces/appointments/paginat
 export class AppointmentsService {
   private readonly apiUrl = `${environment.API_URL}/appointments`;
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
   create(dto: CreateAppointmentDto): Observable<Appointment> {
     return this.http
@@ -36,6 +36,7 @@ export class AppointmentsService {
     if (query.limit) params = params.set("limit", query.limit.toString());
     if (query.search) params = params.set("search", query.search);
     if (query.status) params = params.set("status", query.status);
+    if (query.includeDeleted) params = params.set("includeDeleted", "true");
 
     return this.http
       .get<PaginatedAppointmentResponse>(this.apiUrl, { params })

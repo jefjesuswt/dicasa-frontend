@@ -48,8 +48,9 @@ export class UsersService {
         response.data.filter(
           (user) =>
             user.isActive &&
-            (user.roles.includes(UserRole.ADMIN) ||
-              user.roles.includes(UserRole.SUPERADMIN))
+            (user.roles.includes(UserRole.AGENT) ||
+              user.roles.includes(UserRole.MANAGER) ||
+              user.roles.includes(UserRole.ADMIN))
         )
       ),
       catchError(handleApiError)
@@ -67,12 +68,12 @@ export class UsersService {
   }
 
   updateUser(id: string, payload: UpdateUserPayload): Observable<User> {
-    const url = `${this.apiUrl}/superadmin/${id}`;
+    const url = `${this.apiUrl}/admin/${id}`;
     return this.http.patch<User>(url, payload).pipe(catchError(handleApiError));
   }
 
   deleteUser(id: string): Observable<void> {
-    const url = `${this.apiUrl}/superadmin/${id}`;
+    const url = `${this.apiUrl}/admin/${id}`;
     return this.http.delete<void>(url).pipe(catchError(handleApiError));
   }
 

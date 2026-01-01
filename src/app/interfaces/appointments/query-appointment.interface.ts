@@ -5,4 +5,5 @@ export interface QueryAppointmentParams {
   limit?: number;
   search?: string;
   status?: AppointmentStatus;
+  includeDeleted?: boolean;
 }

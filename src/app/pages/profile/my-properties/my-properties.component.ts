@@ -35,7 +35,7 @@ export class MyPropertiesComponent implements OnInit {
   statusClasses: Record<PropertyStatus, string> = {
     sale: "text-emerald-400 border-emerald-500/30 bg-emerald-500/10",
     rent: "text-sky-400 border-sky-500/30 bg-sky-500/10",
-    sold: "text-slate-500 border-slate-500/30 bg-slate-500/10 line-through opacity-70",
+    sold: "text-[var(--text-secondary)] border-[var(--border-light)] bg-[var(--bg-panel)] line-through opacity-70",
     rented: "text-purple-400 border-purple-500/30 bg-purple-500/10",
   };
 
@@ -71,7 +71,7 @@ export class MyPropertiesComponent implements OnInit {
   getStatusClass(status: string): string {
     return (
       this.statusClasses[status as PropertyStatus] ||
-      "text-slate-400 border-slate-500/30"
+      "text-[var(--text-secondary)] border-[var(--border-light)]"
     );
   }
 

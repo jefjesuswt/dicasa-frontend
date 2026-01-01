@@ -1,29 +1,37 @@
 <!-- SEARCH SECTION -->
-<div class="p-4 md:p-6 bg-slate-950 border-b border-white/10">
+<div class="p-4 md:p-6 bg-[var(--bg-dark)] border-b border-[var(--border-light)]">
   <shared-search-bar (search)="onAppointmentSearch($event)" [dropdownOptions]="statusOptions"
     placeholder="Buscar cliente, email..." label="Filtros de Agenda" dropdownLabel="Estado de Cita" buttonText="BUSCAR">
   </shared-search-bar>
 </div>
 
 <!-- HEADER & CONTROLS -->
-<div class="px-4 md:px-6 py-6 bg-slate-950 border-b border-white/10 flex items-center justify-between">
+<div
+  class="px-4 md:px-6 py-6 bg-[var(--bg-dark)] border-b border-[var(--border-light)] flex flex-col md:flex-row md:items-center justify-between gap-4">
   <div class="flex items-center gap-3">
-    <h2 class="text-xl font-bold text-white uppercase tracking-tight">
+    <h2 class="text-xl font-bold text-[var(--text-heading)] uppercase tracking-tight">
       Agenda de Citas
     </h2>
     @if (!loading) {
-    <span class="px-2 py-0.5 bg-white/10 rounded text-xs font-mono text-slate-400 border border-white/5">
+    <span class="px-2 py-0.5 bg-[var(--bg-panel)] rounded text-xs text-[var(--text-secondary)] border border-[var(--border-light)]">
       {{ totalAppointments }} REGISTROS
     </span>
     }
+  </div>
+
+  <div class="flex items-center gap-3">
+    <p-toggleswitch [(ngModel)]="showDeleted" (onChange)="onDeletedToggleChange()"></p-toggleswitch>
+    <label class="text-xs font-bold text-[var(--text-secondary)] uppercase tracking-wider cursor-pointer">
+      Mostrar Eliminados
+    </label>
   </div>
 </div>
 
 <!-- LOADING STATE -->
 @if (loading) {
-<div class="flex flex-col justify-center items-center py-32 bg-slate-950">
+<div class="flex flex-col justify-center items-center py-32 bg-[var(--bg-dark)]">
   <div class="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-sky-500 mb-4"></div>
-  <span class="text-slate-500 font-mono text-sm animate-pulse tracking-widest uppercase">Sincronizando Agenda...</span>
+  <span class="text-[var(--text-secondary)] text-sm animate-pulse tracking-widest uppercase">Sincronizando Agenda...</span>
 </div>
 }
 
@@ -36,7 +44,7 @@
       <h3 class="text-red-400 font-bold uppercase text-sm mb-1">
         Error de Conexión
       </h3>
-      <p class="text-red-400/70 text-sm font-mono mb-4">{{ error }}</p>
+      <p class="text-red-400/70 text-sm mb-4">{{ error }}</p>
       <button (click)="loadAppointments()"
         class="text-xs font-bold text-white bg-red-500/20 px-4 py-2 hover:bg-red-500/30 transition-colors uppercase tracking-wider">
         Reintentar
@@ -48,40 +56,40 @@
 
 <!-- CONTENT: DESKTOP TABLE -->
 @if (!loading && !error && appointments.length > 0) {
-<div class="hidden md:block overflow-x-auto bg-slate-950 min-h-[500px]">
-  <table class="min-w-full divide-y divide-white/10 text-left">
-    <thead class="bg-white/[0.02]">
+<div class="hidden md:block overflow-x-auto bg-[var(--bg-dark)] min-h-[500px]">
+  <table class="min-w-full divide-y divide-[var(--border-light)] text-left">
+    <thead class="bg-[var(--bg-panel)]">
       <tr>
-        <th scope="col" class="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">
+        <th scope="col" class="px-6 py-4 text-xs font-bold text-[var(--text-secondary)] uppercase tracking-wider">
           Cliente / Interesado
         </th>
-        <th scope="col" class="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">
+        <th scope="col" class="px-6 py-4 text-xs font-bold text-[var(--text-secondary)] uppercase tracking-wider">
           Propiedad de Interés
         </th>
-        <th scope="col" class="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">
+        <th scope="col" class="px-6 py-4 text-xs font-bold text-[var(--text-secondary)] uppercase tracking-wider">
           Agente Asignado
         </th>
-        <th scope="col" class="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">
+        <th scope="col" class="px-6 py-4 text-xs font-bold text-[var(--text-secondary)] uppercase tracking-wider">
           Fecha Programada
         </th>
-        <th scope="col" class="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">
+        <th scope="col" class="px-6 py-4 text-xs font-bold text-[var(--text-secondary)] uppercase tracking-wider">
           Estado Actual
         </th>
-        <th scope="col" class="px-6 py-4 text-right text-xs font-bold text-slate-500 uppercase tracking-wider">
+        <th scope="col" class="px-6 py-4 text-right text-xs font-bold text-[var(--text-secondary)] uppercase tracking-wider">
           Acciones
         </th>
       </tr>
     </thead>
-    <tbody class="divide-y divide-white/10">
+    <tbody class="divide-y divide-[var(--border-light)]">
       @for (app of appointments; track app._id) {
-      <tr class="hover:bg-white/[0.02] transition-colors group">
+      <tr class="hover:bg-[var(--bg-panel)] transition-colors group">
         <!-- Cliente -->
         <td class="px-6 py-4 whitespace-nowrap">
           <div>
-            <div class="text-sm font-bold text-white uppercase">
+            <div class="text-sm font-bold text-[var(--text-heading)] uppercase">
               {{ app.name }}
             </div>
-            <div class="text-xs text-slate-500 font-mono mt-0.5 flex items-center gap-2">
+            <div class="text-xs text-[var(--text-secondary)] mt-0.5 flex items-center gap-2">
               <i class="pi pi-envelope text-[10px]"></i> {{ app.email }}
             </div>
           </div>
@@ -94,11 +102,11 @@
           <a [routerLink]="['/properties', app.property._id]"
             class="text-xs font-bold text-sky-400 hover:text-sky-300 hover:underline transition-colors uppercase flex items-center gap-2"
             title="{{ app.property.title }}">
-            <i class="pi pi-building text-slate-500"></i>
+            <i class="pi pi-building text-[var(--text-secondary)]"></i>
             <span class="truncate max-w-[180px]">{{ app.property.title }}</span>
           </a>
           } @else {
-          <span class="text-xs text-slate-500 font-mono italic flex items-center gap-2">
+          <span class="text-xs text-[var(--text-secondary)] italic flex items-center gap-2">
             <i class="pi pi-exclamation-circle text-amber-500/50"></i> Propiedad no disponible
           </span>
           }
@@ -108,16 +116,16 @@
         <td class="px-6 py-4 whitespace-nowrap">
           @if (app.agent) {
           <div class="flex items-center gap-2">
-            <div class="w-6 h-6 rounded-full bg-slate-800 border border-white/10 overflow-hidden">
+            <div class="w-6 h-6 rounded-full bg-[var(--bg-panel)] border border-[var(--border-light)] overflow-hidden">
               <!-- Si tuvieras imagen del agente -->
-              <i class="pi pi-user pl-1 text-slate-400 w-full h-full flex items-center justify-center"></i>
+              <i class="pi pi-user pl-1 text-[var(--text-secondary)] w-full h-full flex items-center justify-center"></i>
             </div>
-            <span class="text-xs font-medium text-slate-300">{{
+            <span class="text-xs font-medium text-[var(--text-secondary)]">{{
               app.agent.name
               }}</span>
           </div>
           } @else {
-          <span class="text-[10px] text-red-400/60 font-mono italic border border-red-500/10 px-1.5 py-0.5 rounded-sm">
+          <span class="text-[10px] text-red-400/60 italic border border-red-500/10 px-1.5 py-0.5 rounded-sm">
             AGENTE ELIMINADO
           </span>
           }
@@ -126,10 +134,10 @@
         <!-- Fecha -->
         <td class="px-6 py-4 whitespace-nowrap">
           <div class="flex flex-col">
-            <span class="text-sm font-bold text-white font-mono">
+            <span class="text-sm font-bold text-[var(--text-heading)]">
               {{ app.appointmentDate | date : "dd/MM/yyyy" }}
             </span>
-            <span class="text-xs text-slate-500 font-mono">
+            <span class="text-xs text-[var(--text-secondary)]">
               {{ app.appointmentDate | date : "shortTime" }}
             </span>
           </div>
@@ -138,8 +146,8 @@
         <!-- Estado -->
         <td class="px-6 py-4 whitespace-nowrap">
           <span
-            class="px-2 py-1 inline-flex text-[10px] font-bold uppercase tracking-wider rounded-sm border border-transparent"
-            [ngClass]="getStatusBadgeClass(app.status)" style="mix-blend-mode: screen">
+            class="text-[10px] font-bold uppercase tracking-wider"
+            [ngClass]="getStatusBadgeClass(app.status)">
             {{ getStatusLabel(app.status) }}
           </span>
         </td>
@@ -149,12 +157,12 @@
           <div class="flex justify-end gap-1 opacity-60 group-hover:opacity-100 transition-opacity">
             <button (click)="editAppointment(app)" [disabled]="!app.property" [class.opacity-50]="!app.property"
               [class.cursor-not-allowed]="!app.property"
-              class="h-8 w-8 flex items-center justify-center text-slate-400 hover:text-yellow-400 hover:bg-white/5 rounded-sm transition-colors border border-transparent hover:border-white/10 disabled:hover:text-slate-400 disabled:hover:bg-transparent"
+              class="h-8 w-8 flex items-center justify-center text-[var(--text-secondary)] hover:text-yellow-400 hover:bg-[var(--bg-panel)] rounded-sm transition-colors border border-transparent hover:border-[var(--border-light)] disabled:hover:text-[var(--text-secondary)] disabled:hover:bg-transparent"
               title="{{ app.property ? 'Editar Estado' : 'Propiedad eliminada' }}">
               <i class="pi pi-pencil"></i>
             </button>
             <button type="button" (click)="openDeleteDialog(app)"
-              class="h-8 w-8 flex items-center justify-center text-slate-400 hover:text-red-400 hover:bg-white/5 rounded-sm transition-colors border border-transparent hover:border-white/10"
+              class="h-8 w-8 flex items-center justify-center text-[var(--text-secondary)] hover:text-red-400 hover:bg-[var(--bg-panel)] rounded-sm transition-colors border border-transparent hover:border-[var(--border-light)]"
               title="Eliminar Cita">
               <i class="pi pi-trash text-xs"></i>
             </button>
@@ -167,7 +175,7 @@
 </div>
 
 <!-- CONTENT: MOBILE CARDS -->
-<div class="block md:hidden p-4 space-y-4 bg-slate-950">
+<div class="block md:hidden p-4 space-y-4 bg-[var(--bg-dark)]">
   @for (app of appointments; track app._id) {
   <dashboard-appointment-card [appointment]="app" [statusLabel]="getStatusLabel(app.status)"
     [statusClass]="getStatusBadgeClass(app.status)" (edit)="editAppointment($event)"
@@ -178,11 +186,11 @@
 
 <!-- EMPTY STATE -->
 @if (!loading && !error && appointments.length === 0) {
-<div class="flex flex-col items-center justify-center py-24 bg-slate-950 border-t border-white/10">
-  <div class="w-16 h-16 bg-white/5 rounded-full flex items-center justify-center mb-4 border border-white/10">
-    <i class="pi pi-calendar-times text-2xl text-slate-500"></i>
+<div class="flex flex-col items-center justify-center py-24 bg-[var(--bg-dark)] border-t border-[var(--border-light)]">
+  <div class="w-16 h-16 bg-[var(--bg-panel)] rounded-full flex items-center justify-center mb-4 border border-[var(--border-light)]">
+    <i class="pi pi-calendar-times text-2xl text-[var(--text-secondary)]"></i>
   </div>
-  <p class="text-slate-400 font-mono text-xs uppercase tracking-widest">
+  <p class="text-[var(--text-secondary)] text-xs uppercase tracking-widest">
     No hay citas programadas con este criterio
   </p>
 </div>
@@ -190,19 +198,19 @@
 
 <!-- PAGINATION -->
 @if (totalAppointments > 0 && !loading) {
-<div class="flex justify-between items-center px-6 py-4 bg-slate-950 border-t border-white/10">
+<div class="flex justify-between items-center px-6 py-4 bg-[var(--bg-dark)] border-t border-[var(--border-light)]">
   <button (click)="onPageChange(currentPage - 1)" [disabled]="currentPage === 1"
-    class="px-4 py-2 text-xs font-bold uppercase tracking-wider text-slate-400 border border-white/10 rounded-sm hover:bg-white/5 disabled:opacity-30 disabled:hover:bg-transparent transition-colors">
+    class="px-4 py-2 text-xs font-bold uppercase tracking-wider text-[var(--text-secondary)] border border-[var(--border-light)] rounded-sm hover:bg-[var(--bg-panel)] disabled:opacity-30 disabled:hover:bg-transparent transition-colors">
     Anterior
   </button>
 
-  <span class="text-xs text-slate-500 font-mono">
-    PÁGINA <span class="text-white">{{ currentPage }}</span> /
+  <span class="text-xs text-[var(--text-secondary)]">
+    PÁGINA <span class="text-[var(--text-heading)]">{{ currentPage }}</span> /
     {{ Math.ceil(totalAppointments / rowsPerPage) }}
   </span>
 
   <button (click)="onPageChange(currentPage + 1)" [disabled]="currentPage * rowsPerPage >= totalAppointments"
-    class="px-4 py-2 text-xs font-bold uppercase tracking-wider text-slate-400 border border-white/10 rounded-sm hover:bg-white/5 disabled:opacity-30 disabled:hover:bg-transparent transition-colors">
+    class="px-4 py-2 text-xs font-bold uppercase tracking-wider text-[var(--text-secondary)] border border-[var(--border-light)] rounded-sm hover:bg-[var(--bg-panel)] disabled:opacity-30 disabled:hover:bg-transparent transition-colors">
     Siguiente
   </button>
 </div>
@@ -211,10 +219,10 @@
 <!-- DIALOG (Shared) -->
 <shared-dialog [isOpen]="isDeleteDialogOpen" title="ELIMINAR CITA" (close)="closeDeleteDialog()">
   <div class="space-y-6">
-    <p class="text-sm text-slate-600 leading-relaxed">
+    <p class="text-sm text-[var(--text-secondary)] leading-relaxed">
       Estás a punto de cancelar y eliminar la cita agendada por:
       <br />
-      <strong class="text-slate-900 uppercase tracking-wide text-xs block mt-2 p-2 bg-slate-100 rounded-sm">
+      <strong class="text-[var(--text-heading)] uppercase tracking-wide text-xs block mt-2 p-2 bg-[var(--bg-panel)] rounded-sm border border-[var(--border-light)]">
         {{ appointmentToCancel?.name || "CLIENTE SELECCIONADO" }}
       </strong>
       <span class="block mt-2 text-xs text-red-500 italic">Esta acción es irreversible y liberará el espacio en la
@@ -223,7 +231,7 @@
 
     <div class="flex justify-end space-x-3">
       <button type="button" (click)="closeDeleteDialog()" [disabled]="isDeleting"
-        class="bg-white py-2 px-4 border border-gray-300 rounded-sm shadow-sm text-xs font-bold uppercase tracking-wide text-gray-700 hover:bg-gray-50 disabled:opacity-50 transition-colors">
+        class="bg-transparent py-2 px-4 border border-[var(--border-light)] rounded-sm shadow-sm text-xs font-bold uppercase tracking-wide text-[var(--text-secondary)] hover:text-[var(--text-heading)] hover:bg-[var(--bg-panel)] disabled:opacity-50 transition-colors">
         Mantener Cita
       </button>
       <button type="button" (click)="confirmDelete()" [disabled]="isDeleting"

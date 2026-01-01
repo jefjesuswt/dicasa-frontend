@@ -25,7 +25,13 @@ export const authInterceptor: HttpInterceptorFn = (
   }
 
   // 3. Lógica normal (Solo corre en el navegador)
-  const token = localStorage.getItem("accessToken");
+  let token = localStorage.getItem("accessToken");
+
+  // Si no hay token en localStorage, buscamos en sessionStorage
+  if (!token) {
+    token = sessionStorage.getItem("accessToken");
+  }
+
   const apiUrl = environment.API_URL;
   const isApiRequest = req.url.startsWith(apiUrl);
 

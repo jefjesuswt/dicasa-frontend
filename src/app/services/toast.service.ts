@@ -39,6 +39,10 @@ export class ToastService {
     this.show("warning", title, message);
   }
 
+  info(title: string, message: string) {
+    this.show("info", title, message);
+  }
+
   remove(id: number) {
     this.toasts.update((current) => current.filter((t) => t.id !== id));
   }

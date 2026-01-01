@@ -13,7 +13,8 @@ import {
   ReactiveFormsModule,
   Validators,
 } from "@angular/forms";
-import { HotToastService } from "@ngxpert/hot-toast";
+// import { HotToastService } from "@ngxpert/hot-toast";
+import { ToastService } from "../../services/toast.service";
 
 import {
   NgxIntlTelInputModule,
@@ -26,6 +27,7 @@ import { finalize } from "rxjs/operators";
 import { ContactService } from "../../services/contact.service";
 import { CreateContactDto } from "../../interfaces/contact/create-contact.dto";
 import { SeoService } from "../../services/seo.service";
+import { ThemeService } from "../../services/theme.service";
 
 @Component({
   selector: "app-contact",
@@ -37,11 +39,14 @@ export class ContactComponent implements OnInit, OnDestroy {
   private observer: IntersectionObserver | null = null;
   private seoService = inject(SeoService);
   private document = inject(DOCUMENT);
+  private themeService = inject(ThemeService);
+
+  isDarkMode = this.themeService.isDarkMode;
 
   // --- Lógica de Negocio ---
   loading = false;
   private fb = inject(FormBuilder);
-  private toast = inject(HotToastService);
+  private toast = inject(ToastService);
   private contactService = inject(ContactService);
 
   searchCountryField = [SearchCountryField.Iso2, SearchCountryField.Name];
@@ -106,7 +111,7 @@ export class ContactComponent implements OnInit, OnDestroy {
   onSubmit(): void {
     if (this.contactForm.invalid) {
       this.contactForm.markAllAsTouched();
-      this.toast.error("Campos incompletos o inválidos.");
+      this.toast.error("Formulario Inválido", "Campos incompletos o inválidos.");
       return;
     }
 
@@ -115,7 +120,7 @@ export class ContactComponent implements OnInit, OnDestroy {
 
     if (!internationalPhoneNumber) {
       this.loading = false;
-      this.toast.error("Número de teléfono inválido.");
+      this.toast.error("Teléfono Inválido", "Número de teléfono inválido.");
       this.phoneNumber?.setErrors({ invalidNumber: true });
       return;
     }
@@ -134,12 +139,13 @@ export class ContactComponent implements OnInit, OnDestroy {
       .subscribe({
         next: (response) => {
           this.toast.success(
+            "Mensaje Enviado",
             response.message || "Solicitud enviada correctamente."
           );
           this.contactForm.reset();
         },
         error: (errMessage) => {
-          this.toast.error(`Error de transmisión: ${errMessage}`);
+          this.toast.error("Error de Envío", `Error de transmisión: ${errMessage}`);
         },
       });
   }

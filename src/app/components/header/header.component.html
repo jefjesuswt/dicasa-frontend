@@ -48,7 +48,7 @@
               <p class="text-xs font-bold uppercase text-[var(--text-primary)] leading-none mb-1">
                 {{ user()?.name?.split(' ')?.[0] }}
               </p>
-              <p class="text-[9px] text-sky-500 font-mono leading-none tracking-wider">
+              <p class="text-[9px] text-sky-500 leading-none tracking-wider">
                 ONLINE
               </p>
             </div>
@@ -69,11 +69,11 @@
               class="absolute -top-1 right-3 w-2 h-2 bg-[var(--bg-dark)] border-t border-l border-[var(--border-light)] transform rotate-45">
             </div>
 
-            <div class="p-4 border-b border-white/10">
-              <p class="text-white text-xs font-bold truncate uppercase tracking-wide">
+            <div class="p-4 border-b border-[var(--border-light)]">
+              <p class="text-[var(--text-heading)] text-xs font-bold truncate uppercase tracking-wide">
                 {{ user()?.name }}
               </p>
-              <p class="text-slate-500 text-[10px] truncate">
+              <p class="text-[var(--text-secondary)] text-[10px] truncate">
                 {{ user()?.email }}
               </p>
             </div>
@@ -108,9 +108,17 @@
       </div>
     </div>
 
-    <button (click)="toggleMobileMenu()" class="md:hidden text-[var(--text-heading)] p-2">
-      <i class="pi" [class.pi-bars]="!isMenuOpen" [class.pi-times]="isMenuOpen" style="font-size: 1.2rem"></i>
-    </button>
+    <div class="flex items-center gap-2 md:hidden">
+      <button (click)="toggleTheme()"
+        class="h-10 w-10 flex items-center justify-center text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-white/5 transition-colors rounded-full"
+        [attr.aria-label]="isDarkMode() ? 'Cambiar a modo claro' : 'Cambiar a modo oscuro'">
+        <i class="pi text-lg" [class.pi-moon]="isDarkMode()" [class.pi-sun]="!isDarkMode()"></i>
+      </button>
+
+      <button (click)="toggleMobileMenu()" class="text-[var(--text-heading)] p-2">
+        <i class="pi" [class.pi-bars]="!isMenuOpen" [class.pi-times]="isMenuOpen" style="font-size: 1.2rem"></i>
+      </button>
+    </div>
   </nav>
 
   <div
@@ -125,28 +133,7 @@
         </a>
         }
 
-        <!-- Mobile Theme Toggle -->
-        <div class="px-6 pb-4">
-          <button (click)="toggleTheme()"
-            class="w-full relative h-12 bg-white/5 border border-white/10 flex items-center justify-between px-4 hover:bg-white/10 transition-all duration-300 overflow-hidden"
-            [attr.aria-label]="isDarkMode() ? 'Cambiar a modo claro' : 'Cambiar a modo oscuro'">
-            <div class="flex items-center gap-3 z-10">
-              <i class="transition-all duration-300" [class.pi-moon]="isDarkMode()" [class.pi-sun]="!isDarkMode()"
-                [class.text-sky-500]="true"></i>
-              <span class="text-xs font-bold uppercase tracking-widest text-[var(--text-secondary)]">
-                {{ isDarkMode() ? 'Modo Oscuro' : 'Modo Claro' }}
-              </span>
-            </div>
-            <div class="flex items-center gap-2 z-10">
-              <i class="pi pi-sun text-[10px] text-slate-600"></i>
-              <div class="w-8 h-4 bg-slate-800 border border-white/10 relative">
-                <div class="absolute top-0.5 h-3 w-3 bg-sky-500 transition-transform duration-300"
-                  [class.translate-x-0.5]="isDarkMode()" [class.translate-x-[18px]]="!isDarkMode()"></div>
-              </div>
-              <i class="pi pi-moon text-[10px] text-slate-600"></i>
-            </div>
-          </button>
-        </div>
+
       </div>
 
       <div class="bg-white/5 border-t border-white/10 p-6">

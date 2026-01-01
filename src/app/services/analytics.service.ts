@@ -11,6 +11,37 @@ import {
 } from "../interfaces/analytics/analytics.interface";
 import { environment } from "../../environments/environment";
 
+// Interfaz para Action Log
+export interface ActionLog {
+  _id: string;
+  userId: string;
+  userName?: string; // Deprecated - usar user.name
+  action: string;
+  resourceId?: string;
+  createdAt: string;
+  metadata?: any;
+  // Nuevos campos enriquecidos
+  user?: {
+    _id: string;
+    name: string;
+    email: string;
+  };
+  resource?: {
+    _id: string;
+    title: string;
+    type: 'property' | 'appointment' | 'user' | 'unknown';
+  } | null; // null si el recurso fue eliminado
+}
+
+// Interfaz para respuesta paginada de Action Logs
+export interface PaginatedActionLogs {
+  data: ActionLog[];
+  total: number;
+  page: number;
+  limit: number;
+  totalPages: number;
+}
+
 // Interfaz para la respuesta del Dashboard
 export interface DashboardStats {
   kpis: {
@@ -31,6 +62,7 @@ export interface DashboardStats {
       userId: string;
       action: string;
       createdAt: string;
+      resourceId?: string;
     }[];
     alertsCount: number;
   };
@@ -42,12 +74,8 @@ export class AnalyticsService {
   // Inyección de HttpClient (estilo moderno o constructor, ambos funcionan)
   private http = inject(HttpClient);
 
-  // URL del Microservicio (Dicasa Analytics)
-  // Se usa para logs masivos (visitas, sesiones) para no saturar el backend principal
-  private analyticsUrl = environment.ANALYTICS_API_URL;
-
-  // URL del Backend Principal (Dicasa Backend / Gateway)
-  // Se usa para datos sensibles o administrativos (Dashboard) protegidos por ADMIN
+  // URL del Backend Principal (Dicasa Backend)
+  // Se usa para todas las operaciones de analítica (monolito)
   private mainApiUrl = environment.API_URL;
 
   // Lógica del Heartbeat
@@ -55,12 +83,10 @@ export class AnalyticsService {
   private isHeartbeatActive = false;
   private readonly heartbeatInterval = 30000;
 
-  constructor() {}
+  constructor() { }
 
   /**
    * Obtiene las estadísticas completas para el Dashboard Administrativo.
-   * Esta petición viaja al Backend Principal (Gateway), el cual valida
-   * que seas ADMIN y luego consulta internamente al microservicio.
    */
   getDashboardStats(): Observable<DashboardStats> {
     return this.http.get<DashboardStats>(
@@ -69,12 +95,35 @@ export class AnalyticsService {
   }
 
   /**
+   * Obtiene los action logs con paginación y filtros opcionales.
+   */
+  getActionLogs(
+    page: number = 1,
+    limit: number = 10,
+    action?: string,
+    userId?: string
+  ): Observable<PaginatedActionLogs> {
+    let params = `page=${page}&limit=${limit}`;
+
+    if (action) {
+      params += `&action=${action}`;
+    }
+
+    if (userId) {
+      params += `&userId=${userId}`;
+    }
+
+    return this.http.get<PaginatedActionLogs>(
+      `${this.mainApiUrl}/analytics/action-logs?${params}`
+    );
+  }
+
+  /**
    * Registra una nueva visita.
-   * Va directo al microservicio de analíticas.
    */
   logVisit(dto: CreateVisitDto): Observable<VisitResponse> {
     return this.http
-      .post<VisitResponse>(`${this.analyticsUrl}/analytics/visit`, dto)
+      .post<VisitResponse>(`${this.mainApiUrl}/analytics/visit`, dto)
       .pipe(tap(() => console.log("Visit logged")));
   }
 
@@ -83,7 +132,7 @@ export class AnalyticsService {
    */
   startSession(dto: StartSessionDto): Observable<SessionResponse> {
     return this.http.post<SessionResponse>(
-      `${this.analyticsUrl}/analytics/session/start`,
+      `${this.mainApiUrl}/analytics/session/start`,
       dto
     );
   }
@@ -106,7 +155,7 @@ export class AnalyticsService {
 
         this.http
           .post<HeartbeatResponse>(
-            `${this.analyticsUrl}/analytics/session/heartbeat`,
+            `${this.mainApiUrl}/analytics/session/heartbeat`,
             dto
           )
           .subscribe({

@@ -1,41 +1,56 @@
 <div class="animate-fade-in">
   <!-- HEADER DE SECCIÓN -->
-  <div
-    class="flex flex-col md:flex-row justify-between items-end mb-8 border-b border-white/10 pb-6"
-  >
+  <div class="flex flex-col md:flex-row justify-between items-end mb-8 border-b border-[var(--border-light)] pb-6">
     <div>
-      <h2
-        class="text-xl text-white font-light uppercase tracking-[0.15em] mb-2"
-      >
+      <h2 class="text-xl text-[var(--text-heading)] font-light uppercase tracking-[0.15em] mb-2">
         Agenda Personal
       </h2>
-      <p class="text-slate-500 text-sm font-light">
+      <p class="text-[var(--text-secondary)] text-sm font-light">
         Historial y próximos encuentros programados.
       </p>
     </div>
 
-    <!-- Contador estilo técnico -->
-    @if (loadState() === 'loaded') {
-    <div class="text-right hidden md:block">
-      <div class="text-[10px] font-bold text-sky-500 uppercase tracking-widest">
-        Total Registros
+    <!-- CONTROLES (Tabs + Contador) -->
+    <div class="flex flex-col items-end gap-3 mt-4 md:mt-0">
+      @if (loadState() === 'loaded') {
+      <div class="flex items-center bg-[var(--bg-panel)] border border-[var(--border-light)] rounded-lg p-1">
+        <button
+          (click)="setViewMode('list')"
+          class="px-4 py-1.5 text-xs font-bold uppercase tracking-widest rounded transition-all duration-300"
+          [class.bg-[var(--bg-dark)]]="viewMode() === 'list'"
+          [class.shadow-sm]="viewMode() === 'list'"
+          [class.text-[var(--text-heading)]]="viewMode() === 'list'"
+          [class.text-[var(--text-secondary)]]="viewMode() !== 'list'">
+          <i class="pi pi-list mr-2"></i> Lista
+        </button>
+        <button
+          (click)="setViewMode('calendar')"
+          class="px-4 py-1.5 text-xs font-bold uppercase tracking-widest rounded transition-all duration-300"
+          [class.bg-[var(--bg-dark)]]="viewMode() === 'calendar'"
+          [class.shadow-sm]="viewMode() === 'calendar'"
+          [class.text-[var(--text-heading)]]="viewMode() === 'calendar'"
+          [class.text-[var(--text-secondary)]]="viewMode() !== 'calendar'">
+          <i class="pi pi-calendar mr-2"></i> Calendario
+        </button>
       </div>
-      <div class="text-2xl font-mono text-white">
-        {{ appointments().length | number : "2.0" }}
+
+      <div class="hidden md:block text-right">
+        <div class="text-[10px] font-bold text-sky-500 uppercase tracking-widest">
+          Total Registros
+        </div>
+        <div class="text-2xl font-mono text-[var(--text-heading)]">
+          {{ appointments().length | number : "2.0" }}
+        </div>
       </div>
+      }
     </div>
-    }
   </div>
 
   <!-- ESTADOS DE CARGA -->
   @switch (loadState()) { @case ('loading') {
   <div class="flex flex-col items-center justify-center py-24 opacity-50">
-    <div
-      class="w-12 h-12 border-2 border-white/10 border-t-sky-500 animate-spin mb-4"
-    ></div>
-    <span class="text-[10px] font-mono uppercase tracking-widest text-slate-400"
-      >Sincronizando Agenda...</span
-    >
+    <div class="w-12 h-12 border-2 border-[var(--border-light)] border-t-sky-500 animate-spin mb-4"></div>
+    <span class="text-[10px] font-mono uppercase tracking-widest text-[var(--text-secondary)]">Sincronizando Agenda...</span>
   </div>
   } @case ('error') {
   <div class="border border-red-500/20 bg-red-500/5 p-6 text-center">
@@ -44,144 +59,230 @@
       Error de conexión al recuperar citas.
     </p>
   </div>
-  } @case ('loaded') { @if (appointments().length > 0; as apps) {
-  <div class="grid grid-cols-1 gap-4">
-    @for (app of appointments(); track app._id) {
-    <!-- TARJETA DE CITA -->
-    <div
-      class="group relative bg-white/5 border border-white/10 hover:border-sky-500/30 hover:bg-white/[0.07] transition-all duration-300 flex flex-col md:flex-row overflow-hidden"
-    >
-      <!-- 1. COLUMNA FECHA (Bloque Visual) -->
-      <div
-        class="hidden md:flex flex-col items-center justify-center w-24 border-r border-white/10 bg-slate-900/50 shrink-0"
-      >
-        <span
-          class="text-[10px] font-bold text-sky-500 uppercase tracking-widest mb-1"
-        >
-          {{ app.appointmentDate | date : "MMM" }}
-        </span>
-        <span class="text-3xl font-mono font-bold text-white">
-          {{ app.appointmentDate | date : "dd" }}
-        </span>
-        <span class="text-[10px] font-mono text-slate-500 mt-1">
-          {{ app.appointmentDate | date : "HH:mm" }}
-        </span>
-      </div>
-
-      <!-- 2. IMAGEN PROPIEDAD (Thumbnail) -->
-      <div
-        class="h-48 md:h-auto md:w-48 relative overflow-hidden shrink-0 border-b md:border-b-0 md:border-r border-white/10 bg-black"
-      >
-        <img
-          [src]="
-            app.property.images[0] || '/assets/images/placeholder-property.png'
-          "
-          alt="Propiedad"
-          class="w-full h-full object-cover opacity-60 grayscale group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-500 transform group-hover:scale-105"
-          (error)="onImageError($event)"
-        />
-
-        <!-- Status Badge (Flotante en Mobile, Oculto en Desktop para usar layout) -->
-        <div class="absolute top-3 left-3 md:hidden">
-          <span
-            class="px-2 py-1 border text-[10px] font-bold uppercase tracking-widest backdrop-blur-md shadow-lg"
-            [class]="getStatusClass(app.status)"
-          >
-            {{ getStatusLabel(app.status) }}
-          </span>
-        </div>
-      </div>
-
-      <!-- 3. DETALLES -->
-      <div class="flex-1 p-5 flex flex-col justify-between">
-        <div class="flex justify-between items-start mb-4">
-          <div>
-            <!-- Fecha en Mobile -->
-            <div
-              class="md:hidden flex items-center gap-2 text-[10px] font-mono text-sky-500 mb-2"
-            >
-              <i class="pi pi-calendar"></i>
-              {{ app.appointmentDate | date : "medium" }}
-            </div>
-
-            <h3
-              class="text-lg font-bold text-white uppercase tracking-tight mb-1 group-hover:text-sky-400 transition-colors"
-            >
-              <a
-                [routerLink]="['/properties', app.property._id]"
-                class="focus:outline-none"
-              >
-                <span class="absolute inset-0 md:static"></span>
-                <!-- Hitbox extendido -->
-                {{ app.property.title }}
-              </a>
-            </h3>
-          </div>
-
-          <!-- Status Badge (Desktop) -->
-          <div class="hidden md:block">
-            <span
-              class="px-3 py-1 border text-[10px] font-bold uppercase tracking-widest"
-              [class]="getStatusClass(app.status)"
-            >
-              {{ getStatusLabel(app.status) }}
-            </span>
-          </div>
-        </div>
-
-        <!-- AGENTE + ACCIONES (Footer interno) -->
-        <div
-          class="pt-4 border-t border-white/5 flex items-center justify-between mt-2"
-        >
-          <div class="flex items-center gap-3">
-            <shared-avatar
-              class="w-8 h-8 border border-white/10 grayscale group-hover:grayscale-0 transition-all"
-              [src]="app.agent.profileImageUrl"
-              [id]="app.agent._id"
-            ></shared-avatar>
-            <div class="flex flex-col">
-              <span class="text-[10px] font-bold text-slate-400 uppercase"
-                >Agente Asignado</span
-              >
-              <span class="text-xs text-white font-mono">{{
-                app.agent.name
-              }}</span>
-            </div>
-          </div>
-
-          <!-- Botón sutil -->
+  } @case ('loaded') {
+    @if (appointments().length > 0) {
+      @if (viewMode() === 'list') {
+        <!-- VISTA LISTA (Existente) -->
+        <div class="grid grid-cols-1 gap-4">
+          @for (app of appointments(); track app._id) {
+          <!-- TARJETA DE CITA -->
           <div
-            class="text-sky-500 opacity-0 group-hover:opacity-100 -translate-x-4 group-hover:translate-x-0 transition-all duration-300 flex items-center gap-2 text-xs font-bold uppercase tracking-widest"
-          >
-            Ver Propiedad <i class="pi pi-arrow-right"></i>
+            class="group relative bg-[var(--bg-panel)] border border-[var(--border-light)] hover:border-sky-500/30 hover:bg-[var(--bg-dark)] transition-all duration-300 flex flex-col md:flex-row overflow-hidden">
+            <!-- 1. COLUMNA FECHA (Bloque Visual) -->
+            <div
+              class="hidden md:flex flex-col items-center justify-center w-24 border-r border-[var(--border-light)] bg-[var(--bg-dark)]/50 shrink-0">
+              <span class="text-[10px] font-bold text-sky-500 uppercase tracking-widest mb-1">
+                {{ app.appointmentDate | date : "MMM" }}
+              </span>
+              <span class="text-3xl font-mono font-bold text-[var(--text-heading)]">
+                {{ app.appointmentDate | date : "dd" }}
+              </span>
+              <span class="text-[10px] font-mono text-[var(--text-secondary)] mt-1">
+                {{ app.appointmentDate | date : "HH:mm" }}
+              </span>
+            </div>
+
+            <!-- 2. IMAGEN PROPIEDAD (Thumbnail) -->
+            <div
+              class="h-48 md:h-auto md:w-48 relative overflow-hidden shrink-0 border-b md:border-b-0 md:border-r border-[var(--border-light)] bg-black">
+              @if (app.property) {
+              <img [src]="app.property.images[0] || '/assets/images/placeholder-property.png'" alt="Propiedad"
+                class="w-full h-full object-cover transition-transform duration-500 transform group-hover:scale-105"
+                (error)="onImageError($event)" />
+              } @else {
+              <div class="w-full h-full flex items-center justify-center bg-[var(--bg-dark)]/50">
+                <i class="pi pi-exclamation-triangle text-2xl text-amber-500/50"></i>
+              </div>
+              }
+
+              <!-- Status Badge (Flotante en Mobile, Oculto en Desktop para usar layout) -->
+              <div class="absolute top-3 left-3 md:hidden">
+                <span class="px-2 py-1 border text-[10px] font-bold uppercase tracking-widest backdrop-blur-md shadow-lg"
+                  [class]="getStatusClass(app.status)">
+                  {{ getStatusLabel(app.status) }}
+                </span>
+              </div>
+            </div>
+
+            <!-- 3. DETALLES -->
+            <div class="flex-1 p-5 flex flex-col justify-between">
+              <div class="flex justify-between items-start mb-4">
+                <div>
+                  <!-- Fecha en Mobile -->
+                  <div class="md:hidden flex items-center gap-2 text-[10px] font-mono text-sky-500 mb-2">
+                    <i class="pi pi-calendar"></i>
+                    {{ app.appointmentDate | date : "medium" }}
+                  </div>
+
+                  <h3
+                    class="text-lg font-bold text-[var(--text-heading)] uppercase tracking-tight mb-1 group-hover:text-sky-400 transition-colors">
+                    @if (app.property) {
+                    <a [routerLink]="['/properties', app.property._id]" class="focus:outline-none hover:underline">
+                      {{ app.property.title }}
+                    </a>
+                    } @else {
+                    <span class="text-amber-500/70 italic">Propiedad no disponible</span>
+                    }
+                  </h3>
+                </div>
+
+                <!-- Status Badge (Desktop) -->
+                <div class="hidden md:block">
+                  <span class="px-3 py-1 border text-[10px] font-bold uppercase tracking-widest"
+                    [class]="getStatusClass(app.status)">
+                    {{ getStatusLabel(app.status) }}
+                  </span>
+                </div>
+              </div>
+
+              <!-- AGENTE + ACCIONES (Footer interno) -->
+              <div class="pt-4 border-t border-[var(--border-light)] flex items-center justify-between mt-2">
+                <div class="flex items-center gap-3">
+                  @if (app.agent) {
+                  <shared-avatar class="w-8 h-8 border border-[var(--border-light)] grayscale group-hover:grayscale-0 transition-all"
+                    [src]="app.agent.profileImageUrl" [id]="app.agent._id"></shared-avatar>
+                  <div class="flex flex-col">
+                    <span class="text-[10px] font-bold text-[var(--text-secondary)] uppercase">Agente Asignado</span>
+                    <span class="text-xs text-[var(--text-heading)] font-mono">{{ app.agent.name }}</span>
+                  </div>
+                  } @else {
+                  <div class="flex items-center gap-2">
+                    <div class="w-8 h-8 rounded-full bg-[var(--bg-dark)] border border-[var(--border-light)] flex items-center justify-center">
+                      <i class="pi pi-user text-[var(--text-secondary)] text-xs"></i>
+                    </div>
+                    <span class="text-xs text-[var(--text-secondary)] italic">Sin agente asignado</span>
+                  </div>
+                  }
+                </div>
+
+                <!-- Botón sutil -->
+                @if (app.property) {
+                <div
+                  class="text-sky-500 opacity-0 group-hover:opacity-100 -translate-x-4 group-hover:translate-x-0 transition-all duration-300 flex items-center gap-2 text-xs font-bold uppercase tracking-widest">
+                  Ver Propiedad <i class="pi pi-arrow-right"></i>
+                </div>
+                }
+              </div>
+            </div>
+          </div>
+          }
+        </div>
+      } @else {
+        <!-- VISTA CALENDARIO -->
+        <div class="animate-fade-in">
+          <!-- CALENDAR HEADER -->
+          <div class="flex justify-between items-center mb-6">
+            <button (click)="changeMonth(-1)" class="p-2 hover:bg-[var(--bg-dark)] rounded-full text-[var(--text-secondary)] hover:text-[var(--text-heading)] transition-colors">
+              <i class="pi pi-chevron-left"></i>
+            </button>
+            <div class="text-center">
+              <span class="block text-2xl font-light text-[var(--text-heading)] capitalize">{{ currentDate() | date:'MMMM' }}</span>
+              <span class="block text-xs font-mono text-[var(--text-secondary)] tracking-widest">{{ currentDate() | date:'yyyy' }}</span>
+            </div>
+            <button (click)="changeMonth(1)" class="p-2 hover:bg-[var(--bg-dark)] rounded-full text-[var(--text-secondary)] hover:text-[var(--text-heading)] transition-colors">
+              <i class="pi pi-chevron-right"></i>
+            </button>
+          </div>
+
+          <!-- CALENDAR GRID -->
+          <div class="grid grid-cols-7 rounded-lg shadow-sm overflow-hidden calendar-solid-container">
+            <!-- Headers -->
+            @for (day of weekDays; track day) {
+              <div class="calendar-solid-cell py-3 text-center text-xs font-bold uppercase tracking-widest text-slate-500 dark:text-slate-400">
+                {{ day }}
+              </div>
+            }
+
+            <!-- Days -->
+            @for (day of calendarDays(); track $index) {
+              <div class="calendar-solid-cell group relative h-32 p-2 transition-all hover:bg-sky-50 dark:hover:bg-slate-900 z-0 hover:z-10 flex flex-col items-start justify-between"
+                  [class.opacity-100]="day.isCurrentMonth"
+                  [style.background-color]="day.isCurrentMonth ? 'var(--calendar-bg-current)' : 'transparent'"
+                  [class.text-slate-300]="!day.isCurrentMonth">
+
+                <!-- Day Number -->
+                <span class="text-sm font-bold w-7 h-7 flex items-center justify-center rounded-full transition-colors"
+                    [class.bg-sky-500]="day.isToday"
+                    [class.text-white]="day.isToday"
+                    [style.color]="(!day.isToday && day.isCurrentMonth) ? 'var(--calendar-text)' : ''">
+                  {{ day.date | date:'d' }}
+                </span>
+
+                 <div class="w-full flex flex-col gap-1 mt-1 overflow-y-auto max-h-[70px] no-scrollbar">
+                    @for (app of day.appointments; track app._id) {
+                      <div class="w-full px-2 py-1.5 rounded text-[11px] font-bold truncate cursor-pointer transition-colors border-l-2 shadow-sm"
+                        [class]="getStatusClass(app.status) + ' bg-opacity-15 hover:bg-opacity-25'">
+                        {{ app.appointmentDate | date:'HH:mm' }}
+                      </div>
+                    }
+                 </div>
+
+                <!-- Hover Details Tooltip (Solo si hay citas) -->
+                @if (day.appointments.length > 0) {
+                  <!-- LOGICA DE POSICIONAMIENTO -->
+                  <!-- LOGICA DE POSICIONAMIENTO -->
+                  <div class="absolute w-72 bg-[var(--tooltip-bg)] border border-[var(--tooltip-border)] shadow-[0_8px_30px_rgb(0,0,0,0.12)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.5)] rounded-xl p-4 opacity-0 group-hover:opacity-100 pointer-events-none transition-all duration-200 transform scale-95 group-hover:scale-100 ring-1 ring-black/5 dark:ring-white/10"
+                      [class.top-full]="$index < 7"
+                      [class.mt-2]="$index < 7"
+                      [class.bottom-full]="$index >= 7"
+                      [class.mb-2]="$index >= 7"
+
+                      [class.left-0]="$index % 7 === 0"
+                      [class.right-0]="$index % 7 === 6"
+                      [class.left-1/2]="$index % 7 !== 0 && $index % 7 !== 6"
+                      [class.-translate-x-1/2]="$index % 7 !== 0 && $index % 7 !== 6"
+
+                      style="z-index: 50;">
+
+                      <div class="text-xs font-bold text-[var(--tooltip-text)] uppercase tracking-widest mb-3 border-b border-[var(--tooltip-border)] pb-2 flex justify-between items-center">
+                        <span>{{ day.date | date:'EEEE dd' }}</span>
+                        <span class="bg-sky-500/10 text-sky-600 dark:text-sky-400 px-2 py-0.5 rounded-full text-[10px]">{{ day.appointments.length }} Cita(s)</span>
+                      </div>
+
+                      <div class="flex flex-col gap-3">
+                        @for (app of day.appointments; track app._id) {
+                          <div class="flex gap-3 items-start p-2 hover:bg-[var(--tooltip-hover-bg)] rounded-lg transition-colors border border-transparent hover:border-[var(--tooltip-border)]">
+                             <!-- Status Dot -->
+                            <div class="w-2.5 h-2.5 rounded-full mt-1.5 shrink-0 shadow-sm" [class]="getStatusClass(app.status).split(' ')[0].replace('text-', 'bg-')"></div>
+                            <div class="flex-1 min-w-0">
+                                <div class="text-sm font-bold text-[var(--tooltip-text)] line-clamp-1 mb-0.5">
+                                    {{ app.property.title || 'Propiedad no disponible' }}
+                                </div>
+                                <div class="flex items-center gap-2 text-xs text-[var(--tooltip-text-secondary)]">
+                                    <span class="font-mono bg-[var(--tooltip-hover-bg)] border border-[var(--tooltip-border)] px-1.5 py-0.5 rounded text-[10px]">{{ app.appointmentDate | date:'HH:mm' }}</span>
+                                    <span>•</span>
+                                    <span class="truncate font-medium">{{ app.agent.name || 'Sin Asignar' }}</span>
+                                </div>
+                            </div>
+                          </div>
+                        }
+                      </div>
+                  </div>
+                }
+              </div>
+            }
           </div>
         </div>
+      }
+    } @else {
+    <!-- EMPTY STATE -->
+    <div
+      class="border border-dashed border-[var(--border-light)] bg-[var(--bg-panel)] p-12 flex flex-col items-center justify-center text-center">
+      <div
+        class="w-16 h-16 rounded-full bg-[var(--bg-dark)] border border-[var(--border-light)] flex items-center justify-center mb-4 text-[var(--text-secondary)]">
+        <i class="pi pi-calendar-times text-2xl"></i>
       </div>
+      <h3 class="text-[var(--text-heading)] font-bold uppercase tracking-widest mb-2">
+        Agenda Vacía
+      </h3>
+      <p class="text-[var(--text-secondary)] text-sm font-light max-w-xs mb-6">
+        Aún no has programado visitas. Explora nuestro catálogo para comenzar.
+      </p>
+      <a routerLink="/properties"
+        class="px-6 py-3 bg-sky-600 hover:bg-sky-500 text-white text-xs font-bold uppercase tracking-widest transition-colors">
+        Explorar Propiedades
+      </a>
     </div>
     }
-  </div>
-  } @else {
-  <!-- EMPTY STATE -->
-  <div
-    class="border border-dashed border-white/10 bg-white/5 p-12 flex flex-col items-center justify-center text-center"
-  >
-    <div
-      class="w-16 h-16 rounded-full bg-slate-900 border border-white/10 flex items-center justify-center mb-4 text-slate-600"
-    >
-      <i class="pi pi-calendar-times text-2xl"></i>
-    </div>
-    <h3 class="text-white font-bold uppercase tracking-widest mb-2">
-      Agenda Vacía
-    </h3>
-    <p class="text-slate-500 text-sm font-light max-w-xs mb-6">
-      Aún no has programado visitas. Explora nuestro catálogo para comenzar.
-    </p>
-    <a
-      routerLink="/properties"
-      class="px-6 py-3 bg-sky-600 hover:bg-sky-500 text-white text-xs font-bold uppercase tracking-widest transition-colors"
-    >
-      Explorar Propiedades
-    </a>
-  </div>
-  } } }
+  } }
 </div>

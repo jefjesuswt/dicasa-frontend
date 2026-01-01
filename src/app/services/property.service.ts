@@ -24,7 +24,7 @@ export class PropertyService {
 
   private statsChanged$ = new Subject<void>();
 
-  constructor() {}
+  constructor() { }
 
   get statsUpdates$(): Observable<void> {
     return this.statsChanged$.asObservable();
@@ -37,12 +37,41 @@ export class PropertyService {
 
     Object.entries(queryParams).forEach(([key, value]) => {
       if (value !== undefined && value !== null) {
-        params = params.set(key, value.toString());
+        if (Array.isArray(value)) {
+          value.forEach((val) => {
+            params = params.append(key, val.toString());
+          });
+        } else {
+          params = params.set(key, value.toString());
+        }
       }
     });
 
     return this.http
       .get<PaginatedProperties>(this.apiUrl, { params })
+      .pipe(catchError(handleApiError));
+  }
+
+  getPublicProperties(
+    queryParams: QueryPropertiesParams = {}
+  ): Observable<PaginatedProperties> {
+    let params = new HttpParams();
+
+    Object.entries(queryParams).forEach(([key, value]) => {
+      if (value !== undefined && value !== null) {
+        if (Array.isArray(value)) {
+          value.forEach((val) => {
+            params = params.append(key, val.toString());
+          });
+        } else {
+          params = params.set(key, value.toString());
+        }
+      }
+    });
+
+    const url = `${this.apiUrl}/public`;
+    return this.http
+      .get<PaginatedProperties>(url, { params })
       .pipe(catchError(handleApiError));
   }
 
@@ -52,7 +81,13 @@ export class PropertyService {
     let params = new HttpParams();
     Object.entries(queryParams).forEach(([key, value]) => {
       if (value !== undefined && value !== null) {
-        params = params.set(key, value.toString());
+        if (Array.isArray(value)) {
+          value.forEach((val) => {
+            params = params.append(key, val.toString());
+          });
+        } else {
+          params = params.set(key, value.toString());
+        }
       }
     });
 
@@ -107,7 +142,7 @@ export class PropertyService {
   }
 
   getFeaturedProperties(): Observable<Property[]> {
-    return this.getProperties({ featured: true, page: 1, limit: 6 }).pipe(
+    return this.getPublicProperties({ featured: true, page: 1, limit: 20 }).pipe(
       map((response) => response.data)
     );
   }
@@ -115,7 +150,7 @@ export class PropertyService {
   getPropertiesByStatus(
     status: "sale" | "rent" | "sold" | "rented"
   ): Observable<Property[]> {
-    return this.getProperties({ status: status }).pipe(
+    return this.getPublicProperties({ status: status }).pipe(
       map((response) => response.data)
     );
   }
@@ -123,7 +158,7 @@ export class PropertyService {
   getPropertiesByType(
     type: "apartment" | "house" | "villa" | "land" | "commercial"
   ): Observable<Property[]> {
-    return this.getProperties({ type: type }).pipe(
+    return this.getPublicProperties({ type: type }).pipe(
       map((response) => response.data)
     );
   }
