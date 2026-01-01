@@ -126,6 +126,12 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
 
   private initScrollAnimations() {
     this.observer?.disconnect();
+
+    // Check if running in browser/environment with IntersectionObserver
+    if (typeof IntersectionObserver === 'undefined') {
+      return;
+    }
+
     const options = { root: null, rootMargin: "0px", threshold: 0.1 };
 
     this.observer = new IntersectionObserver((entries) => {
