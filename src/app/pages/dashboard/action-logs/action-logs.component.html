@@ -11,7 +11,8 @@
                 </p>
             </div>
 
-            <div class="flex items-center gap-3 bg-[var(--bg-panel)] px-4 py-2 rounded-full border border-[var(--border-light)]">
+            <div
+                class="flex items-center gap-3 bg-[var(--bg-panel)] px-4 py-2 rounded-full border border-[var(--border-light)]">
                 <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
                 <span class="text-xs text-[var(--text-primary)] uppercase">{{ totalLogs }} Registros</span>
             </div>
@@ -21,21 +22,24 @@
     <div class="px-6 md:px-12 py-8 animate-fade-in">
         <!-- Filters Section -->
         <div class="bg-[var(--bg-panel)] border border-[var(--border-light)] p-6 rounded-sm mb-6">
-            <h3 class="text-xs font-bold text-[var(--text-heading)] uppercase tracking-widest mb-4 flex items-center gap-2">
+            <h3
+                class="text-xs font-bold text-[var(--text-heading)] uppercase tracking-widest mb-4 flex items-center gap-2">
                 <i class="pi pi-filter"></i> Filtros de Búsqueda
             </h3>
 
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <!-- Filter by Action -->
                 <div>
-                    <label class="text-[10px] text-[var(--text-secondary)] uppercase tracking-widest block mb-2">Acción</label>
+                    <label
+                        class="text-[10px] text-[var(--text-secondary)] uppercase tracking-widest block mb-2">Acción</label>
                     <input type="text" [(ngModel)]="filterAction" placeholder="e.g., UPDATE_PROPERTY"
                         class="w-full bg-[var(--bg-dark)] border border-[var(--border-light)] px-4 py-2 text-sm text-[var(--text-primary)] placeholder:text-[var(--text-secondary)] focus:border-sky-500 focus:outline-none transition-colors" />
                 </div>
 
                 <!-- Filter by User ID -->
                 <div>
-                    <label class="text-[10px] text-[var(--text-secondary)] uppercase tracking-widest block mb-2">Usuario ID</label>
+                    <label class="text-[10px] text-[var(--text-secondary)] uppercase tracking-widest block mb-2">Usuario
+                        ID</label>
                     <input type="text" [(ngModel)]="filterUserId" placeholder="ID de usuario"
                         class="w-full bg-[var(--bg-dark)] border border-[var(--border-light)] px-4 py-2 text-sm text-[var(--text-primary)] font-mono placeholder:text-[var(--text-secondary)] focus:border-sky-500 focus:outline-none transition-colors" />
                 </div>
@@ -64,16 +68,20 @@
 
         <!-- Logs Table -->
         <div class="bg-[var(--bg-dark)] border border-[var(--border-light)] rounded-sm overflow-hidden">
-            <div class="px-6 py-4 border-b border-[var(--border-light)] bg-[var(--bg-panel)] flex justify-between items-center">
-                <h3 class="text-xs font-bold text-[var(--text-heading)] uppercase tracking-widest flex items-center gap-2">
+            <div
+                class="px-6 py-4 border-b border-[var(--border-light)] bg-[var(--bg-panel)] flex justify-between items-center">
+                <h3
+                    class="text-xs font-bold text-[var(--text-heading)] uppercase tracking-widest flex items-center gap-2">
                     <i class="pi pi-list"></i> Logs de Auditoría
                 </h3>
-                <span class="text-[10px] text-[var(--text-secondary)]">Página {{ currentPage }} de {{ totalPages }}</span>
+                <span class="text-[10px] text-[var(--text-secondary)]">Página {{ currentPage }} de {{ totalPages
+                    }}</span>
             </div>
 
             <div class="overflow-x-auto">
                 <table class="w-full text-left border-collapse">
-                    <thead class="bg-[var(--bg-panel)] text-[10px] text-[var(--text-secondary)] uppercase tracking-wider">
+                    <thead
+                        class="bg-[var(--bg-panel)] text-[10px] text-[var(--text-secondary)] uppercase tracking-wider">
                         <tr>
                             <th class="px-6 py-3 font-medium">Fecha</th>
                             <th class="px-6 py-3 font-medium">Usuario</th>
@@ -133,7 +141,7 @@
                                 </a>
                                 }
                                 @case ('appointment') {
-                                <a [routerLink]="['/dashboard/appointments', log.resource._id]"
+                                <a [routerLink]="['/dashboard/appointments/edit', log.resource._id]"
                                     class="text-emerald-400 hover:text-emerald-300 transition-colors flex items-center gap-1 group">
                                     <i class="pi pi-calendar text-[10px]"></i>
                                     <span class="truncate max-w-[200px]">{{ log.resource.title }}</span>
@@ -142,7 +150,7 @@
                                 </a>
                                 }
                                 @case ('user') {
-                                <a [routerLink]="['/dashboard/users', log.resource._id]"
+                                <a [routerLink]="['/dashboard/users/edit', log.resource._id]"
                                     class="text-purple-400 hover:text-purple-300 transition-colors flex items-center gap-1 group">
                                     <i class="pi pi-user text-[10px]"></i>
                                     <span class="truncate max-w-[200px]">{{ log.resource.title }}</span>
@@ -192,8 +200,10 @@
             <div
                 class="px-6 py-4 border-t border-[var(--border-light)] bg-[var(--bg-panel)] flex flex-col sm:flex-row justify-between items-center gap-4">
                 <div class="text-xs text-[var(--text-secondary)]">
-                    Mostrando <span class="text-[var(--text-heading)] font-bold">{{ (currentPage - 1) * itemsPerPage + 1 }}</span> -
-                    <span class="text-[var(--text-heading)] font-bold">{{ currentPage * itemsPerPage > totalLogs ? totalLogs :
+                    Mostrando <span class="text-[var(--text-heading)] font-bold">{{ (currentPage - 1) * itemsPerPage + 1
+                        }}</span> -
+                    <span class="text-[var(--text-heading)] font-bold">{{ currentPage * itemsPerPage > totalLogs ?
+                        totalLogs :
                         currentPage * itemsPerPage }}</span>
                     de <span class="text-[var(--text-heading)] font-bold">{{ totalLogs }}</span>
                 </div>
