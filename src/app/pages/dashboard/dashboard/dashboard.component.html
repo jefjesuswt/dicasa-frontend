@@ -1,5 +1,6 @@
 <div class="min-h-screen bg-[var(--bg-dark)] text-[var(--text-secondary)] font-sans bg-grid">
-  <header class="pt-12 pb-12 mt-14 border-b border-[var(--border-light)] bg-[var(--bg-panel)]/90 backdrop-blur-sm top-0 z-40">
+  <header
+    class="pt-12 pb-12 mt-14 border-b border-[var(--border-light)] bg-[var(--bg-panel)]/90 backdrop-blur-sm top-0 z-40">
     <div class="container mx-auto px-6">
       <div class="reveal-on-scroll">
         <div class="flex items-center gap-3 mb-4">
@@ -10,13 +11,15 @@
           <div class="h-px flex-grow bg-gradient-to-r from-sky-500/30 to-transparent"></div>
         </div>
 
-        <h1 class="text-4xl lg:text-5xl font-bold text-[var(--text-heading)] uppercase tracking-tight leading-none mb-2">
+        <h1
+          class="text-4xl lg:text-5xl font-bold text-[var(--text-heading)] uppercase tracking-tight leading-none mb-2">
           Panel de
           <span class="text-transparent bg-clip-text bg-gradient-to-r from-sky-400 to-blue-600">Gestión</span>
         </h1>
         <p class="text-[var(--text-secondary)] font-light border-l-2 border-sky-500 pl-4 mt-4 max-w-2xl">
           Bienvenido,
-          <span class="text-[var(--text-heading)] font-medium">{{ user()?.name }}</span>. Visualiza métricas en tiempo real y administra
+          <span class="text-[var(--text-heading)] font-medium">{{ user()?.name }}</span>. Visualiza métricas en tiempo
+          real y administra
           el inventario
           inmobiliario.
         </p>
@@ -77,6 +80,14 @@
           class="group relative px-6 py-4 text-xs font-bold uppercase tracking-widest text-[var(--text-muted)] border-b-2 border-transparent hover:text-[var(--text-heading)] hover:bg-[var(--bg-elevated)] transition-all cursor-pointer flex items-center gap-3">
           <i class="pi pi-list text-lg mb-0.5"></i>
           <span>Registros</span>
+          <span
+            class="absolute bottom-[-2px] left-0 w-full h-[2px] bg-sky-500/50 scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left"></span>
+        </a>
+
+        <a routerLink="backup" routerLinkActive="!text-sky-500 !border-sky-500 bg-[var(--bg-elevated)]"
+          class="group relative px-6 py-4 text-xs font-bold uppercase tracking-widest text-[var(--text-muted)] border-b-2 border-transparent hover:text-[var(--text-heading)] hover:bg-[var(--bg-elevated)] transition-all cursor-pointer flex items-center gap-3">
+          <i class="pi pi-database text-lg mb-0.5"></i>
+          <span>Respaldos</span>
           <span
             class="absolute bottom-[-2px] left-0 w-full h-[2px] bg-sky-500/50 scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left"></span>
         </a>

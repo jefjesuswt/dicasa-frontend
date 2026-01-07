@@ -96,6 +96,14 @@ export const DASHBOARD_ROUTES: Routes = [
         canActivate: [adminGuard], // Solo ADMIN (IT) puede ver logs de acciones
       },
       {
+        path: "backup",
+        loadComponent: () =>
+          import("./backup/backup.component").then(
+            (m) => m.BackupComponent
+          ),
+        canActivate: [adminGuard],
+      },
+      {
         path: "manual",
         loadComponent: () =>
           import("./manual/manual.component").then(
