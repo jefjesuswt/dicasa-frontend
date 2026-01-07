@@ -3,27 +3,26 @@ import { Component, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../../../environments/environment';
-import { MessageService } from 'primeng/api';
-import { ToastModule } from 'primeng/toast';
-import { ConfirmDialogModule } from 'primeng/confirmdialog';
-import { ConfirmationService } from 'primeng/api';
+import { ToastService } from '../../../services/toast.service';
+import { DialogComponent } from '../../../shared/dialog/dialog.component';
 
 @Component({
     selector: 'app-backup',
     standalone: true,
-    imports: [CommonModule, ToastModule, ConfirmDialogModule],
-    providers: [MessageService, ConfirmationService],
+    imports: [CommonModule, DialogComponent],
     templateUrl: './backup.component.html',
 })
 export class BackupComponent {
     private http = inject(HttpClient);
-    private messageService = inject(MessageService);
-    private confirmationService = inject(ConfirmationService);
+    private toastService = inject(ToastService);
     private apiUrl = environment.API_URL;
 
     isDownloading = signal(false);
     isRestoring = signal(false);
-    uploadProgress = signal(0);
+
+    // Dialog state
+    showRestoreConfirm = signal(false);
+    selectedFile = signal<File | null>(null);
 
     downloadBackup() {
         this.isDownloading.set(true);
@@ -36,39 +35,46 @@ export class BackupComponent {
                 link.click();
                 window.URL.revokeObjectURL(url);
                 this.isDownloading.set(false);
-                this.messageService.add({ severity: 'success', summary: 'Éxito', detail: 'Respaldo descargado correctamente' });
+                this.toastService.success('Éxito', 'Respaldo descargado correctamente');
             },
             error: (err) => {
                 console.error('Download error', err);
                 this.isDownloading.set(false);
-                this.messageService.add({ severity: 'error', summary: 'Error', detail: 'No se pudo descargar el respaldo' });
+                this.toastService.error('Error', 'No se pudo descargar el respaldo');
             }
         });
     }
 
     onFileSelected(event: any) {
+        // Reset state
+        this.selectedFile.set(null);
+
         const file = event.target.files[0];
         if (file) {
-            this.confirmRestore(file);
+            // Validate file type simply by extension/type
+            if (file.name.endsWith('.json') || file.type === 'application/json') {
+                this.selectedFile.set(file);
+                this.showRestoreConfirm.set(true);
+            } else {
+                this.toastService.error('Formato inválido', 'El archivo debe ser un JSON válido.');
+            }
+            // Clear input value so same file can be selected again if needed
+            event.target.value = '';
         }
     }
 
-    confirmRestore(file: File) {
-        this.confirmationService.confirm({
-            message: 'Esta acción sobrescribirá o actualizará los datos existentes en la base de datos. ¿Estás seguro de que deseas continuar?',
-            header: 'Confirmar Restauración',
-            icon: 'pi pi-exclamation-triangle',
-            accept: () => {
-                this.restoreBackup(file);
-            },
-            reject: () => {
-                // Clear file input if needed
-            }
-        });
+    cancelRestore() {
+        this.showRestoreConfirm.set(false);
+        this.selectedFile.set(null);
     }
 
-    restoreBackup(file: File) {
+    confirmRestore() {
+        const file = this.selectedFile();
+        if (!file) return;
+
         this.isRestoring.set(true);
+        this.showRestoreConfirm.set(false); // Close dialog
+
         const formData = new FormData();
         formData.append('file', file);
 
@@ -76,22 +82,22 @@ export class BackupComponent {
             next: (res: any) => {
                 this.isRestoring.set(false);
                 const stats = res.stats;
-                this.messageService.add({
-                    severity: 'success',
-                    summary: 'Restauración Completada',
-                    detail: `Colecciones: ${stats.restoredCollections}, Documentos: ${stats.insertedDocs}`
-                });
+                this.toastService.success('Restauración Completada', `Colecciones: ${stats.restoredCollections}, Documentos: ${stats.insertedDocs}`);
 
                 if (stats.errors && stats.errors.length > 0) {
+                    // Since toast service usually shows one message, maybe log errors or show a warning toast too
                     stats.errors.forEach((err: string) => {
-                        this.messageService.add({ severity: 'warn', summary: 'Advertencia', detail: err });
+                        console.warn('Backup warning:', err); // Log to console
+                        this.toastService.warning('Advertencia', 'Hubo algunos errores menores. Revisa la consola.');
                     });
                 }
+                this.selectedFile.set(null);
             },
             error: (err) => {
                 console.error('Restore error', err);
                 this.isRestoring.set(false);
-                this.messageService.add({ severity: 'error', summary: 'Error Fatal', detail: 'Fallo al restaurar el respaldo: ' + (err.error?.message || err.message) });
+                this.toastService.error('Error Fatal', 'Fallo al restaurar: ' + (err.error?.message || err.message));
+                this.selectedFile.set(null);
             }
         });
     }
