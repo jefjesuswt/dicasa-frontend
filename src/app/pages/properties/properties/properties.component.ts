@@ -71,7 +71,6 @@ export class PropertiesComponent implements OnInit, OnDestroy {
   constructor() {
     afterNextRender(() => {
       this.initScrollObserver();
-      this.initializeAnalytics();
     });
   }
 
@@ -84,6 +83,7 @@ export class PropertiesComponent implements OnInit, OnDestroy {
 
     this.loadProperties();
   }
+
 
   ngOnDestroy() {
     this.observer?.disconnect();
@@ -200,46 +200,5 @@ export class PropertiesComponent implements OnInit, OnDestroy {
     return labels[type] || type;
   }
 
-  private async getStableFingerprint(): Promise<string> {
-    const storageKey = "dicasa-fingerprint";
-    let fp = localStorage.getItem(storageKey);
 
-    if (fp) {
-      return fp;
-    }
-
-    const { fingerprint } = await Fingerprint.generate();
-    localStorage.setItem(storageKey, fingerprint);
-    return fingerprint;
-  }
-
-  private async initializeAnalytics(): Promise<void> {
-    try {
-      const fingerprint = await this.getStableFingerprint();
-      const path = window.location.pathname;
-
-      this.analyticsService.logVisit({ fingerprint, path }).subscribe();
-
-      let sessionId = sessionStorage.getItem("analyticsSessionId");
-
-      if (sessionId) {
-        this.analyticsService.startHeartbeatLoop(sessionId);
-      } else {
-        sessionId = uuidv4();
-        sessionStorage.setItem("analyticsSessionId", sessionId);
-
-        this.analyticsService
-          .startSession({ sessionId, fingerprint })
-          .subscribe({
-            next: () => {
-              if (!sessionId) return;
-              this.analyticsService.startHeartbeatLoop(sessionId);
-            },
-            error: (err) => console.error("Failed to create session", err),
-          });
-      }
-    } catch (error) {
-      console.error("Error during analytics initialization:", error);
-    }
-  }
 }

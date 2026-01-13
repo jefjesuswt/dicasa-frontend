@@ -14,6 +14,10 @@ import { AuthService } from "./services/auth.service";
 import { AuthStatus } from "./enums/auth-status.enum";
 import { CommonModule } from "@angular/common";
 import { ToastComponent } from "./components/toast/toast.component";
+import { AnalyticsService } from "./services/analytics.service";
+import Fingerprint from "fingerprinter-js";
+import { v4 as uuidv4 } from "uuid";
+import { afterNextRender, PLATFORM_ID } from "@angular/core";
 
 @Component({
   selector: "app-root",
@@ -52,9 +56,63 @@ export class AppComponent implements OnInit {
 
   public AuthStatus = AuthStatus;
 
-  constructor() { }
+  // ... imports
+  private analyticsService = inject(AnalyticsService);
+  private platformId = inject(PLATFORM_ID);
+
+  constructor() {
+    afterNextRender(() => {
+      this.initializeAnalytics();
+    });
+  }
 
   ngOnInit() {
     this.scrollTopService.enable();
+  }
+
+  private async getStableFingerprint(): Promise<string> {
+    const storageKey = "dicasa-fingerprint";
+    let fp = localStorage.getItem(storageKey);
+
+    if (fp) {
+      return fp;
+    }
+
+    const { fingerprint } = await Fingerprint.generate();
+    localStorage.setItem(storageKey, fingerprint);
+    return fingerprint;
+  }
+
+  private async initializeAnalytics(): Promise<void> {
+    try {
+      const fingerprint = await this.getStableFingerprint();
+
+      // Intentar recuperar sesión existente
+      let sessionId = sessionStorage.getItem("analyticsSessionId");
+
+      if (sessionId) {
+        this.analyticsService.startHeartbeatLoop(sessionId);
+      } else {
+        sessionId = uuidv4();
+        sessionStorage.setItem("analyticsSessionId", sessionId);
+
+        this.analyticsService
+          .startSession({ sessionId, fingerprint })
+          .subscribe({
+            next: () => {
+              if (!sessionId) return;
+              this.analyticsService.startHeartbeatLoop(sessionId);
+            },
+            error: (err) => console.error("Failed to create session", err),
+          });
+      }
+
+      // Opcional: Loguear visita inicial a la app (o hacerlo via Router Events para más precisión)
+      const path = window.location.pathname;
+      this.analyticsService.logVisit({ fingerprint, path }).subscribe();
+
+    } catch (error) {
+      console.error("Error during analytics initialization:", error);
+    }
   }
 }

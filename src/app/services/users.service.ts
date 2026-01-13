@@ -43,7 +43,8 @@ export class UsersService {
   }
 
   getAgents(): Observable<User[]> {
-    return this.http.get<PaginatedUserResponse>(this.apiUrl).pipe(
+    let params = new HttpParams().set("limit", "1000").set("isActive", "true");
+    return this.http.get<PaginatedUserResponse>(this.apiUrl, { params }).pipe(
       map((response) =>
         response.data.filter(
           (user) =>

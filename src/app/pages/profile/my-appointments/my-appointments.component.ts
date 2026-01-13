@@ -10,6 +10,7 @@ import {
   AppointmentStatus,
 } from "../../../interfaces/appointments";
 import { AvatarComponent } from "../../../shared/avatar/avatar.component";
+import { AuthService } from "../../../services/auth.service"; // Import AuthService
 
 type LoadState = "loading" | "loaded" | "error";
 type ViewMode = "list" | "calendar";
@@ -30,6 +31,7 @@ interface CalendarDay {
 export class MyAppointmentsComponent implements OnInit {
   private appointmentsService = inject(AppointmentsService);
   private router = inject(Router);
+  private authService = inject(AuthService); // Inject AuthService
 
   appointments = signal<Appointment[]>([]);
   loadState = signal<LoadState>("loading");
@@ -163,5 +165,10 @@ export class MyAppointmentsComponent implements OnInit {
     if (element) {
       element.src = "/assets/images/placeholder-property.png";
     }
+  }
+
+  isAgent(appointment: Appointment): boolean {
+    const user = this.authService.currentUser();
+    return user?._id === appointment.agent?._id;
   }
 }

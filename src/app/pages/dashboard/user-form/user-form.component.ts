@@ -54,6 +54,7 @@ export class UserFormComponent implements OnInit {
   ];
   phoneFormat = PhoneNumberFormat.International;
   CountryISO = CountryISO;
+  UserRole = UserRole;
 
   ngOnInit(): void {
     this.initializeForm();
@@ -92,11 +93,7 @@ export class UserFormComponent implements OnInit {
         name: ["", [Validators.required, Validators.minLength(3)]],
         email: ["", [Validators.required, Validators.email]],
         phoneNumber: [null, [Validators.required]],
-        rolesGroup: this.fb.group({
-          isAdmin: [false],
-          isManager: [false],
-          isAgent: [false],
-        }),
+        role: [UserRole.USER, [Validators.required]],
 
         password: [""],
         confirmPassword: [""],
@@ -159,15 +156,20 @@ export class UserFormComponent implements OnInit {
       }
     }
 
+    let role = UserRole.USER;
+    if (user.roles.includes(UserRole.ADMIN)) {
+      role = UserRole.ADMIN;
+    } else if (user.roles.includes(UserRole.MANAGER)) {
+      role = UserRole.MANAGER;
+    } else if (user.roles.includes(UserRole.AGENT)) {
+      role = UserRole.AGENT;
+    }
+
     this.userForm.patchValue({
       name: user.name,
       email: user.email,
       phoneNumber: numberToPatch,
-      rolesGroup: {
-        isAdmin: user.roles.includes(UserRole.ADMIN),
-        isManager: user.roles.includes(UserRole.MANAGER),
-        isAgent: user.roles.includes(UserRole.AGENT),
-      },
+      role: role,
     });
     this.userForm.markAsPristine();
   }
@@ -197,13 +199,10 @@ export class UserFormComponent implements OnInit {
 
     const finalRoles: UserRole[] = [];
 
-    // Determinar el rol basado en la selección (mutuamente excluyentes excepto USER)
-    if (formValue.rolesGroup.isAdmin) {
-      finalRoles.push(UserRole.ADMIN);
-    } else if (formValue.rolesGroup.isManager) {
-      finalRoles.push(UserRole.MANAGER);
-    } else if (formValue.rolesGroup.isAgent) {
-      finalRoles.push(UserRole.AGENT);
+    // Determinar el rol basado en la selección
+    const selectedRole = formValue.role;
+    if (selectedRole && selectedRole !== UserRole.USER) {
+      finalRoles.push(selectedRole);
     }
 
     // Todos los usuarios tienen el rol USER como base

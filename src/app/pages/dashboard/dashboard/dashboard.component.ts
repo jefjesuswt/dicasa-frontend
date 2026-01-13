@@ -38,6 +38,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   public statsLoading = true;
   public user = computed(() => this.authService.currentUser());
   public isAdmin = computed(() => this.authService.isAdmin());
+  public isManager = computed(() => this.authService.isManager());
   private observer: IntersectionObserver | null = null;
 
   public stats: StatCard[] = [

@@ -17,23 +17,23 @@ import { MarkdownModule } from 'ngx-markdown';
             </h3>
             <nav class="flex flex-col space-y-2">
               <a (click)="scrollTo('propiedades')"
-                class="cursor-pointer text-sm text-[var(--text-secondary)] hover:text-sky-500 transition-colors py-1 px-2 rounded hover:bg-[var(--bg-panel)] border-l-2 border-transparent hover:border-sky-500">
+                class="cursor-pointer text-sm font-medium text-[var(--text-primary)] hover:text-[var(--color-primary)] transition-colors py-2 px-3 rounded-md hover:bg-[var(--bg-panel)] border-l-2 border-transparent hover:border-[var(--color-primary)] block">
                 1. Propiedades
               </a>
               <a (click)="scrollTo('usuarios')"
-                class="cursor-pointer text-sm text-[var(--text-secondary)] hover:text-sky-500 transition-colors py-1 px-2 rounded hover:bg-[var(--bg-panel)] border-l-2 border-transparent hover:border-sky-500">
+                class="cursor-pointer text-sm font-medium text-[var(--text-primary)] hover:text-[var(--color-primary)] transition-colors py-2 px-3 rounded-md hover:bg-[var(--bg-panel)] border-l-2 border-transparent hover:border-[var(--color-primary)] block">
                 2. Usuarios
               </a>
               <a (click)="scrollTo('agenda')"
-                class="cursor-pointer text-sm text-[var(--text-secondary)] hover:text-sky-500 transition-colors py-1 px-2 rounded hover:bg-[var(--bg-panel)] border-l-2 border-transparent hover:border-sky-500">
+                class="cursor-pointer text-sm font-medium text-[var(--text-primary)] hover:text-[var(--color-primary)] transition-colors py-2 px-3 rounded-md hover:bg-[var(--bg-panel)] border-l-2 border-transparent hover:border-[var(--color-primary)] block">
                 3. Agenda
               </a>
               <a (click)="scrollTo('estadisticas')"
-                class="cursor-pointer text-sm text-[var(--text-secondary)] hover:text-sky-500 transition-colors py-1 px-2 rounded hover:bg-[var(--bg-panel)] border-l-2 border-transparent hover:border-sky-500">
+                class="cursor-pointer text-sm font-medium text-[var(--text-primary)] hover:text-[var(--color-primary)] transition-colors py-2 px-3 rounded-md hover:bg-[var(--bg-panel)] border-l-2 border-transparent hover:border-[var(--color-primary)] block">
                 4. Estadísticas
               </a>
               <a (click)="scrollTo('soporte')"
-                class="cursor-pointer text-sm text-[var(--text-secondary)] hover:text-sky-500 transition-colors py-1 px-2 rounded hover:bg-[var(--bg-panel)] border-l-2 border-transparent hover:border-sky-500">
+                class="cursor-pointer text-sm font-medium text-[var(--text-primary)] hover:text-[var(--color-primary)] transition-colors py-2 px-3 rounded-md hover:bg-[var(--bg-panel)] border-l-2 border-transparent hover:border-[var(--color-primary)] block">
                 Soporte
               </a>
             </nav>
@@ -42,14 +42,21 @@ import { MarkdownModule } from 'ngx-markdown';
 
         <!-- Main Content -->
         <main class="flex-1 min-w-0">
-          <div class="bg-white dark:bg-slate-900 rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 p-8 lg:p-12">
-            <article class="prose prose-slate dark:prose-invert max-w-none
-              prose-headings:font-bold prose-headings:text-slate-800 dark:prose-headings:text-slate-100
+          <div class="bg-[var(--bg-panel)] rounded-xl shadow-sm border border-[var(--border-light)] p-8 lg:p-12">
+            <article class="prose max-w-none
+              prose-headings:font-bold prose-headings:text-[var(--text-heading)]
+              prose-p:text-[var(--text-primary)]
+              prose-li:text-[var(--text-primary)]
+              prose-strong:text-[var(--text-heading)]
               prose-headings:scroll-mt-28
-              prose-a:text-sky-500 hover:prose-a:text-sky-600
-              prose-strong:text-slate-900 dark:prose-strong:text-white
-              prose-code:text-sky-500 prose-code:bg-sky-50 dark:prose-code:bg-sky-900/20 prose-code:px-1 prose-code:rounded
-              prose-img:rounded-xl prose-img:border prose-img:border-slate-200 dark:prose-img:border-slate-800">
+              prose-a:text-[var(--color-primary)] hover:prose-a:text-[var(--color-primary-hover)]
+              prose-code:text-[var(--color-primary)] prose-code:bg-[var(--bg-section-alt)] prose-code:px-1 prose-code:rounded
+              prose-img:rounded-xl prose-img:border prose-img:border-[var(--border-light)]
+              prose-blockquote:text-[var(--text-secondary)] prose-blockquote:border-[var(--color-primary)]
+              prose-table:text-[var(--text-secondary)]
+              prose-th:text-[var(--text-heading)] prose-th:font-bold prose-th:uppercase prose-th:tracking-wider
+              prose-td:border-[var(--border-light)] prose-th:border-[var(--border-light)]
+              prose-tr:border-[var(--border-light)]">
               <markdown [src]="'assets/docs/manual.md'" (load)="onLoad($event)"></markdown>
             </article>
           </div>

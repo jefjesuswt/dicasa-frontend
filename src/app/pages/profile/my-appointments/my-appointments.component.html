@@ -77,8 +77,8 @@
               <span class="text-3xl font-mono font-bold text-[var(--text-heading)]">
                 {{ app.appointmentDate | date : "dd" }}
               </span>
-              <span class="text-[10px] font-mono text-[var(--text-secondary)] mt-1">
-                {{ app.appointmentDate | date : "HH:mm" }}
+              <span class="text-sm font-bold text-[var(--text-secondary)] mt-1">
+                {{ app.appointmentDate | date : "h:mm a" }}
               </span>
             </div>
 
@@ -138,20 +138,33 @@
               <!-- AGENTE + ACCIONES (Footer interno) -->
               <div class="pt-4 border-t border-[var(--border-light)] flex items-center justify-between mt-2">
                 <div class="flex items-center gap-3">
-                  @if (app.agent) {
-                  <shared-avatar class="w-8 h-8 border border-[var(--border-light)] grayscale group-hover:grayscale-0 transition-all"
-                    [src]="app.agent.profileImageUrl" [id]="app.agent._id"></shared-avatar>
-                  <div class="flex flex-col">
-                    <span class="text-[10px] font-bold text-[var(--text-secondary)] uppercase">Agente Asignado</span>
-                    <span class="text-xs text-[var(--text-heading)] font-mono">{{ app.agent.name }}</span>
-                  </div>
-                  } @else {
-                  <div class="flex items-center gap-2">
-                    <div class="w-8 h-8 rounded-full bg-[var(--bg-dark)] border border-[var(--border-light)] flex items-center justify-center">
-                      <i class="pi pi-user text-[var(--text-secondary)] text-xs"></i>
+                  @if (isAgent(app)) {
+                    <div class="flex items-center gap-2">
+                       <div class="w-8 h-8 rounded-full bg-[var(--bg-dark)] border border-[var(--border-light)] flex items-center justify-center">
+                         <i class="pi pi-user text-[var(--text-secondary)] text-xs"></i>
+                       </div>
+                       <div class="flex flex-col">
+                         <span class="text-[10px] font-bold text-[var(--text-secondary)] uppercase">Cliente</span>
+                         <span class="text-xs text-[var(--text-heading)] font-mono">{{ app.name }}</span>
+                         <span class="text-[10px] text-[var(--text-secondary)]">{{ app.phoneNumber }}</span>
+                       </div>
                     </div>
-                    <span class="text-xs text-[var(--text-secondary)] italic">Sin agente asignado</span>
-                  </div>
+                  } @else {
+                    @if (app.agent) {
+                    <shared-avatar class="w-8 h-8 border border-[var(--border-light)] grayscale group-hover:grayscale-0 transition-all"
+                      [src]="app.agent.profileImageUrl" [id]="app.agent._id"></shared-avatar>
+                    <div class="flex flex-col">
+                      <span class="text-[10px] font-bold text-[var(--text-secondary)] uppercase">Agente Asignado</span>
+                      <span class="text-xs text-[var(--text-heading)] font-mono">{{ app.agent.name }}</span>
+                    </div>
+                    } @else {
+                    <div class="flex items-center gap-2">
+                      <div class="w-8 h-8 rounded-full bg-[var(--bg-dark)] border border-[var(--border-light)] flex items-center justify-center">
+                        <i class="pi pi-user text-[var(--text-secondary)] text-xs"></i>
+                      </div>
+                      <span class="text-xs text-[var(--text-secondary)] italic">Sin agente asignado</span>
+                    </div>
+                    }
                   }
                 </div>
 
@@ -210,9 +223,9 @@
 
                  <div class="w-full flex flex-col gap-1 mt-1 overflow-y-auto max-h-[70px] no-scrollbar">
                     @for (app of day.appointments; track app._id) {
-                      <div class="w-full px-2 py-1.5 rounded text-[11px] font-bold truncate cursor-pointer transition-colors border-l-2 shadow-sm"
+                      <div class="w-full px-2 py-1.5 rounded text-xs font-bold truncate cursor-pointer transition-colors border-l-2 shadow-sm"
                         [class]="getStatusClass(app.status) + ' bg-opacity-15 hover:bg-opacity-25'">
-                        {{ app.appointmentDate | date:'HH:mm' }}
+                        {{ app.appointmentDate | date:'h:mm a' }}
                       </div>
                     }
                  </div>
@@ -249,9 +262,13 @@
                                     {{ app.property.title || 'Propiedad no disponible' }}
                                 </div>
                                 <div class="flex items-center gap-2 text-xs text-[var(--tooltip-text-secondary)]">
-                                    <span class="font-mono bg-[var(--tooltip-hover-bg)] border border-[var(--tooltip-border)] px-1.5 py-0.5 rounded text-[10px]">{{ app.appointmentDate | date:'HH:mm' }}</span>
+                                    <span class="font-bold bg-[var(--tooltip-hover-bg)] border border-[var(--tooltip-border)] px-1.5 py-0.5 rounded text-xs">{{ app.appointmentDate | date:'h:mm a' }}</span>
                                     <span>•</span>
-                                    <span class="truncate font-medium">{{ app.agent.name || 'Sin Asignar' }}</span>
+                                    @if (isAgent(app)) {
+                                      <span class="truncate font-medium">Cliente: {{ app.name }}</span>
+                                    } @else {
+                                      <span class="truncate font-medium">{{ app.agent.name || 'Sin Asignar' }}</span>
+                                    }
                                 </div>
                             </div>
                           </div>

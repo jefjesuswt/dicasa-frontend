@@ -55,6 +55,7 @@ export interface DashboardStats {
   charts: {
     inventory: { _id: string; count: number }[];
     schedulingFunnel: { total: number; completed: number };
+    visitsTrend: { date: string; count: number }[];
   };
   security: {
     recentLogs: {

@@ -54,6 +54,9 @@ export class StatisticsComponent implements OnInit {
   // Opciones para Barras
   public barOptions: ChartConfiguration["options"] = {
     ...this.commonOptions,
+    plugins: {
+      legend: { display: false },
+    },
     scales: {
       x: { grid: { display: false }, ticks: { color: "#94a3b8" } },
       y: {
@@ -130,25 +133,26 @@ export class StatisticsComponent implements OnInit {
       ],
     };
 
-    // 3. EVOLUCIÓN (Simulación basada en dato real 'totalVisitsMonth')
-    // Generamos una curva de 7 días basada en el promedio
-    this.generateEvolutionData(data.kpis.totalVisitsMonth);
+    // 3. EVOLUCIÓN (Dato Real Last 7 Days)
+    // Usamos los datos reales del backend
+    this.updateEvolutionChart(data.charts.visitsTrend);
   }
 
-  private generateEvolutionData(totalMonthlyVisits: number) {
-    const days = ["Lun", "Mar", "Mié", "Jue", "Vie", "Sáb", "Dom"];
-    // Estimación simple: promedio diario con variación aleatoria
-    const dailyAvg = Math.floor(totalMonthlyVisits / 30);
+  private updateEvolutionChart(trendData: { date: string; count: number }[]) {
+    // Si no hay datos (array vacío), poner días genéricos o manejar empty state
+    // Pero el backend siempre devuelve algo (aunque sea una lista vacía, el front debe manejarlo).
+    // Aquí asumimos que queremos mostrar lo que venga.
 
-    // Generar datos que parezcan "mercado de valores"
-    const values = days.map(() => {
-      // Variación entre 60% y 140% del promedio para que la curva suba y baje
-      const variance = Math.random() * 0.8 + 0.6;
-      return Math.floor(dailyAvg * variance);
+    // Formatear fechas a algo corto (e.g. "Lun 12")
+    const labels = trendData.map((d) => {
+        const date = new Date(d.date);
+        return date.toLocaleDateString('es-ES', { weekday: 'short', day: 'numeric' });
     });
 
+    const values = trendData.map((d) => d.count);
+
     this.evolutionData = {
-      labels: days,
+      labels: labels,
       datasets: [
         {
           data: values,
