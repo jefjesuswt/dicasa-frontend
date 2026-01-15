@@ -137,9 +137,9 @@ export interface DropdownOption {
                   [(ngModel)]="selectedValue"
                   (change)="onSearch()"
                   class="bg-slate-50 dark:bg-[var(--bg-dark)] text-[var(--text-heading)] text-sm px-3 py-2.5 pr-10 rounded-xl border border-[var(--border-light)] hover:border-sky-500/50 focus:border-sky-500 focus:ring-4 focus:ring-sky-500/10 outline-none transition-all cursor-pointer appearance-none custom-select">
-                  <option value="all" class="bg-white dark:bg-[#0f172a] text-[var(--text-heading)]">Todos</option>
+                  <option value="all">Todos</option>
                   @for(opt of dropdownOptions; track opt.value) {
-                    <option [value]="opt.value" class="bg-white dark:bg-[#0f172a] text-[var(--text-heading)]">{{ opt.label }}</option>
+                    <option [value]="opt.value">{{ opt.label }}</option>
                   }
                 </select>
               </div>
@@ -157,7 +157,7 @@ export interface DropdownOption {
                   (change)="onSearch()"
                   class="bg-slate-50 dark:bg-[var(--bg-dark)] text-[var(--text-heading)] text-sm px-3 py-2.5 pr-10 rounded-xl border border-[var(--border-light)] hover:border-sky-500/50 focus:border-sky-500 focus:ring-4 focus:ring-sky-500/10 outline-none transition-all cursor-pointer appearance-none custom-select">
                   @for(opt of statusOptions; track opt.value) {
-                    <option [value]="opt.value" class="bg-white dark:bg-[#0f172a] text-[var(--text-heading)]">{{ opt.label }}</option>
+                    <option [value]="opt.value">{{ opt.label }}</option>
                   }
                 </select>
               </div>
@@ -217,7 +217,7 @@ export interface DropdownOption {
                   (change)="onSortChange($event); onSearch()"
                   class="bg-slate-50 dark:bg-[var(--bg-dark)] text-[var(--text-heading)] text-sm px-3 py-2.5 pr-10 rounded-xl border border-[var(--border-light)] hover:border-sky-500/50 focus:border-sky-500 focus:ring-4 focus:ring-sky-500/10 outline-none transition-all cursor-pointer appearance-none custom-select">
                   @for(opt of sortOptions; track opt.label) {
-                    <option [value]="opt.value + opt.order" class="bg-white dark:bg-[#0f172a] text-[var(--text-heading)]">{{ opt.label }}</option>
+                    <option [value]="opt.value + opt.order">{{ opt.label }}</option>
                   }
                 </select>
               </div>
@@ -265,11 +265,12 @@ export interface DropdownOption {
         background-repeat: no-repeat;
         background-position: right 0.75rem center;
         background-size: 1rem;
-        color-scheme: light dark;
+        color-scheme: light;
       }
 
       .dark .custom-select {
         background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2394a3b8'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
+        color-scheme: dark;
       }
 
       /* Fix autofill chrome */

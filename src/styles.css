@@ -75,14 +75,14 @@ i {
   /* sky-400 @ 5% */
   --bg-section-alt: theme("colors.sky.100");
   --border-light: rgb(0 0 0 / 0.1);
-  --text-primary: theme("colors.gray.600");
-  --text-secondary: theme("colors.gray.500");
-  --text-heading: theme("colors.gray.700");
-  --btn-primary-bg: theme("colors.gray.700");
+  --text-primary: theme("colors.gray.800");
+  --text-secondary: theme("colors.gray.600");
+  --text-heading: theme("colors.gray.950");
+  --btn-primary-bg: theme("colors.gray.900");
   --btn-primary-text: theme("colors.white");
   --btn-secondary-bg: transparent;
-  --btn-secondary-text: theme("colors.gray.600");
-  --btn-secondary-border: rgb(75 85 99 / 0.3);
+  --btn-secondary-text: theme("colors.gray.800");
+  --btn-secondary-border: rgb(31 41 55 / 0.2);
   /* gray-600 @ 30% */
 
   /* Tooltip Specifics */
