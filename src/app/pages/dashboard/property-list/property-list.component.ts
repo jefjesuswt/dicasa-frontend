@@ -5,7 +5,6 @@ import { Property } from "../../../interfaces/properties";
 import { finalize } from "rxjs";
 import { CommonModule } from "@angular/common";
 import { FormsModule } from "@angular/forms";
-// import { HotToastService } from "@ngxpert/hot-toast";
 import { ToastService } from "../../../services/toast.service";
 import { DialogComponent } from "../../../shared/dialog/dialog.component";
 import { QueryPropertiesParams } from "../../../interfaces/properties/query-property.interface";
@@ -42,12 +41,38 @@ export class PropertyListComponent implements OnInit {
   public loading = true;
   public error: string | null = null;
   public showDeleted = false;
+  public showAdvancedFilters = false; // Control for collapsible filters
 
   // filter
   searchQuery: string = "";
   selectedType: string = "all";
   currentStatus: string = "all";
   statusList: PropertyStatus[] = ["sale", "rent", "sold", "rented"];
+
+  // Advanced filters
+  minPrice: number | null = null;
+  maxPrice: number | null = null;
+  selectedSort: string = "createdAt";
+  selectedOrder: 'asc' | 'desc' = "desc";
+  selectedBedrooms: number | null = null;
+
+  // Sort options
+  sortOptions = [
+    { label: "Más Recientes", value: "createdAt", order: "desc" },
+    { label: "Más Antiguos", value: "createdAt", order: "asc" },
+    { label: "Precio: Mayor a Menor", value: "price", order: "desc" },
+    { label: "Precio: Menor a Mayor", value: "price", order: "asc" },
+    { label: "Habitaciones", value: "bedrooms", order: "desc" },
+  ];
+
+  // Status options for dropdown
+  statusOptions: DropdownOption[] = [
+    { value: "all", label: "Todos los Estatus" },
+    { value: "sale", label: "En Venta" },
+    { value: "rent", label: "En Alquiler" },
+    { value: "sold", label: "Vendido" },
+    { value: "rented", label: "Alquilado" },
+  ];
 
   public propertyTypeOptions: DropdownOption[] = [
     { value: "apartment", label: "Apartamento" },
@@ -82,6 +107,11 @@ export class PropertyListComponent implements OnInit {
           ? undefined
           : (this.currentStatus as PropertyStatus),
       includeDeleted: this.showDeleted ? true : undefined,
+      minPrice: this.minPrice || undefined,
+      maxPrice: this.maxPrice || undefined,
+      bedrooms: this.selectedBedrooms || undefined,
+      sortBy: this.selectedSort,
+      sortOrder: this.selectedOrder,
     };
 
     this.loading = true;
@@ -103,6 +133,12 @@ export class PropertyListComponent implements OnInit {
   onSearch(params: SearchParams): void {
     this.searchQuery = params.query;
     this.selectedType = params.selectedValue;
+    this.currentStatus = params.status || 'all';
+    this.minPrice = params.minPrice ?? null;
+    this.maxPrice = params.maxPrice ?? null;
+    this.selectedBedrooms = params.bedrooms ?? null;
+    this.selectedSort = params.sortBy || 'createdAt';
+    this.selectedOrder = params.sortOrder || 'desc';
     this.currentPage = 1;
     this.loadProperties();
   }
@@ -122,6 +158,55 @@ export class PropertyListComponent implements OnInit {
     this.searchQuery = "";
     this.selectedType = "all";
     this.currentStatus = "all";
+    this.minPrice = null;
+    this.maxPrice = null;
+    this.selectedBedrooms = null;
+    this.selectedSort = "createdAt";
+    this.selectedOrder = "desc";
+    this.currentPage = 1;
+    this.loadProperties();
+  }
+
+  onSortChange(event: any): void {
+    const selectedValue = event.target.value;
+    const selectedOption = this.sortOptions.find(
+      (o) => o.value + o.order === selectedValue
+    );
+    if (selectedOption) {
+      this.selectedSort = selectedOption.value;
+      this.selectedOrder = selectedOption.order as 'asc' | 'desc';
+      this.currentPage = 1;
+      this.loadProperties();
+    }
+  }
+
+  onStatusChange(event: any): void {
+    this.currentStatus = event.target.value;
+    this.currentPage = 1;
+    this.loadProperties();
+  }
+
+  applyAdvancedFilters(): void {
+    this.currentPage = 1;
+    this.loadProperties();
+  }
+
+  getActiveFiltersCount(): number {
+    let count = 0;
+    if (this.minPrice) count++;
+    if (this.maxPrice) count++;
+    if (this.selectedBedrooms) count++;
+    if (this.currentStatus !== 'all') count++;
+    return count;
+  }
+
+  clearAdvancedFilters(): void {
+    this.minPrice = null;
+    this.maxPrice = null;
+    this.selectedBedrooms = null;
+    this.currentStatus = 'all';
+    this.selectedSort = 'createdAt';
+    this.selectedOrder = 'desc';
     this.currentPage = 1;
     this.loadProperties();
   }

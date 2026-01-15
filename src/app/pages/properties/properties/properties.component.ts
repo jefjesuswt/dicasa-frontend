@@ -60,6 +60,13 @@ export class PropertiesComponent implements OnInit, OnDestroy {
     { value: "commercial", label: "Comercial" },
   ];
 
+  // Advanced filters
+  minPrice: number | null = null;
+  maxPrice: number | null = null;
+  selectedSort: string = "createdAt";
+  selectedOrder: 'asc' | 'desc' = "desc";
+  selectedBedrooms: number | null = null;
+
   public totalProperties = 0;
   public currentPage = 1;
   public itemsPerPage = 10;
@@ -127,6 +134,11 @@ export class PropertiesComponent implements OnInit, OnDestroy {
         this.currentStatus === "all"
           ? undefined
           : (this.currentStatus as PropertyStatus),
+      minPrice: this.minPrice || undefined,
+      maxPrice: this.maxPrice || undefined,
+      bedrooms: this.selectedBedrooms || undefined,
+      sortBy: this.selectedSort,
+      sortOrder: this.selectedOrder,
     };
 
     this.propertyService
@@ -150,6 +162,12 @@ export class PropertiesComponent implements OnInit, OnDestroy {
   onSearch(params: SearchParams): void {
     this.searchQuery = params.query;
     this.selectedType = params.selectedValue;
+    this.currentStatus = params.status || 'all';
+    this.minPrice = params.minPrice ?? null;
+    this.maxPrice = params.maxPrice ?? null;
+    this.selectedBedrooms = params.bedrooms ?? null;
+    this.selectedSort = params.sortBy || 'createdAt';
+    this.selectedOrder = params.sortOrder || 'desc';
     this.currentPage = 1;
     this.loadProperties();
   }
@@ -169,6 +187,11 @@ export class PropertiesComponent implements OnInit, OnDestroy {
     this.searchQuery = "";
     this.selectedType = "all";
     this.currentStatus = "all";
+    this.minPrice = null;
+    this.maxPrice = null;
+    this.selectedBedrooms = null;
+    this.selectedSort = "createdAt";
+    this.selectedOrder = "desc";
     this.currentPage = 1;
     this.loadProperties();
   }

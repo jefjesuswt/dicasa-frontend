@@ -1,8 +1,8 @@
-<!-- SEARCH SECTION -->
+<!-- SEARCH AND FILTERS SECTION -->
 <div class="p-4 md:p-6 bg-[var(--bg-dark)] border-b border-[var(--border-light)]">
   <shared-search-bar (search)="onSearch($event)" [dropdownOptions]="propertyTypeOptions"
     placeholder="Buscar por ubicación, ciudad..." label="Filtros de Búsqueda" dropdownLabel="Tipo de Inmueble"
-    buttonText="BUSCAR">
+    buttonText="BUSCAR" [showAdvancedFilters]="true" [statusOptions]="statusOptions" [sortOptions]="sortOptions">
   </shared-search-bar>
 </div>
 
@@ -13,7 +13,8 @@
       Inventario
     </h2>
     @if (!loading) {
-    <span class="px-2 py-0.5 bg-[var(--bg-panel)] rounded text-xs text-[var(--text-secondary)] border border-[var(--border-light)]">
+    <span
+      class="px-2 py-0.5 bg-[var(--bg-panel)] rounded text-xs text-[var(--text-secondary)] border border-[var(--border-light)]">
       {{ properties.length }} ITEMS
     </span>
     }
@@ -40,7 +41,8 @@
 @if (loading) {
 <div class="flex flex-col justify-center items-center py-32 bg-[var(--bg-dark)]">
   <div class="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-sky-500 mb-4"></div>
-  <span class="text-[var(--text-secondary)] text-sm animate-pulse tracking-widest uppercase">Cargando Inventario...</span>
+  <span class="text-[var(--text-secondary)] text-sm animate-pulse tracking-widest uppercase">Cargando
+    Inventario...</span>
 </div>
 }
 
@@ -80,7 +82,8 @@
         <th scope="col" class="px-6 py-4 text-xs font-bold text-[var(--text-secondary)] uppercase tracking-wider">
           Estado
         </th>
-        <th scope="col" class="px-6 py-4 text-right text-xs font-bold text-[var(--text-secondary)] uppercase tracking-wider">
+        <th scope="col"
+          class="px-6 py-4 text-right text-xs font-bold text-[var(--text-secondary)] uppercase tracking-wider">
           Acciones
         </th>
       </tr>
@@ -148,9 +151,7 @@
 
         <!-- Estado -->
         <td class="px-6 py-4 whitespace-nowrap">
-          <span
-            class="text-[10px] font-bold uppercase tracking-wider"
-            [ngClass]="getStatusBadgeClass(property.status)">
+          <span class="text-[10px] font-bold uppercase tracking-wider" [ngClass]="getStatusBadgeClass(property.status)">
             {{ getStatusLabel(property.status) }}
           </span>
         </td>
@@ -193,7 +194,8 @@
 <!-- EMPTY STATE -->
 @if (!loading && !error && properties.length === 0) {
 <div class="flex flex-col items-center justify-center py-24 bg-[var(--bg-dark)] border-t border-[var(--border-light)]">
-  <div class="w-16 h-16 bg-[var(--bg-panel)] rounded-full flex items-center justify-center mb-4 border border-[var(--border-light)]">
+  <div
+    class="w-16 h-16 bg-[var(--bg-panel)] rounded-full flex items-center justify-center mb-4 border border-[var(--border-light)]">
     <i class="pi pi-home text-2xl text-[var(--text-secondary)]"></i>
   </div>
   <p class="text-[var(--text-secondary)] text-xs uppercase tracking-widest mb-6">
@@ -212,7 +214,8 @@
     <p class="text-sm text-[var(--text-secondary)] leading-relaxed">
       Estás a punto de eliminar permanentemente la propiedad:
       <br />
-      <strong class="text-[var(--text-heading)] uppercase tracking-wide text-xs block mt-2 p-2 bg-[var(--bg-panel)] rounded-sm border border-[var(--border-light)]">
+      <strong
+        class="text-[var(--text-heading)] uppercase tracking-wide text-xs block mt-2 p-2 bg-[var(--bg-panel)] rounded-sm border border-[var(--border-light)]">
         {{ propertyToDelete?.title || "ITEM SELECCIONADO" }}
       </strong>
     </p>

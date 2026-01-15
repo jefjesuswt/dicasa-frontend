@@ -11,4 +11,6 @@ export interface QueryPropertiesParams {
   bedrooms?: number;
   featured?: boolean;
   includeDeleted?: boolean;
+  sortBy?: string;
+  sortOrder?: 'asc' | 'desc';
 }

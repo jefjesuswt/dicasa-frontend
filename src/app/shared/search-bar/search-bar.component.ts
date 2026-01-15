@@ -15,6 +15,13 @@ import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 export interface SearchParams {
   query: string;
   selectedValue: string;
+  // Advanced filters
+  status?: string;
+  minPrice?: number;
+  maxPrice?: number;
+  bedrooms?: number;
+  sortBy?: string;
+  sortOrder?: 'asc' | 'desc';
 }
 
 export interface DropdownOption {
@@ -27,135 +34,197 @@ export interface DropdownOption {
   standalone: true,
   imports: [CommonModule, FormsModule],
   template: `
-    <div
-      class="w-full p-1 border border-[var(--border-light)] bg-[var(--bg-dark)]/90 backdrop-blur-md relative z-30 shadow-2xl"
-    >
-      <div class="flex flex-col md:flex-row gap-1">
-        <div
-          class="flex-1 bg-white/5 border border-transparent hover:border-white/10 transition-colors relative group px-4 py-3"
-        >
-          <label
-            class="block text-[10px] font-bold text-sky-500 uppercase tracking-widest mb-1"
-          >
-            {{ label || "Ubicación" }}
-          </label>
-          <div class="flex items-center">
+    <div class="w-full bg-white/90 dark:bg-[var(--bg-dark)]/80 backdrop-blur-md border-b border-[var(--border-light)] shadow-sm">
+      <!-- Search Bar -->
+      <div class="p-4 md:p-6 pb-4">
+        <div class="flex flex-col md:flex-row gap-3">
+          <div class="flex-1 relative">
+            <div class="absolute inset-y-0 left-4 flex items-center pointer-events-none">
+              <i class="pi pi-search text-[var(--text-secondary)] text-sm"></i>
+            </div>
             <input
               type="text"
               [(ngModel)]="searchQuery"
               (ngModelChange)="onQueryChange($event)"
               (keyup.enter)="onSearch()"
-              [placeholder]="placeholder || 'INGRESA UNA ZONA...'"
-              class="w-full bg-transparent text-[var(--text-heading)] placeholder-[var(--text-secondary)] text-sm border-none p-0 focus:ring-0 focus:outline-none uppercase tracking-wide font-bold"
+              [placeholder]="placeholder || 'Buscar por ubicación, ciudad, zona...'"
+              class="w-full bg-slate-50 dark:bg-[var(--bg-panel)] text-[var(--text-heading)] placeholder-[var(--text-secondary)] text-sm pl-11 pr-4 py-3.5 rounded-xl border border-[var(--border-light)] focus:border-sky-500 focus:ring-4 focus:ring-sky-500/10 outline-none transition-all"
             />
-            <i
-              class="pi pi-map-marker text-[var(--text-secondary)] group-focus-within:text-sky-400 transition-colors text-sm ml-2"
-            ></i>
           </div>
-
-          <div
-            class="absolute bottom-0 left-0 h-px w-0 bg-sky-500 group-focus-within:w-full transition-all duration-500"
-          ></div>
+          <button
+            (click)="onSearch()"
+            class="md:w-auto bg-sky-600 hover:bg-sky-500 text-white font-semibold text-sm px-8 py-3.5 rounded-xl transition-all shadow-md hover:shadow-lg flex items-center justify-center gap-2 active:scale-95">
+            <i class="pi pi-search text-sm"></i>
+            <span>Buscar</span>
+          </button>
         </div>
+      </div>
 
-        @if (showDropdown) {
-        <div class="w-full md:w-64 relative">
-          <div
-            (click)="toggleDropdown()"
-            class="h-full bg-white/5 border border-transparent hover:border-white/10 cursor-pointer relative group px-4 py-3 flex flex-col justify-center transition-colors select-none"
-            [class.bg-white-10]="isOpen"
-            [class.border-white-10]="isOpen"
-          >
-            <label
-              class="block text-[10px] font-bold text-sky-500 uppercase tracking-widest mb-1 cursor-pointer"
-            >
-              {{ dropdownLabel || "Categoría" }}
-            </label>
-
-            <div class="flex items-center justify-between">
-              <span
-                class="text-[var(--text-heading)] text-sm uppercase tracking-wide truncate font-bold"
-              >
-                {{ getSelectedLabel() }}
-              </span>
-              <i
-                class="pi pi-angle-down text-[var(--text-secondary)] text-xs transition-transform duration-300"
-                [class.rotate-180]="isOpen"
-                [class.text-sky-400]="isOpen"
-              ></i>
-            </div>
-
-            <div
-              class="absolute bottom-0 left-0 h-px bg-sky-500 transition-all duration-500"
-              [class.w-full]="isOpen"
-              [class.w-0]="!isOpen"
-            ></div>
-          </div>
-
-          @if (isOpen) {
-          <div
-            class="absolute top-full left-0 right-0 mt-1 bg-[var(--bg-dark)] border border-[var(--border-light)] shadow-2xl z-50 max-h-60 overflow-y-auto custom-scrollbar animate-fade-in"
-          >
-            <div
-              (click)="selectOption('all')"
-              class="px-4 py-3 cursor-pointer border-b border-[var(--border-light)] hover:bg-white/5 flex items-center justify-between group transition-colors"
-            >
-              <span
-                class="text-sm uppercase tracking-wide font-bold"
-                [class]="
-                  selectedValue === 'all'
-                    ? 'text-sky-400'
-                    : 'text-[var(--text-secondary)] group-hover:text-[var(--text-heading)]'
-                "
-              >
-                Todos
-              </span>
-              @if (selectedValue === 'all') {
-              <i class="pi pi-check text-sky-500 text-xs"></i>
+      <!-- Filters Section -->
+      @if (showAdvancedFilters) {
+        <!-- Active Filters Pills -->
+        @if (getActiveFiltersCount() > 0) {
+          <div class="px-4 md:px-6 pb-3">
+            <div class="flex flex-wrap items-center gap-2">
+              <span class="text-xs font-semibold text-[var(--text-secondary)] uppercase tracking-wide">Filtros activos:</span>
+              
+              @if (selectedValue !== 'all') {
+                <div class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-sky-500/10 text-sky-600 dark:text-sky-400 rounded-full text-xs font-medium border border-sky-500/20">
+                  <span>{{ dropdownLabel }}: {{ getSelectedTypeLabel() }}</span>
+                  <button (click)="selectedValue = 'all'; onSearch()" class="hover:bg-sky-500/20 rounded-full p-0.5 transition-colors">
+                    <i class="pi pi-times text-[10px]"></i>
+                  </button>
+                </div>
               }
-            </div>
-
-            @for (option of dropdownOptions; track option.value) {
-            <div
-              (click)="selectOption(option.value)"
-              class="px-4 py-3 cursor-pointer border-b border-[var(--border-light)] hover:bg-white/5 flex items-center justify-between group transition-colors last:border-0"
-            >
-              <span
-                class="text-sm uppercase tracking-wide font-bold"
-                [class]="
-                  selectedValue === option.value
-                    ? 'text-sky-400'
-                    : 'text-[var(--text-secondary)] group-hover:text-[var(--text-heading)]'
-                "
-              >
-                {{ option.label }}
-              </span>
-              @if (selectedValue === option.value) {
-              <i class="pi pi-check text-sky-500 text-xs"></i>
+              
+              @if (currentStatus !== 'all') {
+                <div class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-sky-500/10 text-sky-600 dark:text-sky-400 rounded-full text-xs font-medium border border-sky-500/20">
+                  <span>Estatus: {{ getSelectedStatusLabel() }}</span>
+                  <button (click)="currentStatus = 'all'; onSearch()" class="hover:bg-sky-500/20 rounded-full p-0.5 transition-colors">
+                    <i class="pi pi-times text-[10px]"></i>
+                  </button>
+                </div>
               }
+              
+              @if (minPrice) {
+                <div class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-sky-500/10 text-sky-600 dark:text-sky-400 rounded-full text-xs font-medium border border-sky-500/20">
+                  <span>Desde: $ {{ minPrice }}</span>
+                  <button (click)="minPrice = null; onSearch()" class="hover:bg-sky-500/20 rounded-full p-0.5 transition-colors">
+                    <i class="pi pi-times text-[10px]"></i>
+                  </button>
+                </div>
+              }
+              
+              @if (maxPrice) {
+                <div class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-sky-500/10 text-sky-600 dark:text-sky-400 rounded-full text-xs font-medium border border-sky-500/20">
+                  <span>Hasta: $ {{ maxPrice }}</span>
+                  <button (click)="maxPrice = null; onSearch()" class="hover:bg-sky-500/20 rounded-full p-0.5 transition-colors">
+                    <i class="pi pi-times text-[10px]"></i>
+                  </button>
+                </div>
+              }
+              
+              @if (selectedBedrooms) {
+                <div class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-sky-500/10 text-sky-600 dark:text-sky-400 rounded-full text-xs font-medium border border-sky-500/20">
+                  <span>{{ selectedBedrooms }}+ hab</span>
+                  <button (click)="selectedBedrooms = null; onSearch()" class="hover:bg-sky-500/20 rounded-full p-0.5 transition-colors">
+                    <i class="pi pi-times text-[10px]"></i>
+                  </button>
+                </div>
+              }
+              
+              <button 
+                (click)="clearAdvancedFilters()"
+                class="text-xs font-semibold text-red-600 hover:text-red-500 dark:text-red-400 dark:hover:text-red-300 uppercase tracking-wide transition-colors ml-1">
+                Limpiar todos
+              </button>
             </div>
-            }
           </div>
-
-          <div
-            (click)="closeDropdown()"
-            class="fixed inset-0 z-40 cursor-default"
-          ></div>
-          }
-        </div>
         }
 
-        <button
-          (click)="onSearch()"
-          class="w-full md:w-auto bg-[var(--btn-primary-bg)] hover:bg-sky-400 text-[var(--btn-primary-text)] hover:text-white font-bold text-xs uppercase tracking-widest py-4 px-8 transition-all duration-300 flex items-center justify-center gap-2 group/btn"
-        >
-          <span class="hidden md:inline">{{ buttonText || "Buscar" }}</span>
-          <span class="md:hidden">Buscar</span>
-          <i
-            class="pi pi-arrow-right group-hover/btn:translate-x-1 transition-transform"
-          ></i>
-        </button>
-      </div>
+        <!-- Filter Controls - Always Visible -->
+        <div class="px-4 md:px-6 py-5 bg-white/50 dark:bg-[var(--bg-panel)] border-t border-[var(--border-light)]">
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
+            
+            <!-- Type Filter -->
+            @if (showDropdown && dropdownOptions.length > 0) {
+              <div class="flex flex-col gap-2">
+                <label class="text-[10px] font-bold text-[var(--text-secondary)] uppercase tracking-widest flex items-center gap-1.5 ml-1">
+                  <i class="pi pi-building text-[10px]"></i>
+                  {{ dropdownLabel || "Tipo" }}
+                </label>
+                <select 
+                  [(ngModel)]="selectedValue"
+                  (change)="onSearch()"
+                  class="bg-slate-50 dark:bg-[var(--bg-dark)] text-[var(--text-heading)] text-sm px-3 py-2.5 pr-10 rounded-xl border border-[var(--border-light)] hover:border-sky-500/50 focus:border-sky-500 focus:ring-4 focus:ring-sky-500/10 outline-none transition-all cursor-pointer appearance-none custom-select">
+                  <option value="all" class="bg-white dark:bg-[#0f172a] text-[var(--text-heading)]">Todos</option>
+                  @for(opt of dropdownOptions; track opt.value) {
+                    <option [value]="opt.value" class="bg-white dark:bg-[#0f172a] text-[var(--text-heading)]">{{ opt.label }}</option>
+                  }
+                </select>
+              </div>
+            }
+            
+            <!-- Status Filter -->
+            @if (statusOptions.length > 0) {
+              <div class="flex flex-col gap-2">
+                <label class="text-[10px] font-bold text-[var(--text-secondary)] uppercase tracking-widest flex items-center gap-1.5 ml-1">
+                  <i class="pi pi-tag text-[10px]"></i>
+                  Estatus
+                </label>
+                <select 
+                  [(ngModel)]="currentStatus"
+                  (change)="onSearch()"
+                  class="bg-slate-50 dark:bg-[var(--bg-dark)] text-[var(--text-heading)] text-sm px-3 py-2.5 pr-10 rounded-xl border border-[var(--border-light)] hover:border-sky-500/50 focus:border-sky-500 focus:ring-4 focus:ring-sky-500/10 outline-none transition-all cursor-pointer appearance-none custom-select">
+                  @for(opt of statusOptions; track opt.value) {
+                    <option [value]="opt.value" class="bg-white dark:bg-[#0f172a] text-[var(--text-heading)]">{{ opt.label }}</option>
+                  }
+                </select>
+              </div>
+            }
+
+            <!-- Min Price -->
+            <div class="flex flex-col gap-2">
+              <label class="text-[10px] font-bold text-[var(--text-secondary)] uppercase tracking-widest flex items-center gap-1.5 ml-1">
+                <i class="pi pi-dollar text-[10px]"></i>
+                Precio Mínimo
+              </label>
+              <input 
+                type="number" 
+                [(ngModel)]="minPrice"
+                (change)="onSearch()"
+                placeholder="0"
+                class="bg-slate-50 dark:bg-[var(--bg-panel)] text-[var(--text-heading)] text-sm px-3 py-2.5 rounded-xl border border-[var(--border-light)] hover:border-sky-500/50 focus:border-sky-500 focus:ring-4 focus:ring-sky-500/10 outline-none transition-all placeholder:text-[var(--text-secondary)]">
+            </div>
+
+            <!-- Max Price -->
+            <div class="flex flex-col gap-2">
+              <label class="text-[10px] font-bold text-[var(--text-secondary)] uppercase tracking-widest flex items-center gap-1.5 ml-1">
+                <i class="pi pi-dollar text-[10px]"></i>
+                Precio Máximo
+              </label>
+              <input 
+                type="number" 
+                [(ngModel)]="maxPrice"
+                (change)="onSearch()"
+                placeholder="Sin límite"
+                class="bg-slate-50 dark:bg-[var(--bg-panel)] text-[var(--text-heading)] text-sm px-3 py-2.5 rounded-xl border border-[var(--border-light)] hover:border-sky-500/50 focus:border-sky-500 focus:ring-4 focus:ring-sky-500/10 outline-none transition-all placeholder:text-[var(--text-secondary)]">
+            </div>
+
+            <!-- Bedrooms -->
+            <div class="flex flex-col gap-2">
+              <label class="text-[10px] font-bold text-[var(--text-secondary)] uppercase tracking-widest flex items-center gap-1.5 ml-1">
+                <i class="pi pi-home text-[10px]"></i>
+                Habitaciones
+              </label>
+              <input 
+                type="number" 
+                [(ngModel)]="selectedBedrooms"
+                (change)="onSearch()"
+                placeholder="Mínimo" 
+                min="0"
+                class="bg-slate-50 dark:bg-[var(--bg-panel)] text-[var(--text-heading)] text-sm px-3 py-2.5 rounded-xl border border-[var(--border-light)] hover:border-sky-500/50 focus:border-sky-500 focus:ring-4 focus:ring-sky-500/10 outline-none transition-all placeholder:text-[var(--text-secondary)]">
+            </div>
+
+            <!-- Sort -->
+            @if (sortOptions.length > 0) {
+              <div class="flex flex-col gap-2">
+                <label class="text-[10px] font-bold text-[var(--text-secondary)] uppercase tracking-widest flex items-center gap-1.5 ml-1">
+                  <i class="pi pi-sort-alt text-[10px]"></i>
+                  Ordenar
+                </label>
+                <select 
+                  (change)="onSortChange($event); onSearch()"
+                  class="bg-slate-50 dark:bg-[var(--bg-dark)] text-[var(--text-heading)] text-sm px-3 py-2.5 pr-10 rounded-xl border border-[var(--border-light)] hover:border-sky-500/50 focus:border-sky-500 focus:ring-4 focus:ring-sky-500/10 outline-none transition-all cursor-pointer appearance-none custom-select">
+                  @for(opt of sortOptions; track opt.label) {
+                    <option [value]="opt.value + opt.order" class="bg-white dark:bg-[#0f172a] text-[var(--text-heading)]">{{ opt.label }}</option>
+                  }
+                </select>
+              </div>
+            }
+          </div>
+        </div>
+      }
     </div>
   `,
   styles: [
@@ -180,14 +249,27 @@ export interface DropdownOption {
         width: 4px;
       }
       .custom-scrollbar::-webkit-scrollbar-track {
-        background: #020617;
+        background: var(--bg-dark);
       }
       .custom-scrollbar::-webkit-scrollbar-thumb {
-        background: #1e293b;
+        background: var(--border-light);
         border-radius: 2px;
       }
       .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-        background: #38bdf8;
+        background: var(--color-primary);
+      }
+
+      /* Custom Select Arrow */
+      .custom-select {
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2364748b'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right 0.75rem center;
+        background-size: 1rem;
+        color-scheme: light dark;
+      }
+
+      .dark .custom-select {
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2394a3b8'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
       }
 
       /* Fix autofill chrome */
@@ -195,9 +277,9 @@ export interface DropdownOption {
       input:-webkit-autofill:hover,
       input:-webkit-autofill:focus,
       input:-webkit-autofill:active {
-        -webkit-box-shadow: 0 0 0 30px #0f172a inset !important;
-        -webkit-text-fill-color: white !important;
-        caret-color: white !important;
+        -webkit-box-shadow: 0 0 0 30px var(--bg-dark) inset !important;
+        -webkit-text-fill-color: var(--text-heading) !important;
+        caret-color: var(--text-heading) !important;
         transition: background-color 5000s ease-in-out 0s;
       }
     `,
@@ -212,6 +294,11 @@ export class SearchBarComponent implements OnInit {
   @Input() showDropdown: boolean = true;
   @Input() dropdownOptions: DropdownOption[] = [];
 
+  // Advanced filters - Optional
+  @Input() showAdvancedFilters: boolean = false;
+  @Input() statusOptions: DropdownOption[] = [];
+  @Input() sortOptions: { label: string; value: string; order: string }[] = [];
+
   @Output() search = new EventEmitter<SearchParams>();
 
   private destroyRef = inject(DestroyRef);
@@ -219,6 +306,15 @@ export class SearchBarComponent implements OnInit {
 
   searchQuery: string = "";
   selectedValue: string = "all";
+
+  // Advanced filters state
+  currentStatus: string = "all";
+  minPrice: number | null = null;
+  maxPrice: number | null = null;
+  selectedBedrooms: number | null = null;
+  selectedSort: string = "createdAt";
+  selectedOrder: 'asc' | 'desc' = "desc";
+  advancedFiltersExpanded: boolean = false;
 
   // Controla si el dropdown está abierto
   isOpen: boolean = false;
@@ -237,35 +333,63 @@ export class SearchBarComponent implements OnInit {
     this.searchSubject.next(query);
   }
 
-  // --- Lógica del Custom Dropdown ---
-
-  toggleDropdown(): void {
-    this.isOpen = !this.isOpen;
-  }
-
-  closeDropdown(): void {
-    this.isOpen = false;
-  }
-
-  selectOption(value: string): void {
-    this.selectedValue = value;
-    this.isOpen = false;
-    this.onSearch(); // Dispara la búsqueda al seleccionar
-  }
-
-  // Helper para mostrar el label seleccionado en la UI cerrada
-  getSelectedLabel(): string {
-    if (this.selectedValue === "all") return "Todos";
-    const selected = this.dropdownOptions.find(
-      (opt) => opt.value === this.selectedValue
-    );
-    return selected ? selected.label : "Seleccionar";
-  }
-
   onSearch(): void {
     this.search.emit({
       query: this.searchQuery,
       selectedValue: this.selectedValue,
+      status: this.showAdvancedFilters ? this.currentStatus : undefined,
+      minPrice: this.showAdvancedFilters ? (this.minPrice || undefined) : undefined,
+      maxPrice: this.showAdvancedFilters ? (this.maxPrice || undefined) : undefined,
+      bedrooms: this.showAdvancedFilters ? (this.selectedBedrooms || undefined) : undefined,
+      sortBy: this.showAdvancedFilters ? this.selectedSort : undefined,
+      sortOrder: this.showAdvancedFilters ? this.selectedOrder : undefined,
     });
+  }
+
+  onSortChange(event: any): void {
+    const selectedValue = event.target.value;
+    const selectedOption = this.sortOptions.find(
+      (o) => o.value + o.order === selectedValue
+    );
+    if (selectedOption) {
+      this.selectedSort = selectedOption.value;
+      this.selectedOrder = selectedOption.order as 'asc' | 'desc';
+    }
+  }
+
+  getSelectedTypeLabel(): string {
+    const selected = this.dropdownOptions.find(
+      (opt) => opt.value === this.selectedValue
+    );
+    return selected ? selected.label : this.selectedValue;
+  }
+
+  getSelectedStatusLabel(): string {
+    const selected = this.statusOptions.find(
+      (opt) => opt.value === this.currentStatus
+    );
+    return selected ? selected.label : this.currentStatus;
+  }
+
+  getActiveFiltersCount(): number {
+    if (!this.showAdvancedFilters) return 0;
+    let count = 0;
+    if (this.selectedValue !== 'all') count++;
+    if (this.currentStatus !== 'all') count++;
+    if (this.minPrice) count++;
+    if (this.maxPrice) count++;
+    if (this.selectedBedrooms) count++;
+    return count;
+  }
+
+  clearAdvancedFilters(): void {
+    this.selectedValue = 'all';
+    this.currentStatus = 'all';
+    this.minPrice = null;
+    this.maxPrice = null;
+    this.selectedBedrooms = null;
+    this.selectedSort = 'createdAt';
+    this.selectedOrder = 'desc';
+    this.onSearch();
   }
 }
