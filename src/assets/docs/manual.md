@@ -213,7 +213,4 @@ Guía rápida para resolver incidencias comunes reportadas por los usuarios.
 - **Dashboard**: Tablero de control visual con estadísticas.
 - **JWT (JSON Web Token)**: La "llave" digital que se entrega al usuario cuando inicia sesión.
 
----
 
-**Dicasa Group - Tecnología Inmobiliaria**
-Para soporte técnico adicional, contacte a [soporte@dicasa.com](mailto:soporte@dicasa.com)

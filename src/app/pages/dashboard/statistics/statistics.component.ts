@@ -51,7 +51,7 @@ export class StatisticsComponent implements OnInit {
     plugins: { legend: { display: false } }, // Sin leyenda para look limpio
   };
 
-  // Opciones para Barras
+  // Opciones para Barras (General)
   public barOptions: ChartConfiguration["options"] = {
     ...this.commonOptions,
     plugins: {
@@ -67,10 +67,35 @@ export class StatisticsComponent implements OnInit {
     },
   };
 
+  // Opciones específicas para Rendimiento de Asesores (Barras Comparativas)
+  public agentBarOptions: ChartConfiguration["options"] = {
+    ...this.barOptions,
+    plugins: {
+      legend: {
+        display: true,
+        position: 'top',
+        labels: { color: "#94a3b8" }
+      },
+    },
+    scales: {
+      x: { grid: { display: false }, ticks: { color: "#94a3b8" } },
+      y: {
+        grid: { color: "rgba(100, 116, 139, 0.1)" },
+        ticks: { color: "#64748b" },
+        beginAtZero: true,
+      },
+    },
+  };
+
   // Datos de las gráficas
   public inventoryData: ChartData<"doughnut"> = { labels: [], datasets: [] };
   public funnelData: ChartData<"bar"> = { labels: [], datasets: [] };
   public evolutionData: ChartData<"line"> = { labels: [], datasets: [] };
+  public agentPerformanceData: ChartData<"bar"> = { labels: [], datasets: [] };
+
+  // Estados de ordenamiento
+  public agentSortCriteria: 'total' | 'completed' = 'total';
+  public sortedAgents: any[] = [];
 
   ngOnInit() {
     this.loadStats();
@@ -81,12 +106,35 @@ export class StatisticsComponent implements OnInit {
       next: (data) => {
         this.stats.set(data);
         this.updateCharts(data);
+        this.applyAgentSort(); // Inicializar lista ordenada
         this.loading.set(false);
       },
       error: (err) => {
         console.error(err);
         this.loading.set(false);
       },
+    });
+  }
+
+  setAgentSort(criteria: 'total' | 'completed') {
+    this.agentSortCriteria = criteria;
+    this.applyAgentSort();
+  }
+
+  private applyAgentSort() {
+    const data = this.stats();
+    if (!data) return;
+
+    this.sortedAgents = [...data.charts.topAgents].sort((a, b) => {
+      switch (this.agentSortCriteria) {
+        case 'total':
+          return b.totalAppointments - a.totalAppointments;
+        case 'completed':
+          return b.completedAppointments - a.completedAppointments;
+
+        default:
+          return 0;
+      }
     });
   }
 
@@ -136,6 +184,25 @@ export class StatisticsComponent implements OnInit {
     // 3. EVOLUCIÓN (Dato Real Last 7 Days)
     // Usamos los datos reales del backend
     this.updateEvolutionChart(data.charts.visitsTrend);
+
+    // 4. RENDIMIENTO ASESORES (Barras Comparativas)
+    this.agentPerformanceData = {
+      labels: data.charts.topAgents.map(a => a.name.split(' ')[0]),
+      datasets: [
+        {
+          data: data.charts.topAgents.map(a => a.totalAppointments),
+          label: 'Total Citas',
+          backgroundColor: '#38bdf8',
+          borderRadius: 2,
+        },
+        {
+          data: data.charts.topAgents.map(a => a.completedAppointments),
+          label: 'Concretadas',
+          backgroundColor: '#10b981',
+          borderRadius: 2,
+        }
+      ]
+    };
   }
 
   private updateEvolutionChart(trendData: { date: string; count: number }[]) {
@@ -145,8 +212,8 @@ export class StatisticsComponent implements OnInit {
 
     // Formatear fechas a algo corto (e.g. "Lun 12")
     const labels = trendData.map((d) => {
-        const date = new Date(d.date);
-        return date.toLocaleDateString('es-ES', { weekday: 'short', day: 'numeric' });
+      const date = new Date(d.date);
+      return date.toLocaleDateString('es-ES', { weekday: 'short', day: 'numeric' });
     });
 
     const values = trendData.map((d) => d.count);

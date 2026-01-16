@@ -56,6 +56,20 @@ export interface DashboardStats {
     inventory: { _id: string; count: number }[];
     schedulingFunnel: { total: number; completed: number };
     visitsTrend: { date: string; count: number }[];
+    topProperties: {
+      _id: any;
+      appointmentsCount: number;
+      title: string;
+      price: number;
+    }[];
+    topAgents: {
+      _id: any;
+      totalAppointments: number;
+      completedAppointments: number;
+      name: string;
+      email: string;
+      conversionRate: number;
+    }[];
   };
   security: {
     recentLogs: {

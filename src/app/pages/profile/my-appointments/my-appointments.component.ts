@@ -11,6 +11,7 @@ import {
 } from "../../../interfaces/appointments";
 import { AvatarComponent } from "../../../shared/avatar/avatar.component";
 import { AuthService } from "../../../services/auth.service"; // Import AuthService
+import { ToastService } from "../../../services/toast.service";
 
 type LoadState = "loading" | "loaded" | "error";
 type ViewMode = "list" | "calendar";
@@ -22,10 +23,12 @@ interface CalendarDay {
   appointments: Appointment[];
 }
 
+import { DialogComponent } from "../../../shared/dialog/dialog.component";
+
 @Component({
   selector: "app-my-schedules",
   standalone: true,
-  imports: [CommonModule, RouterModule, AvatarComponent],
+  imports: [CommonModule, RouterModule, AvatarComponent, DialogComponent],
   templateUrl: "./my-appointments.component.html",
 })
 export class MyAppointmentsComponent implements OnInit {
@@ -61,15 +64,15 @@ export class MyAppointmentsComponent implements OnInit {
 
     // Days of current month
     for (let i = 1; i <= lastDayOfMonth.getDate(); i++) {
-        const date = new Date(year, month, i);
-        days.push(this.createCalendarDay(date, true));
+      const date = new Date(year, month, i);
+      days.push(this.createCalendarDay(date, true));
     }
 
     // Padding days for next month to complete the grid (up to 42 cells typically for 6 rows)
     const remainingCells = 42 - days.length;
     for (let i = 1; i <= remainingCells; i++) {
-        const date = new Date(year, month + 1, i);
-        days.push(this.createCalendarDay(date, false));
+      const date = new Date(year, month + 1, i);
+      days.push(this.createCalendarDay(date, false));
     }
 
     return days;
@@ -132,33 +135,27 @@ export class MyAppointmentsComponent implements OnInit {
 
   isSameDate(d1: Date, d2: Date): boolean {
     return d1.getFullYear() === d2.getFullYear() &&
-           d1.getMonth() === d2.getMonth() &&
-           d1.getDate() === d2.getDate();
+      d1.getMonth() === d2.getMonth() &&
+      d1.getDate() === d2.getDate();
   }
 
   private createCalendarDay(date: Date, isCurrentMonth: boolean): CalendarDay {
     const today = new Date();
     // Filter appointments for this specific day
     const dayAppointments = this.appointments().filter(app => {
-        const appDate = new Date(app.appointmentDate);
-        return this.isSameDate(appDate, date);
+      const appDate = new Date(app.appointmentDate);
+      return this.isSameDate(appDate, date);
     });
 
     return {
-        date,
-        isCurrentMonth,
-        isToday: this.isSameDate(date, today),
-        appointments: dayAppointments
+      date,
+      isCurrentMonth,
+      isToday: this.isSameDate(date, today),
+      appointments: dayAppointments
     };
   }
 
-  getStatusLabel(status: AppointmentStatus): string {
-    return this.statusLabels[status] || status;
-  }
-
-  getStatusClass(status: AppointmentStatus): string {
-    return this.statusClasses[status] || "text-[var(--text-secondary)] border-[var(--border-light)]";
-  }
+  /* methods moved to end of class */
 
   onImageError(event: Event) {
     const element = event.target as HTMLImageElement;
@@ -167,8 +164,79 @@ export class MyAppointmentsComponent implements OnInit {
     }
   }
 
+  private toastService = inject(ToastService);
+
+  // Dialog State
+  isDialogOpen = signal<boolean>(false);
+  selectedAppointment = signal<Appointment | null>(null);
+
+  openManagementDialog(appointment: Appointment) {
+    this.selectedAppointment.set(appointment);
+    this.isDialogOpen.set(true);
+  }
+
+  closeDialog() {
+    this.isDialogOpen.set(false);
+    this.selectedAppointment.set(null);
+  }
+
+  updateStatus(newStatus: AppointmentStatus) {
+    const appointment = this.selectedAppointment();
+    if (!appointment) return;
+
+    this.appointmentsService.update(appointment._id, { status: newStatus })
+      .subscribe({
+        next: (updatedApp) => {
+          this.toastService.success('Éxito', 'Estado actualizado correctamente');
+
+          this.appointments.update(apps =>
+            apps.map(app => app._id === updatedApp._id ? updatedApp : app)
+          );
+          this.closeDialog();
+        },
+        error: (err) => {
+          console.error("Error actualizando estado:", err);
+          this.toastService.error('Error', 'Error al actualizar el estado');
+        }
+      });
+  }
+
   isAgent(appointment: Appointment): boolean {
     const user = this.authService.currentUser();
     return user?._id === appointment.agent?._id;
+  }
+
+  isClient(appointment: Appointment): boolean {
+    const user = this.authService.currentUser();
+    // Es cliente si su email coincide con el de la cita, Y NO es el agente asignado (para evitar confusion)
+    return user?.email === appointment.email && !this.isAgent(appointment);
+  }
+
+  getAvailableTransitions(status: AppointmentStatus, isClientUser: boolean = false): AppointmentStatus[] {
+    // Definir transiciones validas
+    if (isClientUser) {
+      // Clientes solo pueden cancelar si no esta ya finalizada
+      if ([AppointmentStatus.CANCELLED, AppointmentStatus.COMPLETED].includes(status)) {
+        return [];
+      }
+      return [AppointmentStatus.CANCELLED];
+    }
+
+    // Logica de AGENTE
+    const transitions: Record<AppointmentStatus, AppointmentStatus[]> = {
+      [AppointmentStatus.PENDING]: [AppointmentStatus.CONTACTED, AppointmentStatus.CANCELLED],
+      [AppointmentStatus.CONTACTED]: [AppointmentStatus.COMPLETED, AppointmentStatus.CANCELLED],
+      [AppointmentStatus.COMPLETED]: [],
+      [AppointmentStatus.CANCELLED]: [],
+    };
+    return transitions[status] || [];
+  }
+
+  getStatusClass(status: AppointmentStatus): string {
+    return this.statusClasses[status] || 'bg-gray-100 text-gray-800 border-gray-200';
+  }
+
+  getStatusLabel(status: AppointmentStatus): string {
+    return this.statusLabels[status] || status;
   }
 }

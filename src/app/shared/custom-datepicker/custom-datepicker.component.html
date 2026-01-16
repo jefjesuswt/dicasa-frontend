@@ -27,7 +27,7 @@
 
     <div class="grid grid-cols-7 gap-1 mb-2 text-center">
       @for(day of ['DO','LU','MA','MI','JU','VI','SA']; track day) {
-      <span class="text-[9px] text-[var(--text-secondary)] font-bold">{{ day }}</span>
+      <span class="text-xs text-[var(--text-secondary)] font-bold">{{ day }}</span>
       }
     </div>
 
@@ -51,20 +51,20 @@
     </div>
 
     <div class="mt-4 pt-4 border-t border-[var(--border-light)] flex justify-between items-center">
-      <span class="text-[10px] text-[var(--text-secondary)] uppercase tracking-widest">Hora</span>
+      <span class="text-xs text-[var(--text-secondary)] uppercase tracking-widest">Hora</span>
 
       <div
         class="flex items-center gap-2 bg-[var(--bg-panel)] border border-[var(--border-light)] px-3 py-1 rounded-sm">
         <div class="flex flex-col items-center">
           <button type="button" (click)="updateTime('hour', 1)"
-            class="text-[8px] text-[var(--text-secondary)] hover:text-sky-400 py-0.5">
+            class="text-xs text-[var(--text-secondary)] hover:text-sky-400 py-0.5">
             <i class="pi pi-chevron-up"></i>
           </button>
           <span class="font-bold text-[var(--text-heading)] w-5 text-center text-sm">{{ selectedHour() |
             number : "2.0"
             }}</span>
           <button type="button" (click)="updateTime('hour', -1)"
-            class="text-[8px] text-[var(--text-secondary)] hover:text-sky-400 py-0.5">
+            class="text-xs text-[var(--text-secondary)] hover:text-sky-400 py-0.5">
             <i class="pi pi-chevron-down"></i>
           </button>
         </div>
@@ -73,14 +73,14 @@
 
         <div class="flex flex-col items-center">
           <button type="button" (click)="updateTime('minute', 30)"
-            class="text-[8px] text-[var(--text-secondary)] hover:text-sky-400 py-0.5">
+            class="text-xs text-[var(--text-secondary)] hover:text-sky-400 py-0.5">
             <i class="pi pi-chevron-up"></i>
           </button>
           <span class="font-bold text-[var(--text-heading)] w-5 text-center text-sm">{{ selectedMinute() |
             number : "2.0"
             }}</span>
           <button type="button" (click)="updateTime('minute', -30)"
-            class="text-[8px] text-[var(--text-secondary)] hover:text-sky-400 py-0.5">
+            class="text-xs text-[var(--text-secondary)] hover:text-sky-400 py-0.5">
             <i class="pi pi-chevron-down"></i>
           </button>
         </div>
@@ -89,12 +89,12 @@
 
     @if (unavailableHours().length > 0) {
     <div class="mt-4 pt-4 border-t border-[var(--border-light)]">
-      <span class="text-[10px] text-red-400 uppercase tracking-widest block mb-2">
+      <span class="text-xs text-red-400 uppercase tracking-widest block mb-2">
         Horas No Disponibles:
       </span>
       <div class="flex flex-wrap gap-2">
         @for (date of unavailableHours(); track $index) {
-        <span class="text-[10px] bg-red-500/10 text-red-400 border border-red-500/20 px-2 py-1 rounded">
+        <span class="text-xs bg-red-500/10 text-red-400 border border-red-500/20 px-2 py-1 rounded">
           {{ formatHour(date) }}
         </span>
         }
@@ -103,7 +103,7 @@
     }
 
     <button type="button" (click)="closeCalendar()"
-      class="w-full mt-5 bg-[var(--bg-panel)] hover:bg-sky-500 hover:text-slate-950 text-sky-500 border border-[var(--border-light)] text-[10px] font-bold uppercase tracking-[0.2em] py-3 transition-all active:scale-[0.98]">
+      class="w-full mt-5 bg-[var(--bg-panel)] hover:bg-sky-500 hover:text-slate-950 text-sky-500 border border-[var(--border-light)] text-xs font-bold uppercase tracking-[0.2em] py-3 transition-all active:scale-[0.98]">
       Listo
     </button>
   </div>

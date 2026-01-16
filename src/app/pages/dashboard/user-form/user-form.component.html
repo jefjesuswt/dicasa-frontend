@@ -1,31 +1,21 @@
-<div
-  class="min-h-screen bg-[var(--bg-dark)] text-[var(--text-primary)] font-sans p-4 md:p-8"
->
+<div class="min-h-screen bg-[var(--bg-dark)] text-[var(--text-primary)] font-sans p-4 md:p-8">
   <!-- Header con Botón Atrás -->
-  <div
-    class="max-w-3xl mx-auto mb-8 border-b border-[var(--border-light)] pb-6"
-  >
+  <div class="max-w-3xl mx-auto mb-8 border-b border-[var(--border-light)] pb-6">
     <div class="flex items-center gap-3 mb-2">
-      <button
-        (click)="cancel()"
+      <button (click)="cancel()"
         class="group flex items-center justify-center w-8 h-8 rounded-sm text-[var(--text-secondary)] hover:text-[var(--text-heading)] hover:bg-[var(--bg-panel)] transition-all border border-transparent hover:border-[var(--border-light)]"
-        title="Cancelar y Volver"
-      >
-        <i
-          class="pi pi-arrow-left text-sm group-hover:-translate-x-0.5 transition-transform"
-        ></i>
+        title="Cancelar y Volver">
+        <i class="pi pi-arrow-left text-sm group-hover:-translate-x-0.5 transition-transform"></i>
       </button>
-      <h1
-        class="text-2xl font-bold text-[var(--text-heading)] uppercase tracking-tight"
-      >
+      <h1 class="text-2xl font-bold text-[var(--text-heading)] uppercase tracking-tight">
         {{ pageTitle }}
       </h1>
     </div>
     <p class="text-sm text-[var(--text-secondary)] ml-11">
       {{
-        isEditMode
-          ? "ACTUALIZAR CREDENCIALES Y PERMISOS DE ACCESO."
-          : "DILIGENCIAR FORMULARIO DE ALTA DE NUEVO USUARIO."
+      isEditMode
+      ? "ACTUALIZAR CREDENCIALES Y PERMISOS DE ACCESO."
+      : "DILIGENCIAR FORMULARIO DE ALTA DE NUEVO USUARIO."
       }}
     </p>
   </div>
@@ -33,72 +23,42 @@
   <!-- Estado de Carga -->
   @if (initialLoading) {
   <div
-    class="flex flex-col justify-center items-center py-32 border border-dashed border-[var(--border-light)] rounded-sm"
-  >
-    <div
-      class="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-sky-500 mb-4"
-    ></div>
-    <span
-      class="text-[var(--text-secondary)] text-sm animate-pulse tracking-widest uppercase"
-      >Cargando Datos...</span
-    >
+    class="flex flex-col justify-center items-center py-32 border border-dashed border-[var(--border-light)] rounded-sm">
+    <div class="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-sky-500 mb-4"></div>
+    <span class="text-[var(--text-secondary)] text-sm animate-pulse tracking-widest uppercase">Cargando Datos...</span>
   </div>
   } @else {
 
   <!-- Tarjeta del Formulario -->
   <div
-    class="max-w-3xl mx-auto bg-[var(--bg-dark)] border border-[var(--border-light)] relative shadow-2xl shadow-black/5"
-  >
+    class="max-w-3xl mx-auto bg-[var(--bg-dark)] border border-[var(--border-light)] relative shadow-2xl shadow-black/5">
     <!-- Decoración Técnica (Esquinas) -->
-    <div
-      class="absolute top-0 left-0 w-3 h-3 border-t border-l border-sky-500"
-    ></div>
-    <div
-      class="absolute top-0 right-0 w-3 h-3 border-t border-r border-sky-500"
-    ></div>
-    <div
-      class="absolute bottom-0 left-0 w-3 h-3 border-b border-l border-sky-500"
-    ></div>
-    <div
-      class="absolute bottom-0 right-0 w-3 h-3 border-b border-r border-sky-500"
-    ></div>
+    <div class="absolute top-0 left-0 w-3 h-3 border-t border-l border-sky-500"></div>
+    <div class="absolute top-0 right-0 w-3 h-3 border-t border-r border-sky-500"></div>
+    <div class="absolute bottom-0 left-0 w-3 h-3 border-b border-l border-sky-500"></div>
+    <div class="absolute bottom-0 right-0 w-3 h-3 border-b border-r border-sky-500"></div>
 
-    <form
-      [formGroup]="userForm"
-      (ngSubmit)="onSubmit()"
-      class="p-6 md:p-10 space-y-8"
-      [class.opacity-50]="isSaving"
-      [class.pointer-events-none]="isSaving"
-    >
+    <form [formGroup]="userForm" (ngSubmit)="onSubmit()" class="p-6 md:p-10 space-y-8" [class.opacity-50]="isSaving"
+      [class.pointer-events-none]="isSaving">
       <!-- SECCIÓN 1: DATOS PERSONALES -->
       <div class="space-y-6">
         <h3
-          class="flex items-center gap-2 text-sm font-bold text-sky-500 uppercase tracking-widest border-b border-sky-500/50 pb-2 mb-6"
-        >
+          class="flex items-center gap-2 text-sm font-bold text-sky-500 uppercase tracking-widest border-b border-sky-500/50 pb-2 mb-6">
           <i class="pi pi-id-card"></i> 01 // Información Personal
         </h3>
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
           <!-- Input: Nombre -->
           <div class="space-y-2">
-            <label
-              for="name"
-              class="block text-xs font-bold text-[var(--text-secondary)] uppercase tracking-widest"
-            >
+            <label for="name" class="block text-xs font-bold text-[var(--text-secondary)] uppercase tracking-widest">
               Nombre Completo <span class="text-red-500">*</span>
             </label>
-            <input
-              id="name"
-              type="text"
-              formControlName="name"
+            <input id="name" type="text" formControlName="name"
               class="w-full bg-[var(--bg-dark)] border border-[var(--border-light)] rounded-sm px-4 py-3 text-[var(--text-primary)] placeholder-[var(--text-secondary)] focus:outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500 transition-all text-base"
-              placeholder="INGRESE NOMBRE..."
-            />
+              placeholder="INGRESE NOMBRE..." />
             @if (userForm.get('name')?.invalid && userForm.get('name')?.touched)
             {
-            <p
-              class="text-xs text-red-400 uppercase mt-1 flex items-center gap-1"
-            >
+            <p class="text-xs text-red-400 uppercase mt-1 flex items-center gap-1">
               <i class="pi pi-exclamation-circle text-xs"></i> Requerido (mín. 3
               caracteres)
             </p>
@@ -107,25 +67,16 @@
 
           <!-- Input: Email -->
           <div class="space-y-2">
-            <label
-              for="email"
-              class="block text-xs font-bold text-[var(--text-secondary)] uppercase tracking-widest"
-            >
+            <label for="email" class="block text-xs font-bold text-[var(--text-secondary)] uppercase tracking-widest">
               Correo Electrónico <span class="text-red-500">*</span>
             </label>
-            <input
-              id="email"
-              type="email"
-              formControlName="email"
+            <input id="email" type="email" formControlName="email"
               class="w-full bg-[var(--bg-dark)] border border-[var(--border-light)] rounded-sm px-4 py-3 text-[var(--text-primary)] placeholder-[var(--text-secondary)] focus:outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500 transition-all text-base"
-              placeholder="USUARIO@DOMINIO.COM"
-            />
+              placeholder="USUARIO@DOMINIO.COM" />
             @if (userForm.get('email')?.invalid &&
             userForm.get('email')?.touched) {
-            <p
-              class="text-[10px] text-red-400 uppercase mt-1 flex items-center gap-1"
-            >
-              <i class="pi pi-exclamation-circle text-[10px]"></i>
+            <p class="text-xs text-red-400 uppercase mt-1 flex items-center gap-1">
+              <i class="pi pi-exclamation-circle text-xs"></i>
               @if (userForm.get('email')?.hasError('required')) { Requerido }
               @else { Formato inválido }
             </p>
@@ -135,37 +86,23 @@
 
         <!-- Input: Teléfono -->
         <div class="space-y-2">
-          <label
-            for="phoneNumber"
-            class="block text-xs font-bold text-[var(--text-secondary)] uppercase tracking-widest"
-          >
+          <label for="phoneNumber"
+            class="block text-xs font-bold text-[var(--text-secondary)] uppercase tracking-widest">
             Teléfono Móvil <span class="text-red-500">*</span>
           </label>
           <!-- Wrapper oscuro para ngx-intl-tel-input -->
           <div class="phone-input-wrapper-dark">
-            <ngx-intl-tel-input
-              [cssClass]="
+            <ngx-intl-tel-input [cssClass]="
                 'w-full bg-[var(--bg-dark)] border border-[var(--border-light)] rounded-sm text-[var(--text-primary)] placeholder-[var(--text-secondary)] focus:border-sky-500 h-[46px] text-base !w-full'
-              "
-              [preferredCountries]="preferredCountries"
-              [enableAutoCountrySelect]="true"
-              [enablePlaceholder]="true"
-              [searchCountryPlaceholder]="'Buscar país...'"
-              [selectedCountryISO]="CountryISO.Venezuela"
-              [phoneValidation]="true"
-              [separateDialCode]="true"
-              [numberFormat]="phoneFormat"
-              name="phoneNumber"
-              formControlName="phoneNumber"
-              id="phoneNumber"
-            ></ngx-intl-tel-input>
+              " [preferredCountries]="preferredCountries" [enableAutoCountrySelect]="true" [enablePlaceholder]="true"
+              [searchCountryPlaceholder]="'Buscar país...'" [selectedCountryISO]="CountryISO.Venezuela"
+              [phoneValidation]="true" [separateDialCode]="true" [numberFormat]="phoneFormat" name="phoneNumber"
+              formControlName="phoneNumber" id="phoneNumber"></ngx-intl-tel-input>
           </div>
 
           @if (phoneNumber?.invalid && phoneNumber?.touched) {
-          <p
-            class="text-[10px] text-red-400 uppercase mt-1 flex items-center gap-1"
-          >
-            <i class="pi pi-exclamation-circle text-[10px]"></i>
+          <p class="text-xs text-red-400 uppercase mt-1 flex items-center gap-1">
+            <i class="pi pi-exclamation-circle text-xs"></i>
             @if (phoneNumber?.errors?.['required']) { Requerido } @else { Número
             inválido para el país seleccionado }
           </p>
@@ -176,14 +113,11 @@
       <!-- SECCIÓN 2: ROLES -->
       <div class="space-y-6">
         <h3
-          class="flex items-center gap-2 text-sm font-bold text-violet-500 uppercase tracking-widest border-b border-violet-500/50 pb-2 mb-6 mt-8"
-        >
+          class="flex items-center gap-2 text-sm font-bold text-violet-500 uppercase tracking-widest border-b border-violet-500/50 pb-2 mb-6 mt-8">
           <i class="pi pi-shield"></i> 02 // Permisos de Sistema
         </h3>
 
-        <div
-          class="bg-[var(--bg-panel)] border border-[var(--border-light)] p-5 rounded-sm space-y-4"
-        >
+        <div class="bg-[var(--bg-panel)] border border-[var(--border-light)] p-5 rounded-sm space-y-4">
           <!-- Role: Admin (IT) -->
           <!-- <div
             class="flex items-start gap-4 p-3 border border-[var(--border-light)] bg-[var(--bg-dark)] rounded-sm transition-colors opacity-50 cursor-not-allowed"
@@ -207,23 +141,14 @@
             class="flex items-start gap-4 p-3 border border-[var(--border-light)] bg-[var(--bg-dark)] rounded-sm hover:border-sky-500/30 transition-colors"
             [class.border-sky-500]="
               userForm.get('role')?.value === UserRole.MANAGER
-            "
-          >
+            ">
             <div class="flex items-center h-5">
-              <input
-                id="isManager"
-                type="radio"
-                [value]="UserRole.MANAGER"
-                formControlName="role"
-                class="w-4 h-4 bg-[var(--bg-dark)] border-[var(--border-light)] rounded-full text-sky-500 focus:ring-offset-slate-950 focus:ring-sky-500 cursor-pointer"
-              />
+              <input id="isManager" type="radio" [value]="UserRole.MANAGER" formControlName="role"
+                class="w-4 h-4 bg-[var(--bg-dark)] border-[var(--border-light)] rounded-full text-sky-500 focus:ring-offset-slate-950 focus:ring-sky-500 cursor-pointer" />
             </div>
             <div>
-              <label
-                for="isManager"
-                class="text-sm font-bold text-[var(--text-heading)] uppercase tracking-wide cursor-pointer hover:text-sky-400 transition-colors"
-                >Gerente</label
-              >
+              <label for="isManager"
+                class="text-sm font-bold text-[var(--text-heading)] uppercase tracking-wide cursor-pointer hover:text-sky-400 transition-colors">Gerente</label>
               <p class="text-[var(--text-secondary)] text-xs mt-0.5">
                 Gestión de propiedades, citas y agentes.
               </p>
@@ -235,23 +160,14 @@
             class="flex items-start gap-4 p-3 border border-[var(--border-light)] bg-[var(--bg-dark)] rounded-sm hover:border-purple-500/30 transition-colors"
             [class.border-purple-500]="
               userForm.get('role')?.value === UserRole.AGENT
-            "
-          >
+            ">
             <div class="flex items-center h-5">
-              <input
-                id="isAgent"
-                type="radio"
-                [value]="UserRole.AGENT"
-                formControlName="role"
-                class="w-4 h-4 bg-[var(--bg-dark)] border-[var(--border-light)] rounded-full text-purple-500 focus:ring-offset-slate-950 focus:ring-purple-500 cursor-pointer"
-              />
+              <input id="isAgent" type="radio" [value]="UserRole.AGENT" formControlName="role"
+                class="w-4 h-4 bg-[var(--bg-dark)] border-[var(--border-light)] rounded-full text-purple-500 focus:ring-offset-slate-950 focus:ring-purple-500 cursor-pointer" />
             </div>
             <div>
-              <label
-                for="isAgent"
-                class="text-sm font-bold text-[var(--text-heading)] uppercase tracking-wide cursor-pointer hover:text-purple-400 transition-colors"
-                >Vendedor</label
-              >
+              <label for="isAgent"
+                class="text-sm font-bold text-[var(--text-heading)] uppercase tracking-wide cursor-pointer hover:text-purple-400 transition-colors">Vendedor</label>
               <p class="text-[var(--text-secondary)] text-xs mt-0.5">
                 Gestiona sus propiedades y citas asignadas.
               </p>
@@ -263,23 +179,14 @@
             class="flex items-start gap-4 p-3 border border-[var(--border-light)] bg-[var(--bg-dark)] rounded-sm hover:border-green-500/30 transition-colors"
             [class.border-green-500]="
               userForm.get('role')?.value === UserRole.USER
-            "
-          >
+            ">
             <div class="flex items-center h-5">
-              <input
-                id="isUser"
-                type="radio"
-                [value]="UserRole.USER"
-                formControlName="role"
-                class="w-4 h-4 bg-[var(--bg-dark)] border-[var(--border-light)] rounded-full text-green-500 focus:ring-offset-slate-950 focus:ring-green-500 cursor-pointer"
-              />
+              <input id="isUser" type="radio" [value]="UserRole.USER" formControlName="role"
+                class="w-4 h-4 bg-[var(--bg-dark)] border-[var(--border-light)] rounded-full text-green-500 focus:ring-offset-slate-950 focus:ring-green-500 cursor-pointer" />
             </div>
             <div>
-              <label
-                for="isUser"
-                class="text-sm font-bold text-[var(--text-heading)] uppercase tracking-wide cursor-pointer hover:text-green-400 transition-colors"
-                >Cliente</label
-              >
+              <label for="isUser"
+                class="text-sm font-bold text-[var(--text-heading)] uppercase tracking-wide cursor-pointer hover:text-green-400 transition-colors">Cliente</label>
               <p class="text-[var(--text-secondary)] text-xs mt-0.5">
                 Acceso básico para buscar propiedades y agendar citas.
               </p>
@@ -292,8 +199,7 @@
       @if (!isEditMode) {
       <div class="space-y-6">
         <h3
-          class="flex items-center gap-2 text-sm font-bold text-amber-500 uppercase tracking-widest border-b border-amber-500/50 pb-2 mb-6 mt-8"
-        >
+          class="flex items-center gap-2 text-sm font-bold text-amber-500 uppercase tracking-widest border-b border-amber-500/50 pb-2 mb-6 mt-8">
           <i class="pi pi-lock"></i> 03 // Credenciales de Acceso
         </h3>
 
@@ -307,23 +213,16 @@
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div class="space-y-2">
-            <label
-              for="password"
-              class="block text-xs font-bold text-[var(--text-secondary)] uppercase tracking-widest"
-            >
+            <label for="password"
+              class="block text-xs font-bold text-[var(--text-secondary)] uppercase tracking-widest">
               Contraseña <span class="text-red-500">*</span>
             </label>
-            <input
-              id="password"
-              type="password"
-              formControlName="password"
-              autocomplete="new-password"
+            <input id="password" type="password" formControlName="password" autocomplete="new-password"
               class="w-full bg-[var(--bg-dark)] border border-[var(--border-light)] rounded-sm px-4 py-3 text-[var(--text-primary)] placeholder-[var(--text-secondary)] focus:outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500 transition-all text-base"
-              placeholder="••••••••"
-            />
+              placeholder="••••••••" />
             @if (userForm.get('password')?.invalid &&
             userForm.get('password')?.touched) {
-            <p class="text-[10px] text-red-400 uppercase mt-1">
+            <p class="text-xs text-red-400 uppercase mt-1">
               @if (userForm.get('password')?.hasError('required')) { Requerido }
               @if (userForm.get('password')?.hasError('minlength')) { Mínimo 6
               caracteres }
@@ -332,25 +231,18 @@
           </div>
 
           <div class="space-y-2">
-            <label
-              for="confirmPassword"
-              class="block text-xs font-bold text-[var(--text-secondary)] uppercase tracking-widest"
-            >
+            <label for="confirmPassword"
+              class="block text-xs font-bold text-[var(--text-secondary)] uppercase tracking-widest">
               Confirmar Contraseña <span class="text-red-500">*</span>
             </label>
-            <input
-              id="confirmPassword"
-              type="password"
-              formControlName="confirmPassword"
-              autocomplete="new-password"
+            <input id="confirmPassword" type="password" formControlName="confirmPassword" autocomplete="new-password"
               class="w-full bg-[var(--bg-dark)] border border-[var(--border-light)] rounded-sm px-4 py-3 text-[var(--text-primary)] placeholder-[var(--text-secondary)] focus:outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500 transition-all text-base"
-              placeholder="••••••••"
-            />
+              placeholder="••••••••" />
             @if (userForm.get('confirmPassword')?.touched) { @if
             (userForm.get('confirmPassword')?.hasError('required')) {
-            <p class="text-[10px] text-red-400 uppercase mt-1">Requerido</p>
+            <p class="text-xs text-red-400 uppercase mt-1">Requerido</p>
             } @else if (userForm.get('confirmPassword')?.hasError('mismatch')) {
-            <p class="text-[10px] text-red-400 uppercase mt-1">
+            <p class="text-xs text-red-400 uppercase mt-1">
               Las contraseñas no coinciden
             </p>
             } }
@@ -359,8 +251,7 @@
       </div>
       } @else {
       <div
-        class="mt-8 p-4 border border-dashed border-[var(--border-light)] rounded-sm flex items-center justify-center gap-2 text-[var(--text-secondary)]"
-      >
+        class="mt-8 p-4 border border-dashed border-[var(--border-light)] rounded-sm flex items-center justify-center gap-2 text-[var(--text-secondary)]">
         <i class="pi pi-lock-open text-xl opacity-50"></i>
         <p class="text-xs uppercase">
           Gestión de contraseñas deshabilitada en modo edición
@@ -369,23 +260,14 @@
       }
 
       <!-- FOOTER: ACCIONES -->
-      <div
-        class="pt-8 border-t border-[var(--border-light)] flex flex-col-reverse sm:flex-row sm:justify-end gap-3"
-      >
-        <button
-          type="button"
-          (click)="cancel()"
-          [disabled]="isSaving"
-          class="px-6 py-3 text-xs font-bold uppercase tracking-widest text-[var(--text-secondary)] hover:text-[var(--text-heading)] border border-transparent hover:border-[var(--border-light)] rounded-sm transition-all"
-        >
+      <div class="pt-8 border-t border-[var(--border-light)] flex flex-col-reverse sm:flex-row sm:justify-end gap-3">
+        <button type="button" (click)="cancel()" [disabled]="isSaving"
+          class="px-6 py-3 text-xs font-bold uppercase tracking-widest text-[var(--text-secondary)] hover:text-[var(--text-heading)] border border-transparent hover:border-[var(--border-light)] rounded-sm transition-all">
           Cancelar
         </button>
 
-        <button
-          type="submit"
-          [disabled]="userForm.invalid || isSaving || userForm.pristine"
-          class="px-8 py-3 bg-sky-600 hover:bg-sky-500 text-white text-xs font-bold uppercase tracking-widest rounded-sm shadow-[0_0_15px_rgba(2,132,199,0.3)] hover:shadow-[0_0_20px_rgba(2,132,199,0.5)] disabled:opacity-50 disabled:shadow-none disabled:cursor-not-allowed transition-all flex items-center justify-center gap-2"
-        >
+        <button type="submit" [disabled]="userForm.invalid || isSaving || userForm.pristine"
+          class="px-8 py-3 bg-sky-600 hover:bg-sky-500 text-white text-xs font-bold uppercase tracking-widest rounded-sm shadow-[0_0_15px_rgba(2,132,199,0.3)] hover:shadow-[0_0_20px_rgba(2,132,199,0.5)] disabled:opacity-50 disabled:shadow-none disabled:cursor-not-allowed transition-all flex items-center justify-center gap-2">
           @if (isSaving) {
           <i class="pi pi-spin pi-spinner"></i>
           <span>Procesando...</span>

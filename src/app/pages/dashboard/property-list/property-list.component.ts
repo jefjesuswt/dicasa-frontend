@@ -29,6 +29,15 @@ import { ToggleSwitch } from "primeng/toggleswitch";
     ToggleSwitch,
   ],
   templateUrl: "./property-list.component.html",
+  styles: [`
+    .transition-opacity { transition: opacity 0.3s ease-in-out; }
+    
+    @keyframes loading-bar {
+      0% { transform: translateX(-100%) scaleX(0.2); }
+      50% { transform: translateX(0%) scaleX(0.5); }
+      100% { transform: translateX(100%) scaleX(0.2); }
+    }
+  `]
 })
 export class PropertyListComponent implements OnInit {
   private propertyService = inject(PropertyService);
@@ -39,9 +48,11 @@ export class PropertyListComponent implements OnInit {
 
   public properties: Property[] = [];
   public loading = true;
+  public isInitialLoad = true;
   public error: string | null = null;
   public showDeleted = false;
   public showAdvancedFilters = false; // Control for collapsible filters
+  public activeTab: 'all' | 'published' | 'closed' = 'all';
 
   // filter
   searchQuery: string = "";
@@ -54,7 +65,6 @@ export class PropertyListComponent implements OnInit {
   maxPrice: number | null = null;
   selectedSort: string = "createdAt";
   selectedOrder: 'asc' | 'desc' = "desc";
-  selectedBedrooms: number | null = null;
 
   // Sort options
   sortOptions = [
@@ -62,7 +72,8 @@ export class PropertyListComponent implements OnInit {
     { label: "Más Antiguos", value: "createdAt", order: "asc" },
     { label: "Precio: Mayor a Menor", value: "price", order: "desc" },
     { label: "Precio: Menor a Mayor", value: "price", order: "asc" },
-    { label: "Habitaciones", value: "bedrooms", order: "desc" },
+    { label: "Agente (A-Z)", value: "agent", order: "asc" },
+    { label: "Agente (Z-A)", value: "agent", order: "desc" },
   ];
 
   // Status options for dropdown
@@ -102,14 +113,10 @@ export class PropertyListComponent implements OnInit {
       limit: this.rowsPerPage,
       search: this.searchQuery || undefined,
       type: this.selectedType === "all" ? undefined : this.selectedType,
-      status:
-        this.currentStatus === "all"
-          ? undefined
-          : (this.currentStatus as PropertyStatus),
+      status: this.getStatusesForTab(),
       includeDeleted: this.showDeleted ? true : undefined,
       minPrice: this.minPrice || undefined,
       maxPrice: this.maxPrice || undefined,
-      bedrooms: this.selectedBedrooms || undefined,
       sortBy: this.selectedSort,
       sortOrder: this.selectedOrder,
     };
@@ -118,7 +125,12 @@ export class PropertyListComponent implements OnInit {
     this.error = null;
     this.propertyService
       .getProperties(params)
-      .pipe(finalize(() => (this.loading = false)))
+      .pipe(
+        finalize(() => {
+          this.loading = false;
+          this.isInitialLoad = false;
+        })
+      )
       .subscribe({
         next: (response: PaginatedProperties) => {
           this.properties = response.data;
@@ -134,11 +146,51 @@ export class PropertyListComponent implements OnInit {
     this.searchQuery = params.query;
     this.selectedType = params.selectedValue;
     this.currentStatus = params.status || 'all';
+
+    // Si se busca un estatus específico, reseteamos el tab a 'all' para no entrar en conflicto
+    if (this.currentStatus !== 'all') {
+      this.activeTab = 'all';
+    }
+
     this.minPrice = params.minPrice ?? null;
     this.maxPrice = params.maxPrice ?? null;
-    this.selectedBedrooms = params.bedrooms ?? null;
     this.selectedSort = params.sortBy || 'createdAt';
     this.selectedOrder = params.sortOrder || 'desc';
+    this.currentPage = 1;
+    this.loadProperties();
+  }
+
+  setTab(tab: 'all' | 'published' | 'closed'): void {
+    this.activeTab = tab;
+    this.currentStatus = 'all'; // Reseteamos filtro de estatus individual al cambiar de tab
+    this.currentPage = 1;
+    this.loadProperties();
+  }
+
+  private getStatusesForTab(): PropertyStatus | PropertyStatus[] | undefined {
+    // Si hay un estatus específico seleccionado en el SearchBar, ese manda
+    if (this.currentStatus !== 'all') {
+      return this.currentStatus as PropertyStatus;
+    }
+
+    // Si no, usamos la lógica de tabs
+    switch (this.activeTab) {
+      case 'published':
+        return ['sale', 'rent'];
+      case 'closed':
+        return ['sold', 'rented'];
+      default:
+        return undefined;
+    }
+  }
+
+  toggleSort(column: string): void {
+    if (this.selectedSort === column) {
+      this.selectedOrder = this.selectedOrder === "asc" ? "desc" : "asc";
+    } else {
+      this.selectedSort = column;
+      this.selectedOrder = "asc";
+    }
     this.currentPage = 1;
     this.loadProperties();
   }
@@ -160,7 +212,6 @@ export class PropertyListComponent implements OnInit {
     this.currentStatus = "all";
     this.minPrice = null;
     this.maxPrice = null;
-    this.selectedBedrooms = null;
     this.selectedSort = "createdAt";
     this.selectedOrder = "desc";
     this.currentPage = 1;
@@ -195,7 +246,6 @@ export class PropertyListComponent implements OnInit {
     let count = 0;
     if (this.minPrice) count++;
     if (this.maxPrice) count++;
-    if (this.selectedBedrooms) count++;
     if (this.currentStatus !== 'all') count++;
     return count;
   }
@@ -203,7 +253,6 @@ export class PropertyListComponent implements OnInit {
   clearAdvancedFilters(): void {
     this.minPrice = null;
     this.maxPrice = null;
-    this.selectedBedrooms = null;
     this.currentStatus = 'all';
     this.selectedSort = 'createdAt';
     this.selectedOrder = 'desc';

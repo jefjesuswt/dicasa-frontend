@@ -10,7 +10,7 @@
   <!-- Nombre -->
   <div class="group">
     <label for="name"
-      class="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2 group-focus-within:text-sky-500 transition-colors">
+      class="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-2 group-focus-within:text-sky-500 transition-colors">
       Nombre Completo
     </label>
     <div class="relative">
@@ -23,7 +23,7 @@
       }
     </div>
     @if (name?.invalid && (name?.dirty || name?.touched)) {
-    <span class="text-[10px] text-red-500 mt-1 block tracking-wide">
+    <span class="text-xs text-red-500 mt-1 block tracking-wide">
       * ESTE CAMPO ES REQUERIDO
     </span>
     }
@@ -32,7 +32,7 @@
   <!-- Email -->
   <div class="group">
     <label for="email"
-      class="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2 group-focus-within:text-sky-500 transition-colors">
+      class="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-2 group-focus-within:text-sky-500 transition-colors">
       Correo Electrónico
     </label>
     <div class="relative">
@@ -46,7 +46,7 @@
       }
     </div>
     @if (email?.invalid && (email?.dirty || email?.touched)) {
-    <span class="text-[10px] text-red-500 mt-1 block tracking-wide">
+    <span class="text-xs text-red-500 mt-1 block tracking-wide">
       * FORMATO DE CORREO INVÁLIDO
     </span>
     }
@@ -55,7 +55,7 @@
   <!-- Teléfono -->
   <div class="group">
     <label for="phone"
-      class="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2 group-focus-within:text-sky-500 transition-colors">
+      class="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-2 group-focus-within:text-sky-500 transition-colors">
       Teléfono de Contacto
     </label>
     <!--
@@ -75,7 +75,7 @@
     </div>
 
     @if (phoneNumber?.invalid && phoneNumber?.touched) {
-    <span class="text-[10px] text-red-500 mt-1 block tracking-wide">
+    <span class="text-xs text-red-500 mt-1 block tracking-wide">
       * NÚMERO DE TELÉFONO INVÁLIDO
     </span>
     }
@@ -85,10 +85,10 @@
   <div class="group">
     <div class="flex justify-between items-end mb-2">
       <label
-        class="block text-[10px] font-bold text-slate-400 uppercase tracking-widest group-focus-within:text-sky-500 transition-colors">
+        class="block text-xs font-bold text-slate-400 uppercase tracking-widest group-focus-within:text-sky-500 transition-colors">
         Fecha y Hora
       </label>
-      <span class="text-[9px] text-slate-500 border border-white/10 px-2 py-0.5 rounded">
+      <span class="text-xs text-slate-500 border border-white/10 px-2 py-0.5 rounded">
         LUN-VIE | 08:00 - 18:00
       </span>
     </div>
@@ -115,7 +115,7 @@
 
     @if (appointmentDate?.invalid && (appointmentDate?.dirty ||
     appointmentDate?.touched)) {
-    <span class="text-[10px] text-red-500 mt-1 block tracking-wide">
+    <span class="text-xs text-red-500 mt-1 block tracking-wide">
       @if (appointmentDate?.errors?.['timeRange']) { * HORARIO FUERA DE OFICINA
       } @else { * FECHA REQUERIDA }
     </span>
@@ -125,7 +125,7 @@
   <!-- Mensaje -->
   <div class="group">
     <label for="message"
-      class="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2 group-focus-within:text-sky-500 transition-colors">
+      class="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-2 group-focus-within:text-sky-500 transition-colors">
       Mensaje Adicional
     </label>
     <textarea id="message" formControlName="message" rows="3"
@@ -134,7 +134,7 @@
         message?.invalid && (message?.dirty || message?.touched)
       "></textarea>
     @if (message?.invalid && (message?.dirty || message?.touched)) {
-    <span class="text-[10px] text-red-500 mt-1 block tracking-wide">
+    <span class="text-xs text-red-500 mt-1 block tracking-wide">
       * MÍNIMO 10 CARACTERES
     </span>
     }
@@ -142,7 +142,7 @@
 
   <!-- Botón Submit -->
   <button type="submit" [disabled]="isSubmitting() || appointmentForm.invalid"
-    class="w-full py-4 mt-2 bg-sky-500 hover:bg-sky-400 text-white font-bold text-xs uppercase tracking-[0.2em] transition-all duration-300 shadow-[0_0_20px_rgba(14,165,233,0.3)] hover:shadow-[0_0_30px_rgba(56,189,248,0.5)] disabled:opacity-50 disabled:cursor-not-allowed disabled:shadow-none disabled:bg-[var(--bg-panel)] disabled:text-[var(--text-secondary)] flex justify-center items-center gap-3">
+    class="w-full py-4 mt-2 bg-sky-500 hover:bg-sky-400 text-white font-bold text-sm uppercase tracking-[0.2em] transition-all duration-300 shadow-[0_0_20px_rgba(14,165,233,0.3)] hover:shadow-[0_0_30px_rgba(56,189,248,0.5)] disabled:opacity-50 disabled:cursor-not-allowed disabled:shadow-none disabled:bg-[var(--bg-panel)] disabled:text-[var(--text-secondary)] flex justify-center items-center gap-3">
     @if (isSubmitting()) {
     <i class="pi pi-spin pi-spinner"></i>
     <span>Procesando...</span>
@@ -153,7 +153,8 @@
   </button>
 </form>
 } @else {
-<div class="flex flex-col items-center justify-center p-8 text-center bg-[var(--bg-panel)] border border-[var(--border-light)]">
+<div
+  class="flex flex-col items-center justify-center p-8 text-center bg-[var(--bg-panel)] border border-[var(--border-light)]">
   <div class="w-12 h-12 mb-4 rounded-full bg-slate-800 flex items-center justify-center">
     <i class="pi pi-lock text-slate-400 text-xl"></i>
   </div>
@@ -161,7 +162,7 @@
     Debes iniciar sesión para agendar una visita a esta propiedad.
   </p>
   <button (click)="goToLogin()"
-    class="px-6 py-3 bg-[var(--bg-dark)] hover:bg-sky-500 hover:text-white border border-[var(--border-light)] text-[var(--text-heading)] text-[10px] font-bold uppercase tracking-widest transition-all duration-300">
+    class="px-6 py-3 bg-[var(--bg-dark)] hover:bg-sky-500 hover:text-white border border-[var(--border-light)] text-[var(--text-heading)] text-xs font-bold uppercase tracking-widest transition-all duration-300">
     Iniciar Sesión
   </button>
 </div>

@@ -1,26 +1,20 @@
 <div class="p-4 md:p-6 bg-[var(--bg-dark)] border-b border-[var(--border-light)]">
-  <shared-search-bar
-    (search)="onUserSearch($event)"
-    [dropdownOptions]="userRoleOptions"
-    placeholder="Buscar ID, nombre, email..."
-    label="Directorio de Usuarios"
-    dropdownLabel="Filtrar Rol"
-    buttonText="BUSCAR"
-  >
+  <shared-search-bar (search)="onUserSearch($event)" [dropdownOptions]="userRoleOptions"
+    placeholder="Buscar ID, nombre, email..." label="Directorio de Usuarios" dropdownLabel="Filtrar Rol"
+    buttonText="BUSCAR" [showAdvancedFilters]="true" [sortOptions]="sortOptions" [showPriceFilters]="false"
+    [currentSortBy]="sortBy" [currentSortOrder]="sortOrder">
   </shared-search-bar>
 </div>
 
 <div
-  class="px-4 md:px-6 py-6 bg-[var(--bg-dark)] border-b border-[var(--border-light)] flex flex-col md:flex-row md:items-center justify-between gap-4"
->
+  class="px-4 md:px-6 py-6 bg-[var(--bg-dark)] border-b border-[var(--border-light)] flex flex-col md:flex-row md:items-center justify-between gap-4">
   <div class="flex items-center gap-3">
     <h2 class="text-xl font-bold text-[var(--text-heading)] uppercase tracking-tight">
       Gestión de Usuarios
     </h2>
-    @if (!loading) {
+    @if ((!isInitialLoad || !loading) && !error) {
     <span
-      class="px-2 py-0.5 bg-[var(--bg-panel)] rounded text-xs text-[var(--text-secondary)] border border-[var(--border-light)]"
-    >
+      class="px-2 py-0.5 bg-[var(--bg-panel)] rounded text-sm text-[var(--text-secondary)] border border-[var(--border-light)]">
       {{ totalUsers }} REGISTROS
     </span>
     }
@@ -28,37 +22,31 @@
 
   <div class="flex items-center justify-between md:justify-end gap-6">
     <div class="flex items-center gap-3">
-      <p-toggleswitch
-        [(ngModel)]="showInactive"
-        (onChange)="onInactiveToggleChange()"
-      ></p-toggleswitch>
-      <label
-        class="text-xs font-bold text-slate-500 uppercase tracking-wider cursor-pointer"
-      >
+      <p-toggleswitch [(ngModel)]="showInactive" (onChange)="onInactiveToggleChange()"></p-toggleswitch>
+      <label class="text-sm text-[var(--text-secondary)] uppercase tracking-wider cursor-pointer">
         Mostrar Inactivos
       </label>
     </div>
 
     <button
       class="px-5 py-2.5 bg-sky-600 hover:bg-sky-500 text-white text-xs font-bold uppercase tracking-widest rounded-sm transition-all shadow-[0_0_15px_rgba(2,132,199,0.3)] hover:shadow-[0_0_20px_rgba(2,132,199,0.5)] flex items-center gap-2"
-      (click)="addUser()"
-    >
+      (click)="addUser()">
       <i class="pi pi-plus text-sm"></i>
       <span class="hidden md:inline">Nuevo Usuario</span>
     </button>
   </div>
 </div>
 
-@if (loading) {
+<!-- LOADING STATE (Initial) -->
+@if (loading && isInitialLoad) {
 <div class="flex flex-col justify-center items-center py-24 bg-[var(--bg-dark)]">
-  <div
-    class="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-sky-500 mb-4"
-  ></div>
-  <span class="text-slate-500 text-sm animate-pulse"
-    >CARGANDO DATOS...</span
-  >
+  <div class="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-sky-500 mb-4"></div>
+  <span class="text-[var(--text-secondary)] text-sm animate-pulse tracking-widest uppercase">CARGANDO DATOS...</span>
 </div>
-} @if (error && !loading) {
+}
+
+<!-- ERROR -->
+@if (error && !loading) {
 <div class="m-6 p-6 bg-red-500/5 border border-red-500/20 rounded-sm">
   <div class="flex items-start gap-3">
     <i class="pi pi-exclamation-triangle text-red-400 mt-1"></i>
@@ -67,49 +55,87 @@
         Error de Conexión
       </h3>
       <p class="text-red-400/70 text-sm mb-4">{{ error }}</p>
-      <button
-        (click)="loadUsers()"
-        class="text-xs font-bold text-white bg-red-500/20 px-4 py-2 hover:bg-red-500/30 transition-colors uppercase tracking-wider"
-      >
+      <button (click)="loadUsers()"
+        class="text-xs font-bold text-white bg-red-500/20 px-4 py-2 hover:bg-red-500/30 transition-colors uppercase tracking-wider">
         Reintentar
       </button>
     </div>
   </div>
 </div>
-} @if (!loading && !error && users.length > 0) {
+}
 
-<div class="hidden md:block overflow-x-auto bg-[var(--bg-dark)] min-h-[400px]">
-  <table class="min-w-full divide-y divide-[var(--border-light)] text-left">
+<!-- CONTENT -->
+@if ((!isInitialLoad || !loading) && !error && users.length > 0) {
+
+<div class="hidden md:block overflow-x-auto bg-[var(--bg-dark)] min-h-[400px] relative">
+  <!-- Seamless Loading Bar -->
+  @if (loading) {
+  <div class="absolute top-0 left-0 w-full h-0.5 bg-transparent overflow-hidden z-10">
+    <div class="w-full h-full bg-sky-500 animate-[loading-bar_1.5s_infinite_linear] origin-left"></div>
+  </div>
+  }
+
+  <table class="min-w-full divide-y divide-[var(--border-light)] text-left transition-opacity duration-300"
+    [class.opacity-40]="loading" [class.pointer-events-none]="loading">
     <thead class="bg-[var(--bg-panel)]">
       <tr>
-        <th
-          scope="col"
-          class="px-6 py-4 text-xs font-bold text-[var(--text-secondary)] uppercase tracking-wider"
-        >
-          Usuario
+        <th scope="col" (click)="toggleSort('_id')"
+          class="px-6 py-4 text-sm font-bold text-[var(--text-secondary)] uppercase tracking-wider cursor-pointer hover:text-[var(--text-heading)] transition-colors group/th">
+          <div class="flex items-center gap-2">
+            ID
+            <i class="pi text-xs" [ngClass]="{
+              'pi-sort-alt opacity-20 group-hover/th:opacity-100': sortBy !== '_id',
+              'pi-sort-amount-up text-sky-500': sortBy === '_id' && sortOrder === 'asc',
+              'pi-sort-amount-down text-sky-500': sortBy === '_id' && sortOrder === 'desc'
+            }"></i>
+          </div>
         </th>
-        <th
-          scope="col"
-          class="px-6 py-4 text-xs font-bold text-[var(--text-secondary)] uppercase tracking-wider"
-        >
-          Contacto
+        <th scope="col" (click)="toggleSort('name')"
+          class="px-6 py-4 text-sm font-bold text-[var(--text-secondary)] uppercase tracking-wider cursor-pointer hover:text-[var(--text-heading)] transition-colors group/th">
+          <div class="flex items-center gap-2">
+            Usuario
+            <i class="pi text-xs" [ngClass]="{
+              'pi-sort-alt opacity-20 group-hover/th:opacity-100': sortBy !== 'name',
+              'pi-sort-amount-up text-sky-500': sortBy === 'name' && sortOrder === 'asc',
+              'pi-sort-amount-down text-sky-500': sortBy === 'name' && sortOrder === 'desc'
+            }"></i>
+          </div>
         </th>
-        <th
-          scope="col"
-          class="px-6 py-4 text-xs font-bold text-[var(--text-secondary)] uppercase tracking-wider"
-        >
-          Rol Asignado
+        <th scope="col" (click)="toggleSort('email')"
+          class="px-6 py-4 text-sm font-bold text-[var(--text-secondary)] uppercase tracking-wider cursor-pointer hover:text-[var(--text-heading)] transition-colors group/th">
+          <div class="flex items-center gap-2">
+            Contacto
+            <i class="pi text-xs" [ngClass]="{
+              'pi-sort-alt opacity-20 group-hover/th:opacity-100': sortBy !== 'email',
+              'pi-sort-amount-up text-sky-500': sortBy === 'email' && sortOrder === 'asc',
+              'pi-sort-amount-down text-sky-500': sortBy === 'email' && sortOrder === 'desc'
+            }"></i>
+          </div>
         </th>
-        <th
-          scope="col"
-          class="px-6 py-4 text-xs font-bold text-[var(--text-secondary)] uppercase tracking-wider"
-        >
-          Estado
+        <th scope="col" (click)="toggleSort('roles')"
+          class="px-6 py-4 text-sm font-bold text-[var(--text-secondary)] uppercase tracking-wider cursor-pointer hover:text-[var(--text-heading)] transition-colors group/th">
+          <div class="flex items-center gap-2">
+            Rol Asignado
+            <i class="pi text-xs" [ngClass]="{
+              'pi-sort-alt opacity-20 group-hover/th:opacity-100': sortBy !== 'roles',
+              'pi-sort-amount-up text-sky-500': sortBy === 'roles' && sortOrder === 'asc',
+              'pi-sort-amount-down text-sky-500': sortBy === 'roles' && sortOrder === 'desc'
+            }"></i>
+          </div>
         </th>
-        <th
-          scope="col"
-          class="px-6 py-4 text-right text-xs font-bold text-[var(--text-secondary)] uppercase tracking-wider"
-        >
+        <th scope="col" (click)="toggleSort('isActive')"
+          class="px-6 py-4 text-sm font-bold text-[var(--text-secondary)] uppercase tracking-wider cursor-pointer hover:text-[var(--text-heading)] transition-colors group/th">
+          <div class="flex items-center gap-2">
+            Estado
+            <i class="pi text-xs" [ngClass]="{
+              'pi-sort-alt opacity-20 group-hover/th:opacity-100': sortBy !== 'isActive',
+              'pi-sort-amount-up text-sky-500': sortBy === 'isActive' && sortOrder === 'asc',
+              'pi-sort-amount-down text-sky-500': sortBy === 'isActive' && sortOrder === 'desc'
+            }"></i>
+          </div>
+        </th>
+        <th scope="col"
+          class="px-6 py-4 text-right text-sm font-bold text-[var(--text-secondary)] uppercase tracking-wider">
           Acciones
         </th>
       </tr>
@@ -118,18 +144,21 @@
       @for (user of users; track user._id) {
       <tr class="hover:bg-[var(--bg-panel)] transition-colors group">
         <td class="px-6 py-4 whitespace-nowrap">
+          <span
+            class="text-xs font-mono text-[var(--text-secondary)] bg-[var(--bg-panel)] px-2 py-1 rounded border border-[var(--border-light)] uppercase">
+            {{ user._id.toString().substring(user._id.toString().length - 8) }}
+          </span>
+        </td>
+        <td class="px-6 py-4 whitespace-nowrap">
           <div class="flex items-center">
             <div class="flex-shrink-0 h-9 w-9 relative">
-              <shared-avatar
-                class="w-9 h-9 rounded-md ring-1 ring-white/10"
-                [src]="user.profileImageUrl"
-                [id]="user?._id"
-              ></shared-avatar>
+              <shared-avatar class="w-9 h-9 rounded-md ring-1 ring-white/10" [src]="user.profileImageUrl"
+                [id]="user?._id"></shared-avatar>
             </div>
             <div class="ml-4">
               <div class="text-sm font-bold text-[var(--text-heading)]">{{ user.name }}</div>
               @if (user.phoneNumber) {
-              <div class="text-xs text-[var(--text-secondary)] mt-0.5">
+              <div class="text-sm text-[var(--text-secondary)] mt-0.5">
                 {{ user.phoneNumber }}
               </div>
               }
@@ -138,59 +167,45 @@
         </td>
 
         <td class="px-6 py-4 whitespace-nowrap">
-          <div class="text-xs text-[var(--text-secondary)]">{{ user.email }}</div>
+          <div class="text-sm text-[var(--text-secondary)]">{{ user.email }}</div>
         </td>
 
         <td class="px-6 py-4 whitespace-nowrap">
-          <span
-            class="text-[10px] leading-tight font-bold uppercase tracking-wider"
-            [ngClass]="getRoleBadgeClass(user.roles)"
-          >
+          <span class="text-xs leading-tight font-bold uppercase tracking-wider"
+            [ngClass]="getRoleBadgeClass(user.roles)">
             {{ getRoleLabel(user.roles) }}
           </span>
         </td>
 
         <td class="px-6 py-4 whitespace-nowrap">
           <div class="flex items-center gap-2">
-            <div
-              [class]="
+            <div [class]="
                 'w-1.5 h-1.5 rounded-full ' +
                 (user.isActive
                   ? 'bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.6)]'
                   : 'bg-[var(--text-secondary)]')
-              "
-            ></div>
-            <span
-              class="text-xs font-medium uppercase tracking-wide text-[var(--text-secondary)]"
-            >
+              "></div>
+            <span class="text-sm font-medium uppercase tracking-wide text-[var(--text-secondary)]">
               {{ user.isActive ? "Activo" : "Inactivo" }}
             </span>
           </div>
         </td>
 
         <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-          <div
-            class="flex justify-end gap-1 opacity-60 group-hover:opacity-100 transition-opacity"
-          >
-            <button
-              (click)="editUser(user)"
+          <div class="flex justify-end gap-1 opacity-60 group-hover:opacity-100 transition-opacity">
+            <button (click)="editUser(user)"
               class="h-8 w-8 flex items-center justify-center text-[var(--text-secondary)] hover:text-sky-400 hover:bg-[var(--bg-panel)] rounded-sm transition-colors"
-              title="Editar"
-            >
+              title="Editar">
               <i class="pi pi-pencil"></i>
             </button>
-            <button
-              (click)="openDeleteDialog(user)"
-              [disabled]="!canDeleteUser(user)"
-              [style.opacity]="!canDeleteUser(user) ? 0.3 : 1"
-              [class.cursor-not-allowed]="!canDeleteUser(user)"
+            <button (click)="openDeleteDialog(user)" [disabled]="!canDeleteUser(user)"
+              [style.opacity]="!canDeleteUser(user) ? 0.3 : 1" [class.cursor-not-allowed]="!canDeleteUser(user)"
               class="h-8 w-8 flex items-center justify-center text-[var(--text-secondary)] hover:text-red-400 hover:bg-[var(--bg-panel)] rounded-sm transition-colors disabled:hover:text-[var(--text-secondary)] disabled:hover:bg-transparent"
               [title]="
                 !canDeleteUser(user)
                   ? 'No puedes eliminar este usuario'
                   : 'Eliminar'
-              "
-            >
+              ">
               <i class="pi pi-trash"></i>
             </button>
           </div>
@@ -201,94 +216,64 @@
   </table>
 </div>
 
-<div class="md:hidden p-4 space-y-4 bg-[var(--bg-dark)]">
+<div class="md:hidden p-4 space-y-4 bg-[var(--bg-dark)] transition-opacity duration-300" [class.opacity-40]="loading"
+  [class.pointer-events-none]="loading">
   @for (user of users; track user._id) {
-  <dashboard-user-card
-    [user]="user"
-    (edit)="editUser($event)"
-    (delete)="openDeleteDialog($event)"
-    [canDelete]="canDeleteUser(user)"
-  ></dashboard-user-card>
+  <dashboard-user-card [user]="user" (edit)="editUser($event)" (delete)="openDeleteDialog($event)"
+    [canDelete]="canDeleteUser(user)"></dashboard-user-card>
   }
 </div>
 
 } @if (!loading && !error && users.length === 0) {
-<div
-  class="flex flex-col items-center justify-center py-32 bg-[var(--bg-dark)] border-t border-[var(--border-light)]"
->
+<div class="flex flex-col items-center justify-center py-32 bg-[var(--bg-dark)] border-t border-[var(--border-light)]">
   <div
-    class="w-16 h-16 bg-[var(--bg-panel)] rounded-full flex items-center justify-center mb-4 border border-[var(--border-light)]"
-  >
+    class="w-16 h-16 bg-[var(--bg-panel)] rounded-full flex items-center justify-center mb-4 border border-[var(--border-light)]">
     <i class="pi pi-users text-2xl text-[var(--text-secondary)]"></i>
   </div>
   <p class="text-[var(--text-secondary)] text-sm mb-6">
     NO SE ENCONTRARON USUARIOS
   </p>
-  <button
-    (click)="addUser()"
-    class="text-sky-500 hover:text-sky-400 text-xs font-bold uppercase tracking-widest border-b border-sky-500/30 hover:border-sky-500 transition-all pb-0.5"
-  >
+  <button (click)="addUser()"
+    class="text-sky-500 hover:text-sky-400 text-sm font-bold uppercase tracking-widest border-b border-sky-500/30 hover:border-sky-500 transition-all pb-0.5">
     Crear Primer Registro
   </button>
 </div>
 } @if (totalUsers > 0 && !loading) {
-<div
-  class="flex justify-between items-center px-6 py-4 bg-[var(--bg-dark)] border-t border-[var(--border-light)]"
->
-  <button
-    (click)="onPageChange(currentPage - 1)"
-    [disabled]="currentPage === 1"
-    class="px-4 py-2 text-xs font-bold uppercase tracking-wider text-[var(--text-secondary)] border border-[var(--border-light)] rounded-sm hover:bg-[var(--bg-panel)] disabled:opacity-30 disabled:hover:bg-transparent transition-colors"
-  >
+<div class="flex justify-between items-center px-6 py-4 bg-[var(--bg-dark)] border-t border-[var(--border-light)]">
+  <button (click)="onPageChange(currentPage - 1)" [disabled]="currentPage === 1"
+    class="px-4 py-2 text-sm font-bold uppercase tracking-wider text-[var(--text-secondary)] border border-[var(--border-light)] rounded-sm hover:bg-[var(--bg-panel)] disabled:opacity-30 disabled:hover:bg-transparent transition-colors">
     Anterior
   </button>
 
-  <span class="text-xs text-[var(--text-secondary)]">
+  <span class="text-sm text-[var(--text-secondary)]">
     PÁGINA <span class="text-[var(--text-heading)]">{{ currentPage }}</span> /
     {{ Math.ceil(totalUsers / rowsPerPage) }}
   </span>
 
-  <button
-    (click)="onPageChange(currentPage + 1)"
-    [disabled]="currentPage * rowsPerPage >= totalUsers"
-    class="px-4 py-2 text-xs font-bold uppercase tracking-wider text-[var(--text-secondary)] border border-[var(--border-light)] rounded-sm hover:bg-[var(--bg-panel)] disabled:opacity-30 disabled:hover:bg-transparent transition-colors"
-  >
+  <button (click)="onPageChange(currentPage + 1)" [disabled]="currentPage * rowsPerPage >= totalUsers"
+    class="px-4 py-2 text-sm font-bold uppercase tracking-wider text-[var(--text-secondary)] border border-[var(--border-light)] rounded-sm hover:bg-[var(--bg-panel)] disabled:opacity-30 disabled:hover:bg-transparent transition-colors">
     Siguiente
   </button>
 </div>
 }
 
-<shared-dialog
-  [isOpen]="isDeleteDialogOpen"
-  title="ELIMINAR ACCESO"
-  (close)="closeDeleteDialog()"
->
+<shared-dialog [isOpen]="isDeleteDialogOpen" title="ELIMINAR ACCESO" (close)="closeDeleteDialog()">
   <div class="space-y-6">
     <p class="text-sm text-[var(--text-secondary)] leading-relaxed">
       Estás a punto de eliminar al usuario
       <strong class="text-[var(--text-heading)]">{{
         userToDelete?.name || "seleccionado"
-      }}</strong>
+        }}</strong>
       del sistema. <br /><br />
-      <span class="text-red-600 text-xs font-bold uppercase"
-        >Esta acción es irreversible.</span
-      >
+      <span class="text-red-600 text-sm font-bold uppercase">Esta acción es irreversible.</span>
     </p>
     <div class="flex justify-end space-x-3">
-      <button
-        type="button"
-        (click)="closeDeleteDialog()"
-        [disabled]="isDeleting"
-        class="bg-transparent py-2 px-4 border border-[var(--border-light)] rounded-sm shadow-sm text-xs font-bold uppercase tracking-wide text-[var(--text-secondary)] hover:text-[var(--text-heading)] hover:bg-[var(--bg-panel)] disabled:opacity-50 transition-colors"
-      >
+      <button type="button" (click)="closeDeleteDialog()" [disabled]="isDeleting"
+        class="bg-transparent py-2 px-4 border border-[var(--border-light)] rounded-sm shadow-sm text-sm font-bold uppercase tracking-wide text-[var(--text-secondary)] hover:text-[var(--text-heading)] hover:bg-[var(--bg-panel)] disabled:opacity-50 transition-colors">
         Cancelar
       </button>
-      <button
-        type="button"
-        (click)="confirmDelete()"
-        [disabled]="isDeleting"
-        class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-xs font-bold uppercase tracking-wide rounded-sm text-white bg-red-600 hover:bg-red-700 disabled:opacity-50 transition-colors"
-      >
+      <button type="button" (click)="confirmDelete()" [disabled]="isDeleting"
+        class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-bold uppercase tracking-wide rounded-sm text-white bg-red-600 hover:bg-red-700 disabled:opacity-50 transition-colors">
         @if (isDeleting) {
         <i class="pi pi-spin pi-spinner mr-2"></i>
         <span>Procesando...</span>

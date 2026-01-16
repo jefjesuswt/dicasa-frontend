@@ -3,10 +3,10 @@
     <div class="sticky top-0 z-30 bg-[var(--bg-dark)]/90 backdrop-blur-md border-b border-[var(--border-light)]">
         <div class="px-6 py-4 md:px-12 flex flex-col md:flex-row justify-between items-center gap-4">
             <div>
-                <h1 class="text-xl md:text-2xl font-light text-[var(--text-heading)] tracking-wide uppercase">
+                <h1 class="text-xl md:text-2xl text-[var(--text-heading)] tracking-wide uppercase">
                     Registro de <span class="font-bold text-sky-500">Acciones</span>
                 </h1>
-                <p class="text-[10px] text-[var(--text-secondary)] uppercase tracking-[0.2em] mt-1">
+                <p class="text-sm text-[var(--text-secondary)] uppercase tracking-[0.2em] mt-1">
                     Historial de Auditoría del Sistema
                 </p>
             </div>
@@ -31,14 +31,14 @@
                 <!-- Filter by Action -->
                 <div>
                     <label
-                        class="text-[10px] text-[var(--text-secondary)] uppercase tracking-widest block mb-2">Acción</label>
+                        class="text-xs text-[var(--text-secondary)] uppercase tracking-widest block mb-2">Acción</label>
                     <input type="text" [(ngModel)]="filterAction" placeholder="e.g., UPDATE_PROPERTY"
                         class="w-full bg-[var(--bg-dark)] border border-[var(--border-light)] px-4 py-2 text-sm text-[var(--text-primary)] placeholder:text-[var(--text-secondary)] focus:border-sky-500 focus:outline-none transition-colors" />
                 </div>
 
                 <!-- Filter by User ID -->
                 <div>
-                    <label class="text-[10px] text-[var(--text-secondary)] uppercase tracking-widest block mb-2">Usuario
+                    <label class="text-xs text-[var(--text-secondary)] uppercase tracking-widest block mb-2">Usuario
                         ID</label>
                     <input type="text" [(ngModel)]="filterUserId" placeholder="ID de usuario"
                         class="w-full bg-[var(--bg-dark)] border border-[var(--border-light)] px-4 py-2 text-sm text-[var(--text-primary)] font-mono placeholder:text-[var(--text-secondary)] focus:border-sky-500 focus:outline-none transition-colors" />
@@ -47,11 +47,11 @@
                 <!-- Actions -->
                 <div class="flex items-end gap-2">
                     <button (click)="applyFilters()"
-                        class="flex-1 bg-sky-600 hover:bg-sky-500 text-white text-xs font-bold uppercase tracking-wider px-6 py-3 transition-colors">
+                        class="flex-1 bg-sky-600 hover:bg-sky-500 text-white text-sm font-bold uppercase tracking-wider px-6 py-3 transition-colors">
                         <i class="pi pi-search mr-2"></i> Buscar
                     </button>
                     <button (click)="clearFilters()"
-                        class="px-4 py-3 border border-[var(--border-light)] text-[var(--text-secondary)] hover:text-[var(--text-heading)] hover:border-[var(--border-light)] transition-colors text-xs">
+                        class="px-4 py-3 border border-[var(--border-light)] text-[var(--text-secondary)] hover:text-[var(--text-heading)] hover:border-[var(--border-light)] transition-colors text-sm">
                         <i class="pi pi-times"></i>
                     </button>
                 </div>
@@ -71,17 +71,16 @@
             <div
                 class="px-6 py-4 border-b border-[var(--border-light)] bg-[var(--bg-panel)] flex justify-between items-center">
                 <h3
-                    class="text-xs font-bold text-[var(--text-heading)] uppercase tracking-widest flex items-center gap-2">
+                    class="text-sm font-bold text-[var(--text-heading)] uppercase tracking-widest flex items-center gap-2">
                     <i class="pi pi-list"></i> Logs de Auditoría
                 </h3>
-                <span class="text-[10px] text-[var(--text-secondary)]">Página {{ currentPage }} de {{ totalPages
+                <span class="text-xs text-[var(--text-secondary)]">Página {{ currentPage }} de {{ totalPages
                     }}</span>
             </div>
 
             <div class="overflow-x-auto">
                 <table class="w-full text-left border-collapse">
-                    <thead
-                        class="bg-[var(--bg-panel)] text-[10px] text-[var(--text-secondary)] uppercase tracking-wider">
+                    <thead class="bg-[var(--bg-panel)] text-xs text-[var(--text-secondary)] uppercase tracking-wider">
                         <tr>
                             <th class="px-6 py-3 font-medium">Fecha</th>
                             <th class="px-6 py-3 font-medium">Usuario</th>
@@ -104,7 +103,7 @@
                                     <span class="text-[var(--text-heading)] font-medium">
                                         {{ log.user.name }}
                                     </span>
-                                    <span class="text-[10px] text-[var(--text-secondary)]">
+                                    <span class="text-xs text-[var(--text-secondary)]">
                                         {{ log.user.email }}
                                     </span>
                                 </div>
@@ -113,7 +112,7 @@
                                     {{ log.userName }}
                                 </span>
                                 } @else {
-                                <span class="bg-[var(--bg-panel)] px-2 py-1 rounded text-[10px] text-sky-400">
+                                <span class="bg-[var(--bg-panel)] px-2 py-1 rounded text-xs text-sky-400">
                                     {{ log.userId | slice : 0 : 8 }}...
                                 </span>
                                 }
@@ -122,7 +121,7 @@
                             <!-- Acción Column -->
                             <td class="px-6 py-3">
                                 <span
-                                    [class]="'px-2 py-1 rounded text-[10px] font-medium uppercase tracking-wider ' + getActionBadgeClass(log.action)">
+                                    [class]="'px-2 py-1 rounded text-xs font-medium uppercase tracking-wider ' + getActionBadgeClass(log.action)">
                                     {{ log.action }}
                                 </span>
                             </td>
@@ -134,33 +133,33 @@
                                 @case ('property') {
                                 <a [routerLink]="['/properties', log.resource._id]"
                                     class="text-sky-400 hover:text-sky-300 transition-colors flex items-center gap-1 group">
-                                    <i class="pi pi-home text-[10px]"></i>
+                                    <i class="pi pi-home text-xs"></i>
                                     <span class="truncate max-w-[200px]">{{ log.resource.title }}</span>
                                     <i
-                                        class="pi pi-external-link text-[8px] opacity-0 group-hover:opacity-100 transition-opacity"></i>
+                                        class="pi pi-external-link text-xs opacity-0 group-hover:opacity-100 transition-opacity"></i>
                                 </a>
                                 }
                                 @case ('appointment') {
                                 <a [routerLink]="['/dashboard/appointments/edit', log.resource._id]"
                                     class="text-emerald-400 hover:text-emerald-300 transition-colors flex items-center gap-1 group">
-                                    <i class="pi pi-calendar text-[10px]"></i>
+                                    <i class="pi pi-calendar text-xs"></i>
                                     <span class="truncate max-w-[200px]">{{ log.resource.title }}</span>
                                     <i
-                                        class="pi pi-external-link text-[8px] opacity-0 group-hover:opacity-100 transition-opacity"></i>
+                                        class="pi pi-external-link text-xs opacity-0 group-hover:opacity-100 transition-opacity"></i>
                                 </a>
                                 }
                                 @case ('user') {
                                 <a [routerLink]="['/dashboard/users/edit', log.resource._id]"
                                     class="text-purple-400 hover:text-purple-300 transition-colors flex items-center gap-1 group">
-                                    <i class="pi pi-user text-[10px]"></i>
+                                    <i class="pi pi-user text-xs"></i>
                                     <span class="truncate max-w-[200px]">{{ log.resource.title }}</span>
                                     <i
-                                        class="pi pi-external-link text-[8px] opacity-0 group-hover:opacity-100 transition-opacity"></i>
+                                        class="pi pi-external-link text-xs opacity-0 group-hover:opacity-100 transition-opacity"></i>
                                 </a>
                                 }
                                 @default {
                                 <div class="flex items-center gap-1 text-[var(--text-secondary)]">
-                                    <i class="pi pi-question-circle text-[10px]"></i>
+                                    <i class="pi pi-question-circle text-xs"></i>
                                     <span class="truncate max-w-[200px]">{{ log.resource.title || 'Desconocido'
                                         }}</span>
                                 </div>
@@ -168,14 +167,14 @@
                                 }
                                 } @else if (log.resourceId) {
                                 <div class="flex items-center gap-1 text-[var(--text-secondary)] italic">
-                                    <i class="pi pi-trash text-[10px]"></i>
-                                    <span class="text-[10px]">Recurso eliminado</span>
-                                    <span class="bg-[var(--bg-panel)] px-2 py-1 rounded text-[10px]">
+                                    <i class="pi pi-trash text-sm"></i>
+                                    <span class="text-xs">Recurso eliminado</span>
+                                    <span class="bg-[var(--bg-panel)] px-2 py-1 rounded text-xs">
                                         {{ log.resourceId | slice : 0 : 8 }}...
                                     </span>
                                 </div>
                                 } @else {
-                                <span class="text-[var(--text-secondary)] text-[10px]">N/A</span>
+                                <span class="text-[var(--text-secondary)] text-xs">N/A</span>
                                 }
                             </td>
 
@@ -229,7 +228,7 @@
                     </div>
 
                     <button (click)="goToPage(currentPage + 1)" [disabled]="currentPage === totalPages"
-                        class="h-10 px-6 border border-[var(--border-light)] text-xs font-bold uppercase tracking-widest text-[var(--text-secondary)] hover:bg-[var(--bg-panel)] hover:text-[var(--text-heading)] hover:border-sky-500/50 disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:border-white/10 disabled:hover:bg-transparent transition-all">
+                        class="h-10 px-6 border border-[var(--border-light)] text-sm font-bold uppercase tracking-widest text-[var(--text-secondary)] hover:bg-[var(--bg-panel)] hover:text-[var(--text-heading)] hover:border-sky-500/50 disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:border-white/10 disabled:hover:bg-transparent transition-all">
                         Siguiente <i class="pi pi-chevron-right ml-2"></i>
                     </button>
                 </div>

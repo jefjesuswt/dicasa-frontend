@@ -6,4 +6,6 @@ export interface QueryAppointmentParams {
   search?: string;
   status?: AppointmentStatus;
   includeDeleted?: boolean;
+  sortBy?: string;
+  sortOrder?: "asc" | "desc";
 }

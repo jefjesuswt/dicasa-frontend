@@ -27,7 +27,7 @@ import { ToastService, ToastType } from "../../services/toast.service";
           <div class="flex-1">
             <h4
               [class]="getTextColor(toast.type)"
-              class="text-[10px] font-bold uppercase tracking-widest mb-1"
+              class="text-xs font-bold uppercase tracking-widest mb-1"
             >
               {{ toast.title }}
             </h4>

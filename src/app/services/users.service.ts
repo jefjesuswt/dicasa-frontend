@@ -36,6 +36,8 @@ export class UsersService {
     if (query.isActive !== undefined) {
       params = params.set("isActive", query.isActive.toString());
     }
+    if (query.sortBy) params = params.set("sortBy", query.sortBy);
+    if (query.sortOrder) params = params.set("sortOrder", query.sortOrder);
 
     return this.http
       .get<PaginatedUserResponse>(this.apiUrl, { params })

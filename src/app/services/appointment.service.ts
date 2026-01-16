@@ -37,6 +37,8 @@ export class AppointmentsService {
     if (query.search) params = params.set("search", query.search);
     if (query.status) params = params.set("status", query.status);
     if (query.includeDeleted) params = params.set("includeDeleted", "true");
+    if (query.sortBy) params = params.set("sortBy", query.sortBy);
+    if (query.sortOrder) params = params.set("sortOrder", query.sortOrder);
 
     return this.http
       .get<PaginatedAppointmentResponse>(this.apiUrl, { params })

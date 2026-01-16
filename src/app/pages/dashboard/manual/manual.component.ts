@@ -1,6 +1,14 @@
-import { Component } from '@angular/core';
+import { Component, ElementRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MarkdownModule } from 'ngx-markdown';
+
+export interface Heading {
+  id: string;
+  title: string;
+  level: number;
+  children?: Heading[];
+  expanded?: boolean;
+}
 
 @Component({
   selector: 'app-manual',
@@ -15,27 +23,30 @@ import { MarkdownModule } from 'ngx-markdown';
             <h3 class="font-bold text-[var(--text-heading)] mb-4 uppercase text-xs tracking-widest border-b border-[var(--border-light)] pb-2">
               Contenido
             </h3>
-            <nav class="flex flex-col space-y-2">
-              <a (click)="scrollTo('propiedades')"
-                class="cursor-pointer text-sm font-medium text-[var(--text-primary)] hover:text-[var(--color-primary)] transition-colors py-2 px-3 rounded-md hover:bg-[var(--bg-panel)] border-l-2 border-transparent hover:border-[var(--color-primary)] block">
-                1. Propiedades
-              </a>
-              <a (click)="scrollTo('usuarios')"
-                class="cursor-pointer text-sm font-medium text-[var(--text-primary)] hover:text-[var(--color-primary)] transition-colors py-2 px-3 rounded-md hover:bg-[var(--bg-panel)] border-l-2 border-transparent hover:border-[var(--color-primary)] block">
-                2. Usuarios
-              </a>
-              <a (click)="scrollTo('agenda')"
-                class="cursor-pointer text-sm font-medium text-[var(--text-primary)] hover:text-[var(--color-primary)] transition-colors py-2 px-3 rounded-md hover:bg-[var(--bg-panel)] border-l-2 border-transparent hover:border-[var(--color-primary)] block">
-                3. Agenda
-              </a>
-              <a (click)="scrollTo('estadisticas')"
-                class="cursor-pointer text-sm font-medium text-[var(--text-primary)] hover:text-[var(--color-primary)] transition-colors py-2 px-3 rounded-md hover:bg-[var(--bg-panel)] border-l-2 border-transparent hover:border-[var(--color-primary)] block">
-                4. Estadísticas
-              </a>
-              <a (click)="scrollTo('soporte')"
-                class="cursor-pointer text-sm font-medium text-[var(--text-primary)] hover:text-[var(--color-primary)] transition-colors py-2 px-3 rounded-md hover:bg-[var(--bg-panel)] border-l-2 border-transparent hover:border-[var(--color-primary)] block">
-                Soporte
-              </a>
+            <nav class="flex flex-col space-y-1">
+              @for (h2 of headings; track h2.id) {
+                <!-- H2 Item (Parent) -->
+                <div class="flex flex-col">
+                  <button (click)="toggleSection(h2)"
+                          class="flex items-center justify-between w-full text-left cursor-pointer text-sm font-bold text-[var(--text-heading)] hover:text-[var(--color-primary)] transition-colors py-2 px-2 rounded-md hover:bg-[var(--bg-panel)] group">
+                    <span class="truncate">{{ h2.title }}</span>
+                    <i class="pi pi-chevron-right text-[10px] text-[var(--text-secondary)] transition-transform duration-200"
+                       [class.rotate-90]="h2.expanded"></i>
+                  </button>
+                  
+                  <!-- H3 Items (Children) - Collapsible -->
+                  @if (h2.expanded && h2.children?.length) {
+                    <div class="flex flex-col mt-1 ml-2 border-l border-[var(--border-light)] pl-2 space-y-1">
+                      @for (h3 of h2.children; track h3.id) {
+                        <a (click)="scrollTo(h3.id)"
+                           class="cursor-pointer text-xs font-medium text-[var(--text-secondary)] hover:text-[var(--color-primary)] transition-colors py-1.5 px-2 rounded-sm hover:bg-[var(--bg-panel)] block truncate">
+                          {{ h3.title }}
+                        </a>
+                      }
+                    </div>
+                  }
+                </div>
+              }
             </nav>
           </div>
         </aside>
@@ -72,21 +83,74 @@ import { MarkdownModule } from 'ngx-markdown';
   `]
 })
 export class ManualComponent {
+  headings: Heading[] = [];
+
+  constructor(private el: ElementRef) { }
 
   onLoad(e: any) {
-    // Optional: Add listeners or dynamic TOC generation here
+    // Wait for next tick to ensure DOM is ready
+    setTimeout(() => {
+      this.generateTableOfContents();
+    }, 100);
+  }
+
+  generateTableOfContents() {
+    this.headings = [];
+    const headers = this.el.nativeElement.querySelectorAll('h2, h3');
+
+    let currentH2: Heading | null = null;
+
+    headers.forEach((header: HTMLElement, index: number) => {
+      // 1. Generate a robust, prefixed ID
+      // Prefix 'doc-' prevents issues with IDs starting with numbers
+      let slug = header.innerText.toLowerCase().trim()
+        .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/^-+|-+$/g, '');
+
+      const uniqueId = `doc-${slug}-${index}`;
+      header.id = uniqueId;
+
+      const level = parseInt(header.tagName.substring(1));
+      const headingItem: Heading = {
+        id: uniqueId,
+        title: header.innerText,
+        level: level,
+        children: [],
+        expanded: false // Collapsed by default
+      };
+
+      if (level === 2) {
+        currentH2 = headingItem;
+        this.headings.push(currentH2);
+      } else if (level === 3 && currentH2) {
+        currentH2.children?.push(headingItem);
+      }
+    });
+  }
+
+  toggleSection(section: Heading) {
+    // 1. Collapse all other sections
+    this.headings.forEach(h => {
+      if (h !== section) {
+        h.expanded = false;
+      }
+    });
+
+    // 2. Toggle the clicked section
+    section.expanded = !section.expanded;
+
+    // 3. Scroll to the section if it was expanded
+    if (section.expanded) {
+      this.scrollTo(section.id);
+    }
   }
 
   scrollTo(id: string) {
-    // Fallback: Try to find h2 containing text
-    const headings = document.querySelectorAll('h2, h3');
-    for (let i = 0; i < headings.length; i++) {
-        const h = headings[i] as HTMLElement;
-         // mapping: 'propiedades' -> '1. Propiedades' check
-        if (h.innerText.toLowerCase().includes(id)) {
-            h.scrollIntoView({ behavior: 'smooth', block: 'center' });
-            break;
-        }
+    // Use getElementById which is faster and safer than querySelector for IDs
+    const element = document.getElementById(id);
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
   }
 }

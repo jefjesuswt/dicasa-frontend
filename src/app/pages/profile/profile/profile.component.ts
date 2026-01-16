@@ -15,12 +15,12 @@ import { SeoService } from "../../../services/seo.service";
       <div class="container mx-auto px-6 max-w-6xl">
         <div class="mb-16">
           <h1
-            class="text-3xl md:text-4xl font-light text-[var(--text-heading)] uppercase tracking-[0.2em] mb-4"
+            class="text-3xl md:text-4xl text-[var(--text-heading)] uppercase tracking-[0.2em] mb-4"
           >
             Mi Cuenta
           </h1>
           <div class="h-px w-24 bg-sky-500"></div>
-          <p class="mt-6 text-[var(--text-secondary)] font-light max-w-xl leading-relaxed">
+          <p class="mt-6 text-[var(--text-secondary)] max-w-xl leading-relaxed">
             Bienvenido a tu espacio personal. Aquí puedes gestionar tu
             información y revisar tus citas programadas.
           </p>
@@ -40,7 +40,7 @@ import { SeoService } from "../../../services/seo.service";
                   Perfil
                 </span>
                 <i
-                  class="pi pi-arrow-right text-[10px] opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all text-[var(--text-secondary)]"
+                  class="pi pi-arrow-right text-xs opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all text-[var(--text-secondary)]"
                 ></i>
               </a>
 
@@ -55,7 +55,7 @@ import { SeoService } from "../../../services/seo.service";
                   Agenda
                 </span>
                 <i
-                  class="pi pi-arrow-right text-[10px] opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all text-[var(--text-secondary)]"
+                  class="pi pi-arrow-right text-xs opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all text-[var(--text-secondary)]"
                 ></i>
               </a>
 
@@ -71,7 +71,7 @@ import { SeoService } from "../../../services/seo.service";
                   Propiedades
                 </span>
                 <i
-                  class="pi pi-arrow-right text-[10px] opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all text-[var(--text-secondary)]"
+                  class="pi pi-arrow-right text-xs opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all text-[var(--text-secondary)]"
                 ></i>
               </a>
               }

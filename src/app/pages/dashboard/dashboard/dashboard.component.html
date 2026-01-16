@@ -6,7 +6,8 @@
         <div class="flex items-center gap-3 mb-4">
           <div
             class="inline-block px-3 py-1 border border-sky-500/30 bg-sky-500/10 text-sky-400 text-xs tracking-widest">
-            DASHBOARD // {{ isAdmin() ? "ADMINISTRADOR" : "GERENTE" }} <span class="text-[10px] opacity-50 ml-2">Roles: {{ user()?.roles | json }}</span>
+            DASHBOARD // {{ isAdmin() ? "ADMINISTRADOR" : "GERENTE" }} <span class="text-xs opacity-50 ml-2">Roles: {{
+              user()?.roles | json }}</span>
           </div>
           <div class="h-px flex-grow bg-gradient-to-r from-sky-500/30 to-transparent"></div>
         </div>
@@ -16,7 +17,7 @@
           Panel de
           <span class="text-transparent bg-clip-text bg-gradient-to-r from-sky-400 to-blue-600">Gestión</span>
         </h1>
-        <p class="text-[var(--text-secondary)] font-light border-l-2 border-sky-500 pl-4 mt-4 max-w-2xl">
+        <p class="text-[var(--text-secondary)] border-l-2 border-sky-500 pl-4 mt-4 max-w-2xl">
           Bienvenido,
           <span class="text-[var(--text-heading)] font-medium">{{ user()?.name }}</span>. Visualiza métricas en tiempo
           real y administra
@@ -41,7 +42,7 @@
       <nav class="flex flex-wrap border-b border-[var(--border-light)]">
         <a routerLink="properties" routerLinkActive="!text-sky-500 !border-sky-500 bg-[var(--bg-elevated)]"
           [routerLinkActiveOptions]="{ exact: false }"
-          class="group relative px-6 py-4 text-xs font-bold uppercase tracking-widest text-[var(--text-muted)] border-b-2 border-transparent hover:text-[var(--text-heading)] hover:bg-[var(--bg-elevated)] transition-all cursor-pointer flex items-center gap-3">
+          class="group relative px-6 py-4 text-sm font-bold uppercase tracking-widest text-[var(--text-muted)] border-b-2 border-transparent hover:text-[var(--text-heading)] hover:bg-[var(--bg-elevated)] transition-all cursor-pointer flex items-center gap-3">
           <i class="pi pi-home text-lg mb-0.5"></i>
           <span>Propiedades</span>
           <span
@@ -50,7 +51,7 @@
 
         @if (isAdmin() || isManager()) {
         <a routerLink="users" routerLinkActive="!text-sky-500 !border-sky-500 bg-[var(--bg-elevated)]"
-          class="group relative px-6 py-4 text-xs font-bold uppercase tracking-widest text-[var(--text-muted)] border-b-2 border-transparent hover:text-[var(--text-heading)] hover:bg-[var(--bg-elevated)] transition-all cursor-pointer flex items-center gap-3">
+          class="group relative px-6 py-4 text-sm font-bold uppercase tracking-widest text-[var(--text-muted)] border-b-2 border-transparent hover:text-[var(--text-heading)] hover:bg-[var(--bg-elevated)] transition-all cursor-pointer flex items-center gap-3">
           <i class="pi pi-users text-lg mb-0.5"></i>
           <span>Usuarios</span>
           <span
@@ -59,7 +60,7 @@
         }
 
         <a routerLink="/dashboard/appointments" routerLinkActive="!text-sky-500 !border-sky-500 bg-[var(--bg-elevated)]"
-          class="group relative px-6 py-4 text-xs font-bold uppercase tracking-widest text-[var(--text-muted)] border-b-2 border-transparent hover:text-[var(--text-heading)] hover:bg-[var(--bg-elevated)] transition-all cursor-pointer flex items-center gap-3">
+          class="group relative px-6 py-4 text-sm font-bold uppercase tracking-widest text-[var(--text-muted)] border-b-2 border-transparent hover:text-[var(--text-heading)] hover:bg-[var(--bg-elevated)] transition-all cursor-pointer flex items-center gap-3">
           <i class="pi pi-calendar text-lg mb-0.5"></i>
           <span>Agenda</span>
           <span
@@ -68,7 +69,7 @@
 
         @if (isAdmin() || isManager()) {
         <a routerLink="statistics" routerLinkActive="!text-sky-500 !border-sky-500 bg-[var(--bg-elevated)]"
-          class="group relative px-6 py-4 text-xs font-bold uppercase tracking-widest text-[var(--text-muted)] border-b-2 border-transparent hover:text-[var(--text-heading)] hover:bg-[var(--bg-elevated)] transition-all cursor-pointer flex items-center gap-3">
+          class="group relative px-6 py-4 text-sm font-bold uppercase tracking-widest text-[var(--text-muted)] border-b-2 border-transparent hover:text-[var(--text-heading)] hover:bg-[var(--bg-elevated)] transition-all cursor-pointer flex items-center gap-3">
           <i class="pi pi-chart-line text-lg mb-0.5"></i>
           <!-- Icono Chart -->
           <span>Estadísticas</span>
@@ -79,7 +80,7 @@
 
         @if (isAdmin()) {
         <a routerLink="action-logs" routerLinkActive="!text-sky-500 !border-sky-500 bg-[var(--bg-elevated)]"
-          class="group relative px-6 py-4 text-xs font-bold uppercase tracking-widest text-[var(--text-muted)] border-b-2 border-transparent hover:text-[var(--text-heading)] hover:bg-[var(--bg-elevated)] transition-all cursor-pointer flex items-center gap-3">
+          class="group relative px-6 py-4 text-sm font-bold uppercase tracking-widest text-[var(--text-muted)] border-b-2 border-transparent hover:text-[var(--text-heading)] hover:bg-[var(--bg-elevated)] transition-all cursor-pointer flex items-center gap-3">
           <i class="pi pi-list text-lg mb-0.5"></i>
           <span>Registros</span>
           <span
@@ -89,7 +90,7 @@
 
         @if (isAdmin() || isManager()) {
         <a routerLink="backup" routerLinkActive="!text-sky-500 !border-sky-500 bg-[var(--bg-elevated)]"
-          class="group relative px-6 py-4 text-xs font-bold uppercase tracking-widest text-[var(--text-muted)] border-b-2 border-transparent hover:text-[var(--text-heading)] hover:bg-[var(--bg-elevated)] transition-all cursor-pointer flex items-center gap-3">
+          class="group relative px-6 py-4 text-sm font-bold uppercase tracking-widest text-[var(--text-muted)] border-b-2 border-transparent hover:text-[var(--text-heading)] hover:bg-[var(--bg-elevated)] transition-all cursor-pointer flex items-center gap-3">
           <i class="pi pi-database text-lg mb-0.5"></i>
           <span>Respaldos</span>
           <span
@@ -98,7 +99,7 @@
         }
 
         <a routerLink="manual" routerLinkActive="!text-sky-500 !border-sky-500 bg-[var(--bg-elevated)]"
-          class="group relative px-6 py-4 text-xs font-bold uppercase tracking-widest text-[var(--text-muted)] border-b-2 border-transparent hover:text-[var(--text-heading)] hover:bg-[var(--bg-elevated)] transition-all cursor-pointer flex items-center gap-3">
+          class="group relative px-6 py-4 text-sm font-bold uppercase tracking-widest text-[var(--text-muted)] border-b-2 border-transparent hover:text-[var(--text-heading)] hover:bg-[var(--bg-elevated)] transition-all cursor-pointer flex items-center gap-3">
           <i class="pi pi-book text-lg mb-0.5"></i>
           <span>Manual</span>
           <span

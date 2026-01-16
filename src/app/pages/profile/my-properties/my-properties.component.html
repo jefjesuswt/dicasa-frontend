@@ -1,21 +1,17 @@
 <div class="animate-fade-in">
-  <div
-    class="flex flex-col md:flex-row justify-between items-end mb-8 border-b border-[var(--border-light)] pb-6"
-  >
+  <div class="flex flex-col md:flex-row justify-between items-end mb-8 border-b border-[var(--border-light)] pb-6">
     <div>
-      <h2
-        class="text-xl text-[var(--text-heading)] font-light uppercase tracking-[0.15em] mb-2"
-      >
+      <h2 class="text-xl text-[var(--text-heading)] uppercase tracking-[0.15em] mb-2">
         Gestión de Activos
       </h2>
-      <p class="text-[var(--text-secondary)] text-sm font-light">
+      <p class="text-[var(--text-secondary)] text-base">
         Administra tu portafolio de propiedades publicadas.
       </p>
     </div>
 
     @if (loadState() === 'loaded') {
     <div class="text-right hidden md:block">
-      <div class="text-[10px] font-bold text-sky-500 uppercase tracking-widest">
+      <div class="text-xs font-bold text-sky-500 uppercase tracking-widest">
         Total Propiedades
       </div>
       <div class="text-2xl font-mono text-[var(--text-heading)]">
@@ -27,17 +23,13 @@
 
   @switch (loadState()) { @case ('loading') {
   <div class="flex flex-col items-center justify-center py-24 opacity-50">
-    <div
-      class="w-12 h-12 border-2 border-[var(--border-light)] border-t-sky-500 animate-spin mb-4"
-    ></div>
-    <span class="text-[10px] font-mono uppercase tracking-widest text-[var(--text-secondary)]"
-      >Cargando Inventario...</span
-    >
+    <div class="w-12 h-12 border-2 border-[var(--border-light)] border-t-sky-500 animate-spin mb-4"></div>
+    <span class="text-xs font-mono uppercase tracking-widest text-[var(--text-secondary)]">Cargando Inventario...</span>
   </div>
   } @case ('error') {
   <div class="border border-red-500/20 bg-red-500/5 p-6 text-center">
     <i class="pi pi-exclamation-triangle text-red-500 text-2xl mb-2"></i>
-    <p class="text-red-400 font-mono text-xs uppercase">
+    <p class="text-sm font-mono text-sm uppercase">
       Error recuperando datos.
     </p>
   </div>
@@ -45,71 +37,49 @@
   <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
     @for (prop of properties(); track prop._id) {
     <div
-      class="group bg-[var(--bg-panel)] border border-[var(--border-light)] hover:border-sky-500/30 transition-all duration-300 flex flex-col"
-    >
-      <div
-        class="relative h-56 overflow-hidden bg-black border-b border-[var(--border-light)]"
-      >
-        <img
-          [src]="prop.images[0] || '/assets/images/placeholder-property.png'"
-          alt="{{ prop.title }}"
+      class="group bg-[var(--bg-panel)] border border-[var(--border-light)] hover:border-sky-500/30 transition-all duration-300 flex flex-col">
+      <div class="relative h-56 overflow-hidden bg-black border-b border-[var(--border-light)]">
+        <img [src]="prop.images[0] || '/assets/images/placeholder-property.png'" alt="{{ prop.title }}"
           class="w-full h-full object-cover transition-transform duration-500 transform group-hover:scale-105"
-          (error)="onImageError($event)"
-        />
+          (error)="onImageError($event)" />
 
         <div class="absolute top-3 right-3">
-          <span
-            class="px-2 py-1 border text-[10px] font-bold uppercase tracking-widest backdrop-blur-md shadow-lg"
-            [class]="getStatusClass(prop.status)"
-          >
+          <span class="px-2 py-1 border text-xs font-bold uppercase tracking-widest backdrop-blur-md shadow-lg"
+            [class]="getStatusClass(prop.status)">
             {{ getStatusLabel(prop.status) }}
           </span>
         </div>
 
         <div
-          class="absolute bottom-0 left-0 bg-[var(--bg-dark)]/80 px-3 py-1 border-t border-r border-[var(--border-light)] text-[10px] font-mono text-[var(--text-secondary)]"
-        >
+          class="absolute bottom-0 left-0 bg-[var(--bg-dark)]/80 px-3 py-1 border-t border-r border-[var(--border-light)] text-xs font-mono text-[var(--text-secondary)]">
           REF: {{ prop._id | slice : 0 : 6 }}...
         </div>
       </div>
 
       <div class="p-5 flex-1 flex flex-col justify-between">
         <div>
-          <h3
-            class="text-base font-bold text-[var(--text-heading)] uppercase tracking-tight mb-2 truncate"
-            title="{{ prop.title }}"
-          >
+          <h3 class="text-base font-bold text-[var(--text-heading)] uppercase tracking-tight mb-2 truncate"
+            title="{{ prop.title }}">
             {{ prop.title }}
           </h3>
 
           <div class="flex flex-col gap-1 mb-4">
-            <div
-              class="flex items-center gap-2 text-xs text-[var(--text-secondary)] font-mono"
-            >
-              <i class="pi pi-map-marker text-[10px]"></i>
-              <span class="truncate"
-                >{{ prop.address.city }}, {{ prop.address.state }}</span
-              >
+            <div class="flex items-center gap-2 text-sm text-[var(--text-secondary)] font-mono">
+              <i class="pi pi-map-marker text-xs"></i>
+              <span class="truncate">{{ prop.address.city }}, {{ prop.address.state }}</span>
             </div>
 
-            <div
-              class="flex items-center gap-2 text-sm font-mono text-[var(--text-heading)] mt-1"
-            >
+            <div class="flex items-center gap-2 text-sm font-mono text-[var(--text-heading)] mt-1">
               <span class="text-sky-500">$</span>
               {{ prop.price | number }}
             </div>
           </div>
         </div>
 
-        <div
-          class="pt-4 border-t border-[var(--border-light)] flex items-center justify-between gap-3"
-        >
-          <a
-            [routerLink]="['/properties', prop._id]"
-            target="_blank"
-            class="flex-1 flex items-center justify-center gap-2 py-2 border border-[var(--border-light)] hover:bg-[var(--bg-dark)] text-xs font-bold uppercase tracking-widest text-[var(--text-secondary)] hover:text-[var(--text-heading)] transition-colors"
-          >
-            <i class="pi pi-external-link text-[10px]"></i> Ver
+        <div class="pt-4 border-t border-[var(--border-light)] flex items-center justify-between gap-3">
+          <a [routerLink]="['/properties', prop._id]" target="_blank"
+            class="flex-1 flex items-center justify-center gap-2 py-2 border border-[var(--border-light)] hover:bg-[var(--bg-dark)] text-sm font-bold uppercase tracking-widest text-white bg-sky-600 hover:bg-sky-500 transition-colors">
+            <i class="pi pi-external-link text-xs"></i> Ver
           </a>
         </div>
       </div>
@@ -118,23 +88,19 @@
   </div>
   } @else {
   <div
-    class="border border-dashed border-[var(--border-light)] bg-[var(--bg-panel)] p-12 flex flex-col items-center justify-center text-center"
-  >
+    class="border border-dashed border-[var(--border-light)] bg-[var(--bg-panel)] p-12 flex flex-col items-center justify-center text-center">
     <div
-      class="w-16 h-16 rounded-full bg-[var(--bg-dark)] border border-[var(--border-light)] flex items-center justify-center mb-4 text-[var(--text-secondary)]"
-    >
+      class="w-16 h-16 rounded-full bg-[var(--bg-dark)] border border-[var(--border-light)] flex items-center justify-center mb-4 text-[var(--text-secondary)]">
       <i class="pi pi-folder-open text-2xl"></i>
     </div>
     <h3 class="text-[var(--text-heading)] font-bold uppercase tracking-widest mb-2">
       Sin Propiedades
     </h3>
-    <p class="text-[var(--text-secondary)] text-sm font-light max-w-xs mb-6">
+    <p class="text-[var(--text-secondary)] text-base max-w-xs mb-6">
       No tienes propiedades asignadas a tu perfil actualmente.
     </p>
-    <a
-      routerLink="/dashboard/property-form"
-      class="px-6 py-3 bg-sky-600 hover:bg-sky-500 text-white text-xs font-bold uppercase tracking-widest transition-colors"
-    >
+    <a routerLink="/dashboard/property-form"
+      class="px-6 py-3 bg-sky-600 hover:bg-sky-500 text-white text-sm font-bold uppercase tracking-widest transition-colors">
       <i class="pi pi-plus mr-2"></i> Publicar Nueva
     </a>
   </div>

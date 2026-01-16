@@ -1,140 +1,83 @@
 <div class="max-w-4xl animate-fade-in">
   <div
-    class="flex flex-col md:flex-row items-start md:items-center gap-8 mb-12 pb-12 border-b border-[var(--border-light)]"
-  >
+    class="flex flex-col md:flex-row items-start md:items-center gap-8 mb-12 pb-12 border-b border-[var(--border-light)]">
     <div class="relative group">
-      <div
-        class="w-32 h-32 bg-[var(--bg-panel)] border border-[var(--border-light)] p-1 relative overflow-hidden"
-      >
-        <shared-avatar
-          class="w-full h-full object-cover transition-all duration-500"
-          [src]="currentUser()?.profileImageUrl"
-          [id]="currentUser()?._id"
-          alt="Foto de perfil"
-        ></shared-avatar>
+      <div class="w-32 h-32 bg-[var(--bg-panel)] border border-[var(--border-light)] p-1 relative overflow-hidden">
+        <shared-avatar class="w-full h-full object-cover transition-all duration-500"
+          [src]="currentUser()?.profileImageUrl" [id]="currentUser()?._id" alt="Foto de perfil"></shared-avatar>
 
         @if (uploadingPicture) {
-        <div
-          class="absolute inset-0 bg-[var(--bg-dark)]/80 flex items-center justify-center z-20"
-        >
+        <div class="absolute inset-0 bg-[var(--bg-dark)]/80 flex items-center justify-center z-20">
           <i class="pi pi-spin pi-spinner text-sky-500"></i>
         </div>
         }
       </div>
 
-      <button
-        (click)="triggerFileInput()"
-        [disabled]="uploadingPicture"
-        type="button"
-        class="absolute -bottom-3 -right-3 bg-[var(--bg-dark)] border border-[var(--border-light)] text-[var(--text-primary)] hover:border-sky-500 hover:text-sky-500 w-8 h-8 flex items-center justify-center transition-colors z-10"
-      >
+      <button (click)="triggerFileInput()" [disabled]="uploadingPicture" type="button"
+        class="absolute -bottom-3 -right-3 bg-[var(--bg-dark)] border border-[var(--border-light)] text-[var(--text-primary)] hover:border-sky-500 hover:text-sky-500 w-8 h-8 flex items-center justify-center transition-colors z-10">
         <i class="pi pi-camera text-xs"></i>
       </button>
 
-      <input
-        type="file"
-        class="hidden"
-        #fileInput
-        (change)="onFileSelected($event)"
-        accept="image/png, image/jpeg, image/jpg, image/webp"
-      />
+      <input type="file" class="hidden" #fileInput (change)="onFileSelected($event)"
+        accept="image/png, image/jpeg, image/jpg, image/webp" />
     </div>
 
     <div>
-      <h2
-        class="text-xl text-[var(--text-heading)] font-light uppercase tracking-[0.15em] mb-2"
-      >
+      <h2 class="text-xl text-[var(--text-heading)] uppercase tracking-[0.15em] mb-2">
         Información Personal
       </h2>
-      <p class="text-[var(--text-secondary)] text-sm font-light max-w-md">
+      <p class="text-[var(--text-secondary)] text-base max-w-md">
         Gestiona tus datos personales.
       </p>
     </div>
   </div>
 
-  <form
-    [formGroup]="infoForm"
-    (ngSubmit)="onInfoSubmit()"
-    class="space-y-8 mb-16"
-  >
+  <form [formGroup]="infoForm" (ngSubmit)="onInfoSubmit()" class="space-y-8 mb-16">
     <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
       <div class="group">
-        <label
-          for="name"
-          class="block text-[10px] font-bold text-[var(--text-secondary)] uppercase tracking-widest mb-2 group-focus-within:text-sky-500 transition-colors"
-        >
+        <label for="name"
+          class="block text-xs font-bold text-[var(--text-secondary)] uppercase tracking-widest mb-2 group-focus-within:text-sky-500 transition-colors">
           Nombre Completo
         </label>
-        <input
-          type="text"
-          id="name"
-          formControlName="name"
-          class="block w-full bg-[var(--bg-dark)] border border-[var(--border-light)] px-4 py-3 text-[var(--text-primary)] placeholder-[var(--text-secondary)] focus:border-sky-500 focus:bg-[var(--bg-panel)] focus:outline-none transition-all font-mono text-sm"
-        />
+        <input type="text" id="name" formControlName="name"
+          class="block w-full bg-[var(--bg-dark)] border border-[var(--border-light)] px-4 py-3 text-[var(--text-primary)] placeholder-[var(--text-secondary)] focus:border-sky-500 focus:bg-[var(--bg-panel)] focus:outline-none transition-all font-mono text-sm" />
         @if (name?.invalid && name?.touched) {
-        <span class="text-[10px] text-red-500 font-mono mt-1 block"
-          >* NOMBRE REQUERIDO</span
-        >
+        <span class="text-xs text-red-500 font-mono mt-1 block">* NOMBRE REQUERIDO</span>
         }
       </div>
 
       <div class="group opacity-70">
-        <label
-          for="email"
-          class="block text-[10px] font-bold text-[var(--text-secondary)] uppercase tracking-widest mb-2"
-        >
+        <label for="email" class="block text-xs font-bold text-[var(--text-secondary)] uppercase tracking-widest mb-2">
           Correo Electrónico
-          <span class="text-[9px] ml-2 opacity-50">(NO EDITABLE)</span>
+          <span class="text-xs ml-2 opacity-50">(NO EDITABLE)</span>
         </label>
-        <input
-          type="email"
-          id="email"
-          formControlName="email"
-          class="block w-full bg-[var(--bg-dark)] border border-[var(--border-light)] px-4 py-3 text-[var(--text-secondary)] font-mono text-sm cursor-not-allowed"
-        />
+        <input type="email" id="email" formControlName="email"
+          class="block w-full bg-[var(--bg-dark)] border border-[var(--border-light)] px-4 py-3 text-[var(--text-secondary)] font-mono text-sm cursor-not-allowed" />
       </div>
 
       <div class="md:col-span-2 group">
-        <label
-          for="phone"
-          class="block text-[10px] font-bold text-[var(--text-secondary)] uppercase tracking-widest mb-2 group-focus-within:text-sky-500 transition-colors"
-        >
+        <label for="phone"
+          class="block text-xs font-bold text-[var(--text-secondary)] uppercase tracking-widest mb-2 group-focus-within:text-sky-500 transition-colors">
           Teléfono de Contacto
         </label>
         <div
-          class="relative w-full bg-[var(--bg-dark)] border border-[var(--border-light)] focus-within:border-sky-500 focus-within:bg-[var(--bg-panel)] transition-all"
-        >
-          <ngx-intl-tel-input
-            [cssClass]="
+          class="relative w-full bg-[var(--bg-dark)] border border-[var(--border-light)] focus-within:border-sky-500 focus-within:bg-[var(--bg-panel)] transition-all">
+          <ngx-intl-tel-input [cssClass]="
               'w-full !bg-transparent !border-none !shadow-none !text-[var(--text-primary)] font-mono text-sm !h-[46px] flex items-center'
-            "
-            [preferredCountries]="preferredCountries"
-            [enableAutoCountrySelect]="true"
-            [enablePlaceholder]="true"
-            [selectedCountryISO]="CountryISO.Venezuela"
-            [phoneValidation]="true"
-            [separateDialCode]="true"
-            [numberFormat]="phoneFormat"
-            name="phoneNumber"
-            formControlName="phoneNumber"
-            id="phoneNumber"
-          >
+            " [preferredCountries]="preferredCountries" [enableAutoCountrySelect]="true" [enablePlaceholder]="true"
+            [selectedCountryISO]="CountryISO.Venezuela" [phoneValidation]="true" [separateDialCode]="true"
+            [numberFormat]="phoneFormat" name="phoneNumber" formControlName="phoneNumber" id="phoneNumber">
           </ngx-intl-tel-input>
         </div>
         @if (phoneNumber?.invalid && phoneNumber?.touched) {
-        <span class="text-[10px] text-red-500 font-mono mt-1 block"
-          >* NÚMERO INVÁLIDO</span
-        >
+        <span class="text-xs text-red-500 font-mono mt-1 block">* NÚMERO INVÁLIDO</span>
         }
       </div>
     </div>
 
     <div class="flex justify-end">
-      <button
-        type="submit"
-        [disabled]="infoForm.invalid || infoForm.pristine || loadingInfo"
-        class="px-8 py-3 bg-sky-600 hover:bg-sky-500 text-white text-xs font-bold uppercase tracking-widest transition-all disabled:opacity-50 disabled:bg-[var(--bg-panel)] disabled:text-[var(--text-secondary)]"
-      >
+      <button type="submit" [disabled]="infoForm.invalid || infoForm.pristine || loadingInfo"
+        class="px-8 py-3 bg-sky-600 hover:bg-sky-500 text-white text-sm font-bold uppercase tracking-widest transition-all disabled:opacity-50 disabled:bg-[var(--bg-panel)] disabled:text-[var(--text-secondary)]">
         @if (loadingInfo) {
         <span class="font-mono">GUARDANDO...</span>
         } @else {
@@ -145,20 +88,15 @@
   </form>
 
   <div class="border border-[var(--border-light)] bg-[var(--bg-panel)]">
-    <button
-      (click)="togglePasswordForm()"
-      type="button"
-      class="w-full flex items-center justify-between p-6 hover:bg-[var(--bg-dark)] transition-colors text-left group"
-    >
+    <button (click)="togglePasswordForm()" type="button"
+      class="w-full flex items-center justify-between p-6 hover:bg-[var(--bg-dark)] transition-colors text-left group">
       <div class="flex items-center gap-4">
-        <div
-          class="w-1 h-8 bg-[var(--border-light)] group-hover:bg-red-500 transition-colors"
-        ></div>
+        <div class="w-1 h-8 bg-[var(--border-light)] group-hover:bg-red-500 transition-colors"></div>
         <div>
           <h3 class="text-sm text-[var(--text-heading)] font-bold uppercase tracking-widest">
             Seguridad
           </h3>
-          <p class="text-[10px] text-[var(--text-secondary)] font-mono uppercase">
+          <p class="text-xs text-[var(--text-secondary)] font-mono uppercase">
             Gestión de Contraseña
           </p>
         </div>
@@ -166,75 +104,50 @@
 
       <div class="text-[var(--text-secondary)] group-hover:text-[var(--text-heading)] transition-colors">
         @if (showPasswordForm) {
-        <span class="text-[10px] uppercase tracking-widest mr-2">Cancelar</span>
+        <span class="text-xs uppercase tracking-widest mr-2">Cancelar</span>
         <i class="pi pi-minus text-xs"></i>
         } @else {
-        <span class="text-[10px] uppercase tracking-widest mr-2">Editar</span>
+        <span class="text-xs uppercase tracking-widest mr-2">Editar</span>
         <i class="pi pi-plus text-xs"></i>
         }
       </div>
     </button>
 
-    <div
-      class="overflow-hidden transition-all duration-500 ease-in-out"
-      [style.max-height]="showPasswordForm ? '500px' : '0px'"
-      [class.opacity-100]="showPasswordForm"
-      [class.opacity-0]="!showPasswordForm"
-    >
-      <form
-        [formGroup]="passwordForm"
-        (ngSubmit)="onPasswordSubmit()"
-        class="p-6 pt-0 border-t border-[var(--border-light)]"
-      >
+    <div class="overflow-hidden transition-all duration-500 ease-in-out"
+      [style.max-height]="showPasswordForm ? '500px' : '0px'" [class.opacity-100]="showPasswordForm"
+      [class.opacity-0]="!showPasswordForm">
+      <form [formGroup]="passwordForm" (ngSubmit)="onPasswordSubmit()"
+        class="p-6 pt-0 border-t border-[var(--border-light)]">
         <div class="space-y-6 mt-6 max-w-md">
           <div class="group">
             <label
-              class="block text-[10px] font-bold text-[var(--text-secondary)] uppercase tracking-widest mb-2"
-              >Contraseña Actual</label
-            >
-            <input
-              type="password"
-              formControlName="currentPassword"
-              class="block w-full bg-[var(--bg-dark)] border border-[var(--border-light)] px-4 py-3 text-[var(--text-primary)] focus:border-red-500 focus:outline-none transition-colors font-mono text-sm"
-            />
+              class="block text-xs font-bold text-[var(--text-secondary)] uppercase tracking-widest mb-2">Contraseña
+              Actual</label>
+            <input type="password" formControlName="currentPassword"
+              class="block w-full bg-[var(--bg-dark)] border border-[var(--border-light)] px-4 py-3 text-[var(--text-primary)] focus:border-red-500 focus:outline-none transition-colors font-mono text-sm" />
           </div>
 
           <div class="group">
-            <label
-              class="block text-[10px] font-bold text-[var(--text-secondary)] uppercase tracking-widest mb-2"
-              >Nueva Contraseña</label
-            >
-            <input
-              type="password"
-              formControlName="newPassword"
-              class="block w-full bg-[var(--bg-dark)] border border-[var(--border-light)] px-4 py-3 text-[var(--text-primary)] focus:border-red-500 focus:outline-none transition-colors font-mono text-sm"
-            />
+            <label class="block text-xs font-bold text-[var(--text-secondary)] uppercase tracking-widest mb-2">Nueva
+              Contraseña</label>
+            <input type="password" formControlName="newPassword"
+              class="block w-full bg-[var(--bg-dark)] border border-[var(--border-light)] px-4 py-3 text-[var(--text-primary)] focus:border-red-500 focus:outline-none transition-colors font-mono text-sm" />
           </div>
 
           <div class="group">
-            <label
-              class="block text-[10px] font-bold text-[var(--text-secondary)] uppercase tracking-widest mb-2"
-              >Confirmar Contraseña</label
-            >
-            <input
-              type="password"
-              formControlName="confirmPassword"
-              class="block w-full bg-[var(--bg-dark)] border border-[var(--border-light)] px-4 py-3 text-[var(--text-primary)] focus:border-red-500 focus:outline-none transition-colors font-mono text-sm"
-            />
+            <label class="block text-xs font-bold text-[var(--text-secondary)] uppercase tracking-widest mb-2">Confirmar
+              Contraseña</label>
+            <input type="password" formControlName="confirmPassword"
+              class="block w-full bg-[var(--bg-dark)] border border-[var(--border-light)] px-4 py-3 text-[var(--text-primary)] focus:border-red-500 focus:outline-none transition-colors font-mono text-sm" />
             @if (passwordForm.hasError('mismatch') &&
             passwordForm.get('confirmPassword')?.touched) {
-            <span class="text-[10px] text-red-500 font-mono mt-1 block"
-              >* LAS CONTRASEÑAS NO COINCIDEN</span
-            >
+            <span class="text-xs text-red-500 font-mono mt-1 block">* LAS CONTRASEÑAS NO COINCIDEN</span>
             }
           </div>
 
           <div class="pt-4">
-            <button
-              type="submit"
-              [disabled]="passwordForm.invalid || loadingPassword"
-              class="px-6 py-3 bg-[var(--text-heading)] text-[var(--bg-dark)] hover:bg-red-500 hover:text-white text-xs font-bold uppercase tracking-widest transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-            >
+            <button type="submit" [disabled]="passwordForm.invalid || loadingPassword"
+              class="px-6 py-3 bg-[var(--text-heading)] text-[var(--bg-dark)] hover:bg-red-500 hover:text-white text-sm font-bold uppercase tracking-widest transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
               @if (loadingPassword) { PROCESANDO... } @else { ACTUALIZAR
               CREDENCIALES }
             </button>

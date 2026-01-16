@@ -1,4 +1,10 @@
 @import "tailwindcss";
+
+/**
+ * Tailwind CSS v4 Modern Plugins
+ * NOTE: The @plugin rule is a modern Tailwind v4 feature. 
+ * If your IDE shows a warning, it's likely due to outdated linting rules. 
+ */
 @plugin "@tailwindcss/typography";
 
 
@@ -56,6 +62,7 @@ i {
     max-height: 0;
     transform: translateY(-10px);
   }
+
   to {
     opacity: 1;
     max-height: 500px;
@@ -75,9 +82,9 @@ i {
   /* sky-400 @ 5% */
   --bg-section-alt: theme("colors.sky.100");
   --border-light: rgb(0 0 0 / 0.1);
-  --text-primary: theme("colors.gray.800");
-  --text-secondary: theme("colors.gray.600");
-  --text-heading: theme("colors.gray.950");
+  --text-primary: theme("colors.gray.900");
+  --text-secondary: theme("colors.gray.800");
+  --text-heading: theme("colors.black");
   --btn-primary-bg: theme("colors.gray.900");
   --btn-primary-text: theme("colors.white");
   --btn-secondary-bg: transparent;
@@ -110,8 +117,8 @@ i {
   /* white @ 2% */
   --border-light: rgb(255 255 255 / 0.1);
   /* white @ 10% */
-  --text-primary: theme("colors.slate.200");
-  --text-secondary: theme("colors.slate.400");
+  --text-primary: theme("colors.slate.100");
+  --text-secondary: theme("colors.slate.300");
   --text-heading: theme("colors.white");
   --btn-primary-bg: theme("colors.white");
   --btn-primary-text: theme("colors.slate.950");
@@ -121,7 +128,8 @@ i {
   /* white @ 20% */
 
   /* Tooltip Specifics */
-  --tooltip-bg: #0f172a; /* slate-900 */
+  --tooltip-bg: #0f172a;
+  /* slate-900 */
   --tooltip-border: theme("colors.slate.700");
   --tooltip-text: theme("colors.slate.100");
   --tooltip-text-secondary: theme("colors.slate.400");
@@ -172,7 +180,8 @@ i {
   background-color: var(--tooltip-bg);
   border: 1px solid var(--tooltip-border);
   border-radius: 0.5rem;
-  overflow: hidden; /* Ensures borders don't leak */
+  overflow: hidden;
+  /* Ensures borders don't leak */
 }
 
 .calendar-cell {
@@ -207,6 +216,7 @@ i {
   border: 1px solid var(--tooltip-border);
   gap: 1px;
 }
+
 .calendar-solid-cell {
   background-color: var(--tooltip-bg);
 }
@@ -444,9 +454,7 @@ input:-webkit-autofill:active {
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-.dark
-  .p-toggleswitch:not(.p-toggleswitch-checked)
-  .p-toggleswitch-slider:before {
+.dark .p-toggleswitch:not(.p-toggleswitch-checked) .p-toggleswitch-slider:before {
   background-color: theme("colors.slate.400") !important;
 }
 
@@ -454,8 +462,21 @@ input:-webkit-autofill:active {
   background-color: theme("colors.slate.300") !important;
 }
 
-.dark
-  .p-toggleswitch:not(.p-toggleswitch-checked):hover
-  .p-toggleswitch-slider {
+.dark .p-toggleswitch:not(.p-toggleswitch-checked):hover .p-toggleswitch-slider {
   background-color: theme("colors.slate.700") !important;
+}
+
+/* --- ANIMACIONES ADICIONALES --- */
+@keyframes loading-bar {
+  0% {
+    transform: translateX(-100%) scaleX(0.2);
+  }
+
+  50% {
+    transform: translateX(0%) scaleX(0.5);
+  }
+
+  100% {
+    transform: translateX(100%) scaleX(0.2);
+  }
 }

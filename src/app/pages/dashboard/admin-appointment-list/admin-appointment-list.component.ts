@@ -43,6 +43,7 @@ export class AdminAppointmentListComponent implements OnInit {
 
   public appointments: Appointment[] = [];
   public loading = true;
+  public isInitialLoad = true;
   public error: string | null = null;
   public Math = Math;
   public showDeleted = false;
@@ -50,7 +51,19 @@ export class AdminAppointmentListComponent implements OnInit {
   public totalAppointments = 0;
   public currentPage = 1;
   public rowsPerPage = 10;
+  public sortBy = "appointmentDate";
+  public sortOrder: "asc" | "desc" = "desc";
   public currentQueryParams: QueryAppointmentParams = {};
+
+  public sortOptions = [
+    { label: "Fecha: Más Próximas", value: "appointmentDate", order: "desc" },
+    { label: "Fecha: Más Lejanas", value: "appointmentDate", order: "asc" },
+    { label: "Propiedad (A-Z)", value: "property", order: "asc" },
+    { label: "Agente (A-Z)", value: "agent", order: "asc" },
+    { label: "Cliente (A-Z)", value: "name", order: "asc" },
+    { label: "Contacto (A-Z)", value: "email", order: "asc" },
+    { label: "Estado (A-Z)", value: "status", order: "asc" },
+  ];
 
   public isDeleteDialogOpen = false;
   public appointmentToCancel: Appointment | null = null;
@@ -85,6 +98,8 @@ export class AdminAppointmentListComponent implements OnInit {
       ...this.currentQueryParams,
       page: this.currentPage,
       limit: this.rowsPerPage,
+      sortBy: this.sortBy,
+      sortOrder: this.sortOrder,
       includeDeleted: this.showDeleted ? true : undefined,
     };
 
@@ -97,9 +112,11 @@ export class AdminAppointmentListComponent implements OnInit {
         next: (response: PaginatedAppointmentResponse) => {
           this.appointments = response.data;
           this.totalAppointments = response.total;
+          this.isInitialLoad = false;
         },
         error: (errMessage) => {
           this.error = `Error al cargar citas: ${errMessage}`;
+          this.isInitialLoad = false;
         },
       });
   }
@@ -112,6 +129,19 @@ export class AdminAppointmentListComponent implements OnInit {
           ? undefined
           : (params.selectedValue as AppointmentStatus),
     };
+    this.sortBy = params.sortBy || "appointmentDate";
+    this.sortOrder = params.sortOrder || "desc";
+    this.currentPage = 1;
+    this.loadAppointments();
+  }
+
+  toggleSort(column: string) {
+    if (this.sortBy === column) {
+      this.sortOrder = this.sortOrder === "asc" ? "desc" : "asc";
+    } else {
+      this.sortBy = column;
+      this.sortOrder = "asc";
+    }
     this.currentPage = 1;
     this.loadAppointments();
   }

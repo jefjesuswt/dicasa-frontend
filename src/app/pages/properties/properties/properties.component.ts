@@ -37,6 +37,18 @@ import { SeoService } from "../../../services/seo.service";
     FormsModule,
   ],
   templateUrl: "./properties.component.html",
+  styles: [`
+    .transition-opacity { transition: opacity 0.3s ease-in-out; }
+    @keyframes loading-bar {
+      0% { transform: translateX(-100%) scaleX(0.2); }
+      50% { transform: translateX(0%) scaleX(0.5); }
+      100% { transform: translateX(100%) scaleX(0.2); }
+    }
+    .bg-grid {
+      background-image: radial-gradient(var(--border-light) 1px, transparent 1px);
+      background-size: 30px 30px;
+    }
+  `]
 })
 export class PropertiesComponent implements OnInit, OnDestroy {
   private observer: IntersectionObserver | null = null;
@@ -45,6 +57,7 @@ export class PropertiesComponent implements OnInit, OnDestroy {
 
   properties: Property[] = [];
   loading = true;
+  isInitialLoad = true;
   error: string | null = null;
 
   searchQuery: string = "";
@@ -60,12 +73,26 @@ export class PropertiesComponent implements OnInit, OnDestroy {
     { value: "commercial", label: "Comercial" },
   ];
 
+  // Status options for public view
+  public statusOptions: DropdownOption[] = [
+    { value: "all", label: "Todos los Estatus" },
+    { value: "sale", label: "En Venta" },
+    { value: "rent", label: "En Alquiler" },
+  ];
+
+  // Sort options
+  public sortOptions = [
+    { label: "Más Recientes", value: "createdAt", order: "desc" },
+    { label: "Más Antiguos", value: "createdAt", order: "asc" },
+    { label: "Precio: Mayor a Menor", value: "price", order: "desc" },
+    { label: "Precio: Menor a Mayor", value: "price", order: "asc" },
+  ];
+
   // Advanced filters
   minPrice: number | null = null;
   maxPrice: number | null = null;
   selectedSort: string = "createdAt";
   selectedOrder: 'asc' | 'desc' = "desc";
-  selectedBedrooms: number | null = null;
 
   public totalProperties = 0;
   public currentPage = 1;
@@ -136,14 +163,18 @@ export class PropertiesComponent implements OnInit, OnDestroy {
           : (this.currentStatus as PropertyStatus),
       minPrice: this.minPrice || undefined,
       maxPrice: this.maxPrice || undefined,
-      bedrooms: this.selectedBedrooms || undefined,
       sortBy: this.selectedSort,
       sortOrder: this.selectedOrder,
     };
 
     this.propertyService
       .getPublicProperties(params)
-      .pipe(finalize(() => (this.loading = false)))
+      .pipe(
+        finalize(() => {
+          this.loading = false;
+          this.isInitialLoad = false;
+        })
+      )
       .subscribe({
         next: (response: PaginatedProperties) => {
           this.properties = response.data;
@@ -165,7 +196,6 @@ export class PropertiesComponent implements OnInit, OnDestroy {
     this.currentStatus = params.status || 'all';
     this.minPrice = params.minPrice ?? null;
     this.maxPrice = params.maxPrice ?? null;
-    this.selectedBedrooms = params.bedrooms ?? null;
     this.selectedSort = params.sortBy || 'createdAt';
     this.selectedOrder = params.sortOrder || 'desc';
     this.currentPage = 1;
@@ -189,7 +219,6 @@ export class PropertiesComponent implements OnInit, OnDestroy {
     this.currentStatus = "all";
     this.minPrice = null;
     this.maxPrice = null;
-    this.selectedBedrooms = null;
     this.selectedSort = "createdAt";
     this.selectedOrder = "desc";
     this.currentPage = 1;

@@ -9,10 +9,10 @@
       <h2 class="text-2xl font-bold text-[var(--text-heading)] uppercase tracking-widest mb-4">
         Creación de Cuenta
       </h2>
-      <p class="mt-2 text-sm text-[var(--text-secondary)] font-light">
+      <p class="mt-2 text-sm text-[var(--text-secondary)]">
         ¿Ya tienes una cuenta?
         <a routerLink="/auth/login"
-          class="font-bold text-sky-500 hover:text-[var(--text-heading)] transition-colors uppercase tracking-wider text-xs">
+          class="font-bold text-sky-500 hover:text-[var(--text-heading)] transition-colors uppercase tracking-wider text-sm">
           Inicia sesión aquí
         </a>
       </p>
@@ -31,7 +31,7 @@
             placeholder="NOMBRE COMPLETO" />
         </div>
         @if (name?.invalid && (name?.dirty || name?.touched)) {
-        <p class="mt-1 text-[10px] text-red-500">
+        <p class="mt-1 text-xs text-red-500">
           * NOMBRE REQUERIDO
         </p>
         }
@@ -49,7 +49,7 @@
             placeholder="CORREO ELECTRÓNICO" />
         </div>
         @if (email?.invalid && (email?.dirty || email?.touched)) {
-        <p class="mt-1 text-[10px] text-red-500">
+        <p class="mt-1 text-xs text-red-500">
           * INGRESA UN CORREO VÁLIDO
         </p>
         }
@@ -66,7 +66,7 @@
             placeholder="TELÉFONO DE CONTACTO"></ngx-intl-tel-input>
         </div>
         @if (phoneNumber?.invalid && phoneNumber?.touched) {
-        <p class="mt-1 text-[10px] text-red-500">
+        <p class="mt-1 text-xs text-red-500">
           * TELÉFONO INVÁLIDO O REQUERIDO
         </p>
         }
@@ -85,7 +85,7 @@
             placeholder="CONTRASEÑA (MÍNIMO 6 CARACTERES)" />
         </div>
         @if (password?.invalid && (password?.dirty || password?.touched)) {
-        <p class="mt-1 text-[10px] text-red-500">
+        <p class="mt-1 text-xs text-red-500">
           * MÍNIMO 6 CARACTERES
         </p>
         }
@@ -105,7 +105,7 @@
         </div>
         @if ((confirmPassword?.invalid || registerForm.hasError('mismatch')) &&
         (confirmPassword?.dirty || confirmPassword?.touched)) {
-        <p class="mt-1 text-[10px] text-red-500">
+        <p class="mt-1 text-xs text-red-500">
           * LAS CONTRASEÑAS NO COINCIDEN
         </p>
         }
@@ -113,7 +113,7 @@
 
       <div class="pt-4">
         <button type="submit"
-          class="w-full py-4 bg-sky-500 hover:bg-sky-400 text-[var(--btn-primary-text)] font-bold text-xs uppercase tracking-[0.2em] transition-all duration-300 shadow-[0_0_20px_rgba(14,165,233,0.3)] disabled:opacity-50 disabled:cursor-not-allowed disabled:shadow-none disabled:bg-[var(--bg-panel)] disabled:text-[var(--text-secondary)] flex justify-center items-center gap-3"
+          class="w-full py-4 bg-sky-500 hover:bg-sky-400 text-[var(--btn-primary-text)] font-bold text-sm uppercase tracking-[0.2em] transition-all duration-300 shadow-[0_0_20px_rgba(14,165,233,0.3)] disabled:opacity-50 disabled:cursor-not-allowed disabled:shadow-none disabled:bg-[var(--bg-panel)] disabled:text-[var(--text-secondary)] flex justify-center items-center gap-3"
           [disabled]="loading || registerForm.invalid">
           @if(!loading) {
           <span>REGISTRAR Y ACTIVAR CUENTA</span>

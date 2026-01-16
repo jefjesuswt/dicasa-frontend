@@ -38,6 +38,14 @@ import { FormsModule } from "@angular/forms";
     DashboardUserCardComponent, // 👈 Lo añadimos aquí
   ],
   templateUrl: "./user-list.component.html",
+  styles: [`
+    .transition-opacity { transition: opacity 0.3s ease-in-out; }
+    @keyframes loading-bar {
+      0% { transform: translateX(-100%) scaleX(0.2); }
+      50% { transform: translateX(0%) scaleX(0.5); }
+      100% { transform: translateX(100%) scaleX(0.2); }
+    }
+  `]
 })
 export class UserListComponent implements OnInit {
   private usersService = inject(UsersService);
@@ -50,6 +58,7 @@ export class UserListComponent implements OnInit {
   public users: User[] = [];
   public showInactive = false;
   public loading = true;
+  public isInitialLoad = true;
   public error: string | null = null;
   public Math = Math;
 
@@ -61,6 +70,8 @@ export class UserListComponent implements OnInit {
   public totalUsers = 0;
   public currentPage = 1;
   public rowsPerPage = 10;
+  public sortBy = "_id";
+  public sortOrder: "asc" | "desc" = "desc";
   public currentQueryParams: QueryUserParams = {};
 
   public userRoleOptions: DropdownOption[] = [
@@ -68,6 +79,17 @@ export class UserListComponent implements OnInit {
     { value: UserRole.MANAGER, label: "Gerente" },
     { value: UserRole.AGENT, label: "Vendedor" },
     { value: UserRole.USER, label: "Cliente" },
+  ];
+
+  public sortOptions = [
+    { label: "Más Recientes", value: "_id", order: "desc" },
+    { label: "Más Antiguos", value: "_id", order: "asc" },
+    { label: "Nombre (A-Z)", value: "name", order: "asc" },
+    { label: "Nombre (Z-A)", value: "name", order: "desc" },
+    { label: "ID (Asc)", value: "_id", order: "asc" },
+    { label: "ID (Desc)", value: "_id", order: "desc" },
+    { label: "Rol (A-Z)", value: "roles", order: "asc" },
+    { label: "Rol (Z-A)", value: "roles", order: "desc" },
   ];
 
   public statusBadgeClass: Record<string, string> = {
@@ -85,12 +107,19 @@ export class UserListComponent implements OnInit {
       page: this.currentPage,
       limit: this.rowsPerPage,
       isActive: this.showInactive ? undefined : true,
+      sortBy: this.sortBy,
+      sortOrder: this.sortOrder,
     };
     this.loading = true;
     this.error = null;
     this.usersService
       .getUsers(params)
-      .pipe(finalize(() => (this.loading = false)))
+      .pipe(
+        finalize(() => {
+          this.loading = false;
+          this.isInitialLoad = false;
+        })
+      )
       .subscribe({
         next: (response: PaginatedUserResponse) => {
           this.users = response.data;
@@ -111,7 +140,19 @@ export class UserListComponent implements OnInit {
           ? undefined
           : (params.selectedValue as UserRole),
     };
+    this.sortBy = params.sortBy || "createdAt";
+    this.sortOrder = params.sortOrder || "desc";
     this.currentPage = 1;
+    this.loadUsers();
+  }
+
+  toggleSort(column: string) {
+    if (this.sortBy === column) {
+      this.sortOrder = this.sortOrder === "asc" ? "desc" : "asc";
+    } else {
+      this.sortBy = column;
+      this.sortOrder = "asc";
+    }
     this.loadUsers();
   }
 

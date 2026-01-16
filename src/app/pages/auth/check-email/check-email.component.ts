@@ -23,22 +23,22 @@ import { RouterModule } from "@angular/router";
           </h2>
         </div>
 
-        <p class="mt-2 text-base text-[var(--text-secondary)] font-light leading-relaxed">
+        <p class="mt-2 text-base text-[var(--text-secondary)] leading-relaxed">
           Hemos enviado un <strong>enlace de verificación</strong> a tu
           dirección de correo electrónico. Por favor, haz clic en él para
           activar tu cuenta.
         </p>
 
-        <div class="text-sm text-[var(--text-secondary)] mt-4">
+        <div class="text-base text-[var(--text-secondary)] mt-4">
           (REVISA TU CARPETA DE SPAM SI NO LO ENCUENTRAS)
         </div>
 
         <div class="mt-8 pt-4 border-t border-[var(--border-light)]">
           <a
             routerLink="/"
-            class="font-bold text-[var(--text-secondary)] hover:text-[var(--text-heading)] transition-colors uppercase tracking-wider text-xs"
+            class="font-bold text-[var(--text-secondary)] hover:text-[var(--text-heading)] transition-colors uppercase tracking-wider text-sm"
           >
-            <i class="pi pi-arrow-left text-sky-500 text-[10px] mr-2"></i>
+            <i class="pi pi-arrow-left text-sky-500 text-xs mr-2"></i>
             VOLVER AL SITIO PRINCIPAL
           </a>
         </div>

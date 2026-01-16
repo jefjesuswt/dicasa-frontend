@@ -2,17 +2,18 @@
   <div class="sticky top-0 z-30 bg-[var(--bg-dark)]/90 backdrop-blur-md border-b border-[var(--border-light)]">
     <div class="px-6 py-4 md:px-12 flex flex-col md:flex-row justify-between items-center gap-4">
       <div>
-        <h1 class="text-xl md:text-2xl font-light text-[var(--text-heading)] tracking-wide uppercase">
+        <h1 class="text-xl md:text-2xl font-normal text-[var(--text-heading)] tracking-wide uppercase">
           Dashboard <span class="font-bold text-sky-500">Operativo</span>
         </h1>
-        <p class="text-[10px] text-[var(--text-secondary)] uppercase tracking-[0.2em] mt-1">
-          Inteligencia de Negocio & Auditoría
+        <p class="text-sm text-[var(--text-secondary)] uppercase tracking-[0.2em] mt-1">
+          Inteligencia de Negocio
         </p>
       </div>
 
-      <div class="flex items-center gap-3 bg-[var(--bg-panel)] px-4 py-2 rounded-full border border-[var(--border-light)]">
+      <div
+        class="flex items-center gap-3 bg-[var(--bg-panel)] px-4 py-2 rounded-full border border-[var(--border-light)]">
         <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-        <span class="text-xs text-[var(--text-primary)] uppercase">Sistema Online</span>
+        <span class="text-sm text-[var(--text-primary)] uppercase">Sistema Online</span>
       </div>
     </div>
   </div>
@@ -21,60 +22,66 @@
     @if (loading()) {
     <div class="h-[50vh] flex flex-col items-center justify-center gap-4">
       <i class="pi pi-spin pi-spinner text-3xl text-sky-600"></i>
-      <span class="text-xs text-[var(--text-secondary)] uppercase">Sincronizando Datos...</span>
+      <span class="text-sm text-[var(--text-secondary)] uppercase">Sincronizando Datos...</span>
     </div>
     } @else if (stats(); as data) {
     <div class="flex flex-col gap-8">
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <div class="bg-[var(--bg-panel)] border border-[var(--border-light)] p-6 rounded-sm hover:border-sky-500/20 transition-colors group">
+        <div
+          class="bg-[var(--bg-panel)] border border-[var(--border-light)] p-6 rounded-sm hover:border-sky-500/20 transition-colors group">
           <div class="flex justify-between items-start mb-2">
-            <span class="text-[10px] text-[var(--text-secondary)] uppercase tracking-widest font-bold">Usuarios Activos</span>
+            <span class="text-sm text-[var(--text-secondary)] uppercase tracking-widest font-bold">Usuarios
+              Activos</span>
             <i class="pi pi-users text-[var(--text-secondary)] group-hover:text-sky-500 transition-colors"></i>
           </div>
           <div class="flex items-baseline gap-2">
-            <span class="text-3xl text-[var(--text-heading)] font-light">{{
+            <span class="text-3xl text-[var(--text-heading)] font-normal">{{
               data.kpis.activeUsers
               }}</span>
-            <span class="text-xs text-emerald-500">en línea</span>
+            <span class="text-sm text-emerald-500">en línea</span>
           </div>
         </div>
 
-        <div class="bg-[var(--bg-panel)] border border-[var(--border-light)] p-6 rounded-sm hover:border-sky-500/20 transition-colors group">
+        <div
+          class="bg-[var(--bg-panel)] border border-[var(--border-light)] p-6 rounded-sm hover:border-sky-500/20 transition-colors group">
           <div class="flex justify-between items-start mb-2">
-            <span class="text-[10px] text-[var(--text-secondary)] uppercase tracking-widest font-bold">Tráfico Mes</span>
+            <span class="text-sm text-[var(--text-secondary)] uppercase tracking-widest font-bold">Tráfico
+              Mes</span>
             <i class="pi pi-chart-bar text-[var(--text-secondary)] group-hover:text-sky-500 transition-colors"></i>
           </div>
           <div class="flex items-baseline gap-2">
-            <span class="text-3xl text-[var(--text-heading)] font-light">{{
+            <span class="text-3xl text-[var(--text-heading)] font-normal">{{
               data.kpis.totalVisitsMonth | number
               }}</span>
-            <span class="text-xs text-[var(--text-secondary)]">visitas</span>
+            <span class="text-sm text-[var(--text-secondary)]">visitas</span>
           </div>
         </div>
 
-        <div class="bg-[var(--bg-panel)] border border-[var(--border-light)] p-6 rounded-sm hover:border-sky-500/20 transition-colors group">
+        <div
+          class="bg-[var(--bg-panel)] border border-[var(--border-light)] p-6 rounded-sm hover:border-sky-500/20 transition-colors group">
           <div class="flex justify-between items-start mb-2">
-            <span class="text-[10px] text-[var(--text-secondary)] uppercase tracking-widest font-bold">Permanencia</span>
+            <span class="text-sm text-[var(--text-secondary)] uppercase tracking-widest font-bold">Permanencia</span>
             <i class="pi pi-clock text-[var(--text-secondary)] group-hover:text-sky-500 transition-colors"></i>
           </div>
           <div class="flex items-baseline gap-2">
-            <span class="text-3xl text-[var(--text-heading)] font-light">{{
+            <span class="text-3xl text-[var(--text-heading)] font-normal">{{
               data.kpis.avgPermanence / 60 | number : "1.0-1"
               }}</span>
-            <span class="text-xs text-[var(--text-secondary)]">minutos</span>
+            <span class="text-sm text-[var(--text-secondary)]">minutos</span>
           </div>
         </div>
 
-        <div class="bg-[var(--bg-panel)] border border-[var(--border-light)] p-6 rounded-sm hover:border-sky-500/20 transition-colors group">
+        <div
+          class="bg-[var(--bg-panel)] border border-[var(--border-light)] p-6 rounded-sm hover:border-sky-500/20 transition-colors group">
           <div class="flex justify-between items-start mb-2">
-            <span class="text-[10px] text-[var(--text-secondary)] uppercase tracking-widest font-bold">Propiedades</span>
+            <span class="text-sm text-[var(--text-secondary)] uppercase tracking-widest font-bold">Propiedades</span>
             <i class="pi pi-home text-[var(--text-secondary)] group-hover:text-sky-500 transition-colors"></i>
           </div>
           <div class="flex items-baseline gap-2">
-            <span class="text-3xl text-[var(--text-heading)] font-light">{{
+            <span class="text-3xl text-[var(--text-heading)] font-normal">{{
               data.kpis.totalProperties
               }}</span>
-            <span class="text-xs text-[var(--text-secondary)]">totales</span>
+            <span class="text-sm text-[var(--text-secondary)]">totales</span>
           </div>
         </div>
       </div>
@@ -86,13 +93,13 @@
             <h3 class="text-sm font-bold text-[var(--text-heading)] uppercase tracking-widest">
               Tendencia de Usuarios
             </h3>
-            <p class="text-xs text-[var(--text-secondary)] mt-1">
+            <p class="text-sm text-[var(--text-secondary)] mt-1">
               Comportamiento de tráfico últimos 7 días
             </p>
           </div>
           <div class="text-right">
             <span class="text-2xl text-[var(--text-heading)] block">+{{ evolutionData.datasets[0].data[6] }}</span>
-            <span class="text-[10px] text-emerald-500 uppercase font-bold">Hoy</span>
+            <span class="text-sm text-emerald-500 uppercase font-bold">Hoy</span>
           </div>
         </div>
         <div class="relative h-64 w-full">
@@ -103,7 +110,8 @@
 
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <div class="bg-[var(--bg-panel)] border border-[var(--border-light)] p-6 rounded-sm flex flex-col">
-          <h3 class="text-xs font-bold text-[var(--text-heading)] uppercase tracking-widest mb-6 border-l-2 border-sky-500 pl-3">
+          <h3
+            class="text-sm font-bold text-[var(--text-heading)] uppercase tracking-widest mb-6 border-l-2 border-sky-500 pl-3">
             Composición de Cartera
           </h3>
           <div class="relative h-64 w-full">
@@ -114,16 +122,154 @@
 
         <div class="bg-[var(--bg-panel)] border border-[var(--border-light)] p-6 rounded-sm flex flex-col">
           <div class="flex justify-between items-start mb-6 border-l-2 border-emerald-500 pl-3">
-            <h3 class="text-xs font-bold text-[var(--text-heading)] uppercase tracking-widest">
+            <h3 class="text-sm font-bold text-[var(--text-heading)] uppercase tracking-widest">
               Efectividad Comercial
             </h3>
-            <span class="text-xs text-emerald-400 bg-emerald-500/10 px-2 py-1 rounded">
+            <span class="text-sm text-emerald-400 bg-emerald-500/10 px-2 py-1 rounded">
               {{ data.kpis.schedulingRate }}% Éxito
             </span>
           </div>
           <div class="relative h-64 w-full">
             <canvas baseChart [data]="funnelData" [type]="'bar'" [options]="barOptions">
             </canvas>
+          </div>
+        </div>
+      </div>
+
+      <!-- NUEVAS ESTADISTICAS PARA GERENCIA -->
+      <div class="flex flex-col gap-8">
+
+        <!-- 1. CHART: COMPARATIVA DE RENDIMIENTO (FULL WIDTH) -->
+        <div class="bg-[var(--bg-panel)] border border-[var(--border-light)] p-6 rounded-sm">
+          <div class="flex items-center gap-3 mb-6">
+            <div class="w-8 h-8 rounded-full bg-sky-500/10 flex items-center justify-center">
+              <i class="pi pi-chart-bar text-sky-500 text-sm"></i>
+            </div>
+            <h3 class="text-sm font-bold text-[var(--text-heading)] uppercase tracking-wider">
+              Comparativa de Equipo
+            </h3>
+          </div>
+
+          <div class="relative h-64 w-full">
+            <canvas baseChart [data]="agentPerformanceData" [type]="'bar'" [options]="agentBarOptions">
+            </canvas>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 xl:grid-cols-2 gap-8">
+          <!-- TOP PROPIEDADES -->
+          <div class="bg-[var(--bg-panel)] border border-[var(--border-light)] p-6 rounded-sm">
+            <div class="flex items-center gap-3 mb-6">
+              <div class="w-8 h-8 rounded-full bg-sky-500/10 flex items-center justify-center">
+                <i class="pi pi-star text-sky-500 text-sm"></i>
+              </div>
+              <h3 class="text-sm font-bold text-[var(--text-heading)] uppercase tracking-wider">
+                Propiedades con Mayor Demanda
+              </h3>
+            </div>
+
+            <div class="space-y-4">
+              @for (prop of data.charts.topProperties; track prop._id) {
+              <div
+                class="flex items-center justify-between p-3 bg-[var(--bg-dark)]/40 border border-[var(--border-light)] rounded-sm group hover:border-sky-500/30 transition-colors">
+                <div class="flex flex-col gap-1 min-w-0">
+                  <span class="text-sm font-bold text-[var(--text-heading)] truncate uppercase">
+                    {{ prop.title }}
+                  </span>
+                  <span class="text-xs text-[var(--text-secondary)]">
+                    Valoración: <span class="text-emerald-400">{{ prop.price | currency:'USD' }}</span>
+                  </span>
+                </div>
+                <div class="text-right flex-shrink-0 ml-4">
+                  <span class="text-lg font-normal text-sky-500">{{ prop.appointmentsCount }}</span>
+                  <span class="text-[9px] text-[var(--text-secondary)] block uppercase tracking-tighter">Citas</span>
+                </div>
+              </div>
+              } @empty {
+              <p class="text-sm text-[var(--text-secondary)] italic">No hay datos suficientes aún.</p>
+              }
+            </div>
+          </div>
+
+          <!-- TOP AGENTES -->
+
+
+
+
+          <!-- 2. LIST CARD -->
+          <div class="bg-[var(--bg-panel)] border border-[var(--border-light)] p-6 rounded-sm">
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
+              <div class="flex items-center gap-3">
+                <div class="w-8 h-8 rounded-full bg-emerald-500/10 flex items-center justify-center">
+                  <i class="pi pi-list text-emerald-500 text-sm"></i>
+                </div>
+                <h3 class="text-sm font-bold text-[var(--text-heading)] uppercase tracking-wider">
+                  Ranking de Asesores
+                </h3>
+              </div>
+
+              <!-- SORTING UI -->
+              <div
+                class="flex items-center bg-[var(--bg-dark)]/50 border border-[var(--border-light)] p-1 rounded-sm gap-1">
+                <button (click)="setAgentSort('total')"
+                  class="px-3 py-1.5 text-[10px] uppercase font-bold tracking-tighter transition-all rounded-sm"
+                  [class.bg-sky-500]="agentSortCriteria === 'total'" [class.text-white]="agentSortCriteria === 'total'"
+                  [class.text-[var(--text-secondary)]]="agentSortCriteria !== 'total'"
+                  [class.hover:text-sky-400]="agentSortCriteria !== 'total'">
+                  Total
+                </button>
+                <button (click)="setAgentSort('completed')"
+                  class="px-3 py-1.5 text-[10px] uppercase font-bold tracking-tighter transition-all rounded-sm"
+                  [class.bg-sky-500]="agentSortCriteria === 'completed'"
+                  [class.text-white]="agentSortCriteria === 'completed'"
+                  [class.text-[var(--text-secondary)]]="agentSortCriteria !== 'completed'"
+                  [class.hover:text-sky-400]="agentSortCriteria !== 'completed'">
+                  Éxitos
+                </button>
+
+              </div>
+            </div>
+
+            <div class="space-y-2">
+              @for (agent of sortedAgents; track agent._id) {
+              <div
+                class="p-4 bg-[var(--bg-dark)]/40 border border-[var(--border-light)] rounded-sm hover:border-emerald-500/20 transition-colors">
+                <div class="flex justify-between items-start mb-3">
+                  <div class="flex items-center gap-3">
+                    <div
+                      class="w-8 h-8 rounded-full bg-[var(--bg-panel)] flex items-center justify-center border border-[var(--border-light)] text-sm font-bold text-sky-500 uppercase">
+                      {{ agent.name.charAt(0) }}
+                    </div>
+                    <div>
+                      <p class="text-sm font-bold text-[var(--text-heading)] uppercase">{{ agent.name }}</p>
+                      <p class="text-xs text-[var(--text-secondary)]">{{ agent.email }}</p>
+                    </div>
+                  </div>
+                  <div class="text-right">
+                    <span class="text-sm font-bold"
+                      [ngClass]="agent.conversionRate >= 50 ? 'text-emerald-500' : 'text-amber-500'">
+                      {{ agent.conversionRate | number : "1.0-1" }}%
+                    </span>
+                    <span
+                      class="text-[9px] text-[var(--text-secondary)] block uppercase tracking-tighter">Conversión</span>
+                  </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-2 mt-2 pt-2 border-t border-[var(--border-light)]/50">
+                  <div class="flex flex-col">
+                    <span class="text-xs text-[var(--text-secondary)] uppercase tracking-tighter">Total Citas</span>
+                    <span class="text-sm font-normal text-[var(--text-heading)]">{{ agent.totalAppointments }}</span>
+                  </div>
+                  <div class="flex flex-col">
+                    <span class="text-xs text-[var(--text-secondary)] uppercase tracking-tighter">Concretadas</span>
+                    <span class="text-sm font-normal text-emerald-500">{{ agent.completedAppointments }}</span>
+                  </div>
+                </div>
+              </div>
+              } @empty {
+              <p class="text-sm text-[var(--text-secondary)] italic">No hay datos suficientes aún.</p>
+              }
+            </div>
           </div>
         </div>
       </div>

@@ -12,7 +12,7 @@
       </h2>
 
       @if (email) {
-      <p class="mt-2 text-sm text-[var(--text-secondary)] font-light max-w-sm mx-auto">
+      <p class="mt-2 text-sm text-[var(--text-secondary)] max-w-sm mx-auto">
         Ingresa el código de 6 dígitos que enviamos a tu correo electrónico:
       </p>
       <span
@@ -42,7 +42,7 @@
         </div>
 
         @if (code?.invalid && code?.touched) {
-        <div class="mt-1 text-[10px] text-red-500 text-center">
+        <div class="mt-1 text-xs text-red-500 text-center">
           * CÓDIGO REQUERIDO, 6 DÍGITOS NUMÉRICOS
         </div>
         }
@@ -64,15 +64,15 @@
 
     <!-- ACCIÓN DE REENVÍO -->
     <div class="text-center mt-6 border-t border-[var(--border-light)] pt-4">
-      <p class="text-[var(--text-secondary)] text-xs font-light mb-2">
+      <p class="text-[var(--text-secondary)] text-xs mb-2">
         ¿No recibiste el código?
       </p>
       <button (click)="resendCode()" [disabled]="resending"
         class="font-bold text-[var(--text-secondary)] hover:text-[var(--text-heading)] transition-colors uppercase tracking-wider text-xs disabled:opacity-50 disabled:cursor-not-allowed">
         @if (!resending) {
-        <i class="pi pi-refresh text-sky-500 text-[10px] mr-1"></i> REENVIAR
+        <i class="pi pi-refresh text-sky-500 text-xs mr-1"></i> REENVIAR
         CÓDIGO } @else {
-        <i class="pi pi-spin pi-spinner text-sky-500 text-[10px] mr-1"></i>
+        <i class="pi pi-spin pi-spinner text-sky-500 text-xs mr-1"></i>
         REENVIANDO... }
       </button>
     </div>

@@ -6,4 +6,6 @@ export interface QueryUserParams {
   search?: string;
   role?: UserRole;
   isActive?: boolean;
+  sortBy?: string;
+  sortOrder?: 'asc' | 'desc';
 }

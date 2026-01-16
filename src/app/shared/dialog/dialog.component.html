@@ -1,47 +1,40 @@
 @if (isOpen) {
+<div class="fixed inset-0 z-[9999] flex items-center justify-center bg-[var(--bg-dark)]/90 backdrop-blur-sm p-4"
+  (click)="onClose()" [@backdropFade]>
+  <!-- Modal Panel -->
   <div
-    class="fixed inset-0 z-[9999] flex items-center justify-center bg-[var(--bg-dark)]/90 backdrop-blur-sm p-4"
-    (click)="onClose()"
-    [@backdropFade]
-  >
-    <!-- Modal Panel -->
-    <div
-      class="relative w-full max-w-lg bg-[var(--bg-dark)] border border-[var(--border-light)] shadow-2xl shadow-black/80"
-      (click)="$event.stopPropagation()"
-      [@panelScale]
-    >
-      <!-- Decoración Técnica (Esquinas) -->
-      <div class="absolute top-0 left-0 w-2 h-2 border-t border-l border-sky-500"></div>
-      <div class="absolute top-0 right-0 w-2 h-2 border-t border-r border-sky-500"></div>
-      <div class="absolute bottom-0 left-0 w-2 h-2 border-b border-l border-sky-500"></div>
-      <div class="absolute bottom-0 right-0 w-2 h-2 border-b border-r border-sky-500"></div>
+    class="relative w-full max-w-lg bg-[var(--bg-dark)] border border-[var(--border-light)] shadow-2xl shadow-black/80"
+    (click)="$event.stopPropagation()" [@panelScale]>
+    <!-- Decoración Técnica (Esquinas) -->
+    <div class="absolute top-0 left-0 w-2 h-2 border-t border-l border-sky-500"></div>
+    <div class="absolute top-0 right-0 w-2 h-2 border-t border-r border-sky-500"></div>
+    <div class="absolute bottom-0 left-0 w-2 h-2 border-b border-l border-sky-500"></div>
+    <div class="absolute bottom-0 right-0 w-2 h-2 border-b border-r border-sky-500"></div>
 
-      <!-- Header -->
-      <div class="flex justify-between items-center px-6 py-4 border-b border-[var(--border-light)] bg-white/[0.02]">
-        <div class="flex items-center gap-3">
-          <!-- Icono de alerta sutil -->
-          <div class="w-1.5 h-4 bg-sky-500 rounded-sm"></div>
-          <h3 class="text-sm font-bold text-[var(--text-heading)] uppercase tracking-widest">
-            {{ title }}
-          </h3>
-        </div>
-
-        <button
-          (click)="onClose()"
-          class="text-[var(--text-secondary)] hover:text-[var(--text-heading)] transition-colors p-1 rounded-sm hover:bg-white/10 focus:outline-none"
-          title="Cerrar (Esc)"
-        >
-          <i class="pi pi-times text-sm"></i>
-        </button>
+    <!-- Header -->
+    <div class="flex justify-between items-center px-6 py-4 border-b border-[var(--border-light)] bg-white/[0.02]">
+      <div class="flex items-center gap-3">
+        <!-- Icono de alerta sutil -->
+        <div class="w-1.5 h-4 bg-sky-500 rounded-sm"></div>
+        <h3 class="text-base font-bold text-[var(--text-heading)] uppercase tracking-widest">
+          {{ title }}
+        </h3>
       </div>
 
-      <!-- Content -->
-      <div class="p-6 md:p-8 text-[var(--text-primary)]">
-        <ng-content></ng-content>
-      </div>
-
-      <!-- Barra decorativa inferior -->
-      <div class="h-1 w-full bg-gradient-to-r from-transparent via-white/5 to-transparent opacity-50"></div>
+      <button (click)="onClose()"
+        class="text-[var(--text-secondary)] hover:text-[var(--text-heading)] transition-colors p-1 rounded-sm hover:bg-white/10 focus:outline-none"
+        title="Cerrar (Esc)">
+        <i class="pi pi-times text-sm"></i>
+      </button>
     </div>
+
+    <!-- Content -->
+    <div class="p-6 md:p-8 text-[var(--text-primary)]">
+      <ng-content></ng-content>
+    </div>
+
+    <!-- Barra decorativa inferior -->
+    <div class="h-1 w-full bg-gradient-to-r from-transparent via-white/5 to-transparent opacity-50"></div>
   </div>
+</div>
 }

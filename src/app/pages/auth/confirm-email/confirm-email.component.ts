@@ -41,7 +41,7 @@ import { CommonModule } from "@angular/common";
           >
             ¡Cuenta Verificada!
           </h2>
-          <p class="text-base text-[var(--text-secondary)] font-light leading-relaxed">
+          <p class="text-base text-[var(--text-secondary)] leading-relaxed">
             Tu acceso ha sido confirmado. Serás redirigido al panel principal.
           </p>
           <div
@@ -60,13 +60,13 @@ import { CommonModule } from "@angular/common";
           >
             Error de Verificación
           </h2>
-          <p class="text-sm text-red-400 font-light leading-relaxed">
+          <p class="text-base text-red-400 leading-relaxed">
             {{ errorMessage() }}
           </p>
           <div class="mt-8">
             <a
               routerLink="/auth/login"
-              class="px-6 py-3 bg-[var(--text-heading)] hover:bg-red-500 hover:text-white text-[var(--bg-dark)] text-xs font-bold uppercase tracking-widest transition-colors"
+              class="px-6 py-3 bg-[var(--text-heading)] hover:bg-red-500 hover:text-white text-[var(--bg-dark)] text-sm font-bold uppercase tracking-widest transition-colors"
             >
               VOLVER AL ACCESO
             </a>

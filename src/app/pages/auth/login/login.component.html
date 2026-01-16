@@ -9,9 +9,9 @@
       <h2 class="text-2xl font-bold text-[var(--text-heading)] uppercase tracking-widest mb-1">
         INICIAR SESION
       </h2>
-      <p class="mt-2 text-sm text-[var(--text-secondary)] font-light">
+      <p class="mt-2 text-sm text-[var(--text-secondary)]">
         <a routerLink="/auth/register"
-          class="font-bold text-sky-500 hover:text-[var(--text-heading)] transition-colors uppercase tracking-wider text-xs">
+          class="font-bold text-sky-500 hover:text-[var(--text-heading)] transition-colors uppercase tracking-wider text-sm">
           O crear una cuenta
         </a>
       </p>
@@ -37,7 +37,7 @@
         </div>
 
         @if (email?.invalid && (email?.dirty || email?.touched)) {
-        <p class="mt-1 text-[10px] text-red-500">
+        <p class="mt-1 text-xs text-red-500">
           * INGRESA UN CORREO VÁLIDO
         </p>
         }
@@ -62,7 +62,7 @@
         </div>
 
         @if (password?.invalid && (password?.dirty || password?.touched)) {
-        <p class="mt-1 text-[10px] text-red-500">
+        <p class="mt-1 text-xs text-red-500">
           * CONTRASEÑA MÍNIMO 6 CARACTERES
         </p>
         }
@@ -73,15 +73,14 @@
         <div class="flex items-center">
           <input id="remember-me" name="remember-me" type="checkbox" formControlName="rememberMe"
             class="h-4 w-4 text-sky-500 bg-[var(--bg-panel)] border-[var(--border-light)] focus:ring-sky-500" />
-          <label for="remember-me"
-            class="ml-3 block text-xs text-[var(--text-secondary)] font-light uppercase tracking-wider">
+          <label for="remember-me" class="ml-3 block text-sm text-[var(--text-secondary)] uppercase tracking-wider">
             Recordarme
           </label>
         </div>
 
         <div class="text-sm">
           <a routerLink="/auth/forgot-password"
-            class="font-bold text-[var(--text-secondary)] hover:text-sky-500 transition-colors uppercase tracking-wider text-xs">
+            class="font-bold text-[var(--text-secondary)] hover:text-sky-500 transition-colors uppercase tracking-wider text-sm">
             ¿Olvidaste tu contraseña?
           </a>
         </div>
@@ -90,7 +89,7 @@
       <!-- BOTÓN SUBMIT -->
       <div class="pt-4">
         <button type="submit"
-          class="w-full py-4 bg-sky-500 hover:bg-sky-400 text-[var(--btn-primary-text)] font-bold text-xs uppercase tracking-[0.2em] transition-all duration-300 shadow-[0_0_20px_rgba(14,165,233,0.3)] disabled:opacity-50 disabled:cursor-not-allowed disabled:shadow-none disabled:bg-[var(--bg-panel)] disabled:text-[var(--text-secondary)] flex justify-center items-center gap-3"
+          class="w-full py-4 bg-sky-500 hover:bg-sky-400 text-[var(--btn-primary-text)] font-bold text-sm uppercase tracking-[0.2em] transition-all duration-300 shadow-[0_0_20px_rgba(14,165,233,0.3)] disabled:opacity-50 disabled:cursor-not-allowed disabled:shadow-none disabled:bg-[var(--bg-panel)] disabled:text-[var(--text-secondary)] flex justify-center items-center gap-3"
           [disabled]="loading || loginForm.invalid">
           @if(!loading) {
           <span>ACCEDER AL PANEL</span>

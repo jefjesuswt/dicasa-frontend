@@ -48,7 +48,7 @@
               <p class="text-xs font-bold uppercase text-[var(--text-primary)] leading-none mb-1">
                 {{ user()?.name?.split(' ')?.[0] }}
               </p>
-              <p class="text-[9px] text-sky-500 leading-none tracking-wider">
+              <p class="text-xs text-sky-500 leading-none tracking-wider">
                 ONLINE
               </p>
             </div>
@@ -73,7 +73,7 @@
               <p class="text-[var(--text-heading)] text-xs font-bold truncate uppercase tracking-wide">
                 {{ user()?.name }}
               </p>
-              <p class="text-[var(--text-secondary)] text-[10px] truncate">
+              <p class="text-[var(--text-secondary)] text-xs truncate">
                 {{ user()?.email }}
               </p>
             </div>
@@ -101,7 +101,7 @@
         </div>
         } @else {
         <a routerLink="/auth/login"
-          class="h-9 px-5 flex items-center bg-sky-600 hover:bg-sky-500 text-white text-[10px] font-bold uppercase tracking-[0.15em] transition-colors shadow-lg shadow-sky-900/20">
+          class="h-9 px-5 flex items-center bg-sky-600 hover:bg-sky-500 text-white text-xs font-bold uppercase tracking-[0.15em] transition-colors shadow-lg shadow-sky-900/20">
           Iniciar Sesión
         </a>
         }

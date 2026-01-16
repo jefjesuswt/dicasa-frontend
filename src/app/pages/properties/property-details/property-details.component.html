@@ -35,14 +35,13 @@
     <div class="flex flex-col lg:flex-row justify-between items-end gap-8 mb-12">
       <div class="w-full lg:w-2/3">
         <div class="flex flex-wrap items-center gap-3 mb-4">
-          <span
-            [ngClass]="{
+          <span [ngClass]="{
               'border-emerald-500/20 text-emerald-700 dark:bg-emerald-950/50 dark:text-emerald-400 dark:border-emerald-500/50': prop.status === 'sale',
               'border-sky-500/20 text-sky-700 dark:bg-sky-950/50 dark:text-sky-400 dark:border-sky-500/50': prop.status === 'rent',
               'border-slate-300 text-slate-600 dark:bg-slate-800 dark:text-slate-400 dark:border-slate-600 line-through': prop.status === 'sold',
               'border-purple-500/20 text-purple-700 dark:bg-purple-950/50 dark:text-purple-400 dark:border-purple-500/50': prop.status === 'rented'
             }"
-            class="px-3 py-1 border text-[10px] font-bold uppercase tracking-widest bg-sky-100 dark:bg-transparent transition-colors duration-200">
+            class="px-3 py-1 border text-xs font-bold uppercase tracking-widest bg-sky-100 dark:bg-transparent transition-colors duration-200">
             {{ getStatusLabel(prop.status) }}
           </span>
           <div class="h-px w-8 bg-[var(--border-light)]"></div>
@@ -66,7 +65,7 @@
       </div>
 
       <div class="w-full lg:w-1/3 flex flex-col items-start lg:items-end">
-        <div class="text-[10px] font-bold text-[var(--text-secondary)] uppercase tracking-widest mb-1">
+        <div class="text-xs font-bold text-[var(--text-secondary)] uppercase tracking-widest mb-1">
           Valor de Mercado
         </div>
         <div class="flex items-baseline gap-1">
@@ -76,8 +75,7 @@
           <span class="text-xl text-sky-500 font-bold">$</span>
         </div>
         @if (prop.status === 'rent') {
-        <span
-          class="text-[10px] text-[var(--text-secondary)] uppercase border-t border-[var(--border-light)] pt-1 mt-1">
+        <span class="text-xs text-[var(--text-secondary)] uppercase border-t border-[var(--border-light)] pt-1 mt-1">
           Facturación Mensual
         </span>
         }
@@ -96,7 +94,7 @@
 
           <div class="absolute top-0 left-0 w-full p-6 flex justify-between items-start pointer-events-none">
             <div
-              class="bg-[var(--bg-dark)]/80 backdrop-blur text-[var(--text-heading)] text-[10px] font-bold uppercase px-3 py-1 border border-[var(--border-light)]">
+              class="bg-[var(--bg-dark)]/80 backdrop-blur text-[var(--text-heading)] text-xs font-bold uppercase px-3 py-1 border border-[var(--border-light)]">
               Vista Principal
             </div>
           </div>
@@ -141,7 +139,7 @@
           class="grid grid-cols-2 md:grid-cols-4 border-b border-[var(--border-light)] divide-x divide-[var(--border-light)] bg-[var(--bg-panel)]">
           <div class="p-6 flex flex-col justify-between h-32 hover:bg-white/5 transition-colors group">
             <span
-              class="text-[10px] text-[var(--text-secondary)] uppercase tracking-widest group-hover:text-sky-500 transition-colors">Área
+              class="text-xs text-[var(--text-secondary)] uppercase tracking-widest group-hover:text-sky-500 transition-colors">Área
               Total</span>
             <div class="flex items-end gap-1">
               <span class="text-2xl text-[var(--text-heading)] font-bold">{{
@@ -153,7 +151,7 @@
 
           <div class="p-6 flex flex-col justify-between h-32 hover:bg-white/5 transition-colors group">
             <span
-              class="text-[10px] text-[var(--text-secondary)] uppercase tracking-widest group-hover:text-sky-500 transition-colors">Habitaciones</span>
+              class="text-xs text-[var(--text-secondary)] uppercase tracking-widest group-hover:text-sky-500 transition-colors">Habitaciones</span>
             <div class="flex items-end gap-1">
               <span class="text-2xl text-[var(--text-heading)] font-bold">{{
                 prop.bedrooms || 0
@@ -164,7 +162,7 @@
 
           <div class="p-6 flex flex-col justify-between h-32 hover:bg-white/5 transition-colors group">
             <span
-              class="text-[10px] text-[var(--text-secondary)] uppercase tracking-widest group-hover:text-sky-500 transition-colors">Baños</span>
+              class="text-xs text-[var(--text-secondary)] uppercase tracking-widest group-hover:text-sky-500 transition-colors">Baños</span>
             <div class="flex items-end gap-1">
               <span class="text-2xl text-[var(--text-heading)] font-bold">{{
                 prop.bathrooms || 0
@@ -175,7 +173,7 @@
 
           <div class="p-6 flex flex-col justify-between h-32 hover:bg-white/5 transition-colors group">
             <span
-              class="text-[10px] text-[var(--text-secondary)] uppercase tracking-widest group-hover:text-sky-500 transition-colors">Estacionamiento</span>
+              class="text-xs text-[var(--text-secondary)] uppercase tracking-widest group-hover:text-sky-500 transition-colors">Estacionamiento</span>
             <div class="flex items-end gap-2">
               <span class="text-xl text-[var(--text-heading)] font-bold">
                 {{ prop.features.hasParking ? "SÍ" : "NO" }}
@@ -237,10 +235,9 @@
             </div>
           </div>
           <div class="flex items-center gap-2 mt-12">
-            <span class="text-[10px] text-[var(--text-secondary)] uppercase tracking-widest font-bold">Ref.
+            <span class="text-xs text-[var(--text-secondary)] uppercase tracking-widest font-bold">Ref.
               Propiedad</span>
-            <div
-              class="bg-[var(--bg-panel)] border border-[var(--border-light)] px-2 py-1 text-[10px] text-sky-500">
+            <div class="bg-[var(--bg-panel)] border border-[var(--border-light)] px-2 py-1 text-xs text-sky-500">
               {{ prop._id }}
             </div>
           </div>
@@ -252,7 +249,7 @@
           <div class="border border-[var(--border-light)] bg-[var(--bg-panel)] p-6 relative">
             <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-sky-500 to-blue-600"></div>
 
-            <h3 class="text-[10px] font-bold text-[var(--text-secondary)] uppercase tracking-widest mb-6">
+            <h3 class="text-xs font-bold text-[var(--text-secondary)] uppercase tracking-widest mb-6">
               Representante Oficial
             </h3>
 
@@ -263,7 +260,7 @@
                 <h4 class="text-[var(--text-heading)] font-bold uppercase text-sm tracking-wide">
                   {{ prop.agent.name }}
                 </h4>
-                <div class="text-sky-500 text-[10px] mt-1">
+                <div class="text-sky-500 text-xs mt-1">
                   Asesor Inmobiliario #{{ prop.agent._id | slice : 0 : 6 }}
                 </div>
               </div>
@@ -288,7 +285,7 @@
 
           <div>
             <h3
-              class="text-[10px] font-bold text-[var(--text-secondary)] uppercase tracking-widest mb-4 flex items-center gap-2">
+              class="text-xs font-bold text-[var(--text-secondary)] uppercase tracking-widest mb-4 flex items-center gap-2">
               <i class="pi pi-calendar text-sky-500"></i> Agendar Cita
             </h3>
 
