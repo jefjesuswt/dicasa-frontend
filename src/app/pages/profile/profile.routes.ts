@@ -28,6 +28,15 @@ export const PROFILE_ROUTES: Routes = [
         canActivate: [staffGuard], // AGENT, MANAGER, ADMIN pueden ver sus propiedades
       },
       {
+        path: "my-properties/edit/:id",
+        loadComponent: () =>
+          import("../dashboard/property-form/property-form.component").then(
+            (m) => m.PropertyFormComponent
+          ),
+        data: { isAgentMode: true },
+        canActivate: [staffGuard],
+      },
+      {
         path: "",
         redirectTo: "my-info",
         pathMatch: "full",

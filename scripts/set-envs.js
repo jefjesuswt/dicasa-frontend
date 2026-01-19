@@ -7,7 +7,7 @@ require("dotenv").config();
 
 // 1. Lee la variable de entorno
 const API_URL = process.env.API_URL;
-const ANALYTICS_API_URL = process.env.ANALYTICS_API_URL;
+const MAPBOX_TOKEN = process.env.MAPBOX_TOKEN;
 
 if (!API_URL) {
   console.warn(
@@ -22,7 +22,7 @@ const devContent = `
 export const environment = {
   production: false,
   API_URL: "${API_URL || "http://localhost:3000/api"}",
-  ANALYTICS_API_URL: "${ANALYTICS_API_URL || "http://localhost:3000/api"}"
+  mapboxToken: "${MAPBOX_TOKEN || ""}"
 };
 `;
 
@@ -32,7 +32,7 @@ const prodContent = `
 export const environment = {
   production: true,
   API_URL: "${API_URL}",
-  ANALYTICS_API_URL: "${ANALYTICS_API_URL}"
+  mapboxToken: "${MAPBOX_TOKEN}"
 };
 `;
 

@@ -234,6 +234,26 @@
               } }
             </div>
           </div>
+
+
+          <!-- MAPA -->
+          @if (prop.address.latitude && prop.address.longitude) {
+          <div class="mt-8">
+            <div class="flex items-center justify-between mb-6">
+              <h3
+                class="text-sm font-bold text-[var(--text-heading)] uppercase tracking-widest flex items-center gap-3">
+                <span class="w-1 h-4 bg-sky-500"></span>
+                Ubicación
+              </h3>
+            </div>
+
+            <div
+              class="h-[350px] bg-[var(--bg-panel)] rounded-sm overflow-hidden relative border border-[var(--border-light)]">
+              <div id="details-map" class="h-full w-full z-0"></div>
+            </div>
+          </div>
+          }
+
           <div class="flex items-center gap-2 mt-12">
             <span class="text-xs text-[var(--text-secondary)] uppercase tracking-widest font-bold">Ref.
               Propiedad</span>

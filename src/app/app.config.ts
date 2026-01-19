@@ -18,6 +18,7 @@ import {
 } from "@angular/common/http";
 
 import { provideMarkdown } from 'ngx-markdown';
+import { environment } from '../environments/environment';
 
 import { PreloadStrategyService } from "./services/preload-strategy.service";
 import { authInterceptor } from "./interceptors/auth.interceptor";
@@ -57,6 +58,8 @@ export const appConfig: ApplicationConfig = {
     }),
     provideHttpClient(withFetch(), withInterceptors([authInterceptor])),
     provideMarkdown({ loader: HttpClient }),
+    provideMarkdown({ loader: HttpClient }),
+
 
     // provideHotToastConfig({
     //   position: "bottom-center",

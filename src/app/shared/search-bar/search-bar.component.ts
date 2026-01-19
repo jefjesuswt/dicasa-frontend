@@ -19,6 +19,8 @@ export interface SearchParams {
   status?: string;
   minPrice?: number;
   maxPrice?: number;
+  startDate?: string;
+  endDate?: string;
   sortBy?: string;
   sortOrder?: 'asc' | 'desc';
 }
@@ -33,7 +35,7 @@ export interface DropdownOption {
   standalone: true,
   imports: [CommonModule, FormsModule],
   template: `
-    <div class="w-full bg-white dark:bg-[var(--bg-panel)] backdrop-blur-md border border-[var(--border-light)] shadow-sm rounded-2xl overflow-hidden transition-all duration-300">
+    <div class="w-full bg-[var(--bg-panel)] backdrop-blur-md border border-[var(--border-light)] shadow-sm rounded-2xl overflow-hidden transition-all duration-300">
       <!-- Search Bar -->
       <div class="p-4 md:p-5">
         <div class="flex flex-col md:flex-row gap-3">
@@ -47,7 +49,7 @@ export interface DropdownOption {
               (ngModelChange)="onQueryChange($event)"
               (keyup.enter)="onSearch()"
               [placeholder]="placeholder || 'Buscar por ubicación, ciudad, zona...'"
-              class="w-full bg-slate-50 dark:bg-[var(--bg-panel)] text-[var(--text-heading)] placeholder-[var(--text-secondary)] text-sm pl-11 pr-4 py-3.5 rounded-xl border border-[var(--border-light)] focus:border-sky-500 focus:ring-4 focus:ring-sky-500/10 outline-none transition-all"
+              class="w-full bg-[var(--bg-dark)] text-[var(--text-heading)] placeholder-[var(--text-secondary)] text-sm pl-11 pr-4 py-3.5 rounded-xl border border-[var(--border-light)] focus:border-sky-500 focus:ring-4 focus:ring-sky-500/10 outline-none transition-all"
             />
           </div>
           <button
@@ -115,7 +117,7 @@ export interface DropdownOption {
         }
 
         <!-- Filter Controls - Always Visible -->
-        <div class="px-4 md:px-6 py-5 bg-white/50 dark:bg-[var(--bg-panel)] border-t border-[var(--border-light)]">
+        <div class="px-4 md:px-6 py-5 bg-[var(--bg-panel)] border-t border-[var(--border-light)]">
           <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
             
             <!-- Type Filter -->
@@ -128,7 +130,7 @@ export interface DropdownOption {
                 <select 
                   [(ngModel)]="selectedValue"
                   (change)="onSearch()"
-                  class="bg-slate-50 dark:bg-[var(--bg-dark)] text-[var(--text-heading)] text-sm px-3 py-2.5 pr-10 rounded-xl border border-[var(--border-light)] hover:border-sky-500/50 focus:border-sky-500 focus:ring-4 focus:ring-sky-500/10 outline-none transition-all cursor-pointer appearance-none custom-select">
+                  class="bg-[var(--bg-dark)] text-[var(--text-heading)] text-sm px-3 py-2.5 pr-10 rounded-xl border border-[var(--border-light)] hover:border-sky-500/50 focus:border-sky-500 focus:ring-4 focus:ring-sky-500/10 outline-none transition-all cursor-pointer appearance-none custom-select">
                   <option value="all">Todos</option>
                   @for(opt of dropdownOptions; track opt.value) {
                     <option [value]="opt.value">{{ opt.label }}</option>
@@ -147,7 +149,7 @@ export interface DropdownOption {
                 <select 
                   [(ngModel)]="currentStatus"
                   (change)="onSearch()"
-                  class="bg-slate-50 dark:bg-[var(--bg-dark)] text-[var(--text-heading)] text-sm px-3 py-2.5 pr-10 rounded-xl border border-[var(--border-light)] hover:border-sky-500/50 focus:border-sky-500 focus:ring-4 focus:ring-sky-500/10 outline-none transition-all cursor-pointer appearance-none custom-select">
+                  class="bg-[var(--bg-dark)] text-[var(--text-heading)] text-sm px-3 py-2.5 pr-10 rounded-xl border border-[var(--border-light)] hover:border-sky-500/50 focus:border-sky-500 focus:ring-4 focus:ring-sky-500/10 outline-none transition-all cursor-pointer appearance-none custom-select">
                   @for(opt of statusOptions; track opt.value) {
                     <option [value]="opt.value">{{ opt.label }}</option>
                   }
@@ -167,7 +169,7 @@ export interface DropdownOption {
                   [(ngModel)]="minPrice"
                   (change)="onSearch()"
                   placeholder="0"
-                  class="bg-slate-50 dark:bg-[var(--bg-panel)] text-[var(--text-heading)] text-sm px-3 py-2.5 rounded-xl border border-[var(--border-light)] hover:border-sky-500/50 focus:border-sky-500 focus:ring-4 focus:ring-sky-500/10 outline-none transition-all placeholder:text-[var(--text-secondary)]">
+                  class="bg-[var(--bg-dark)] text-[var(--text-heading)] text-sm px-3 py-2.5 rounded-xl border border-[var(--border-light)] hover:border-sky-500/50 focus:border-sky-500 focus:ring-4 focus:ring-sky-500/10 outline-none transition-all placeholder:text-[var(--text-secondary)]">
               </div>
             }
 
@@ -183,7 +185,36 @@ export interface DropdownOption {
                   [(ngModel)]="maxPrice"
                   (change)="onSearch()"
                   placeholder="Sin límite"
-                  class="bg-slate-50 dark:bg-[var(--bg-panel)] text-[var(--text-heading)] text-sm px-3 py-2.5 rounded-xl border border-[var(--border-light)] hover:border-sky-500/50 focus:border-sky-500 focus:ring-4 focus:ring-sky-500/10 outline-none transition-all placeholder:text-[var(--text-secondary)]">
+                  class="bg-[var(--bg-dark)] text-[var(--text-heading)] text-sm px-3 py-2.5 rounded-xl border border-[var(--border-light)] hover:border-sky-500/50 focus:border-sky-500 focus:ring-4 focus:ring-sky-500/10 outline-none transition-all placeholder:text-[var(--text-secondary)]">
+              </div>
+            }
+
+
+
+            <!-- Date Filters -->
+            @if (showDateFilters) {
+              <div class="flex flex-col gap-2">
+                <label class="text-sm font-bold text-[var(--text-secondary)] uppercase tracking-widest flex items-center gap-1.5 ml-1">
+                  <i class="pi pi-calendar text-sm"></i>
+                  Fecha Inicio
+                </label>
+                <input
+                  type="date"
+                  [(ngModel)]="startDate"
+                  (change)="onSearch()"
+                  class="bg-[var(--bg-dark)] text-[var(--text-heading)] text-sm px-3 py-2.5 rounded-xl border border-[var(--border-light)] hover:border-sky-500/50 focus:border-sky-500 focus:ring-4 focus:ring-sky-500/10 outline-none transition-all cursor-pointer">
+              </div>
+
+              <div class="flex flex-col gap-2">
+                <label class="text-sm font-bold text-[var(--text-secondary)] uppercase tracking-widest flex items-center gap-1.5 ml-1">
+                  <i class="pi pi-calendar text-sm"></i>
+                  Fecha Fin
+                </label>
+                <input
+                  type="date"
+                  [(ngModel)]="endDate"
+                  (change)="onSearch()"
+                  class="bg-[var(--bg-dark)] text-[var(--text-heading)] text-sm px-3 py-2.5 rounded-xl border border-[var(--border-light)] hover:border-sky-500/50 focus:border-sky-500 focus:ring-4 focus:ring-sky-500/10 outline-none transition-all cursor-pointer">
               </div>
             }
 
@@ -197,7 +228,7 @@ export interface DropdownOption {
                 <select 
                   [ngModel]="selectedSort + selectedOrder"
                   (change)="onSortChange($event); onSearch()"
-                  class="bg-slate-50 dark:bg-[var(--bg-dark)] text-[var(--text-heading)] text-sm px-3 py-2.5 pr-10 rounded-xl border border-[var(--border-light)] hover:border-sky-500/50 focus:border-sky-500 focus:ring-4 focus:ring-sky-500/10 outline-none transition-all cursor-pointer appearance-none custom-select">
+                  class="bg-[var(--bg-dark)] text-[var(--text-heading)] text-sm px-3 py-2.5 pr-10 rounded-xl border border-[var(--border-light)] hover:border-sky-500/50 focus:border-sky-500 focus:ring-4 focus:ring-sky-500/10 outline-none transition-all cursor-pointer appearance-none custom-select">
                   @for(opt of sortOptions; track opt.label) {
                     <option [value]="opt.value + opt.order">{{ opt.label }}</option>
                   }
@@ -243,15 +274,15 @@ export interface DropdownOption {
 
       /* Custom Select Arrow */
       .custom-select {
-        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2364748b'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2394a3b8'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
         background-repeat: no-repeat;
         background-position: right 0.75rem center;
         background-size: 1rem;
-        color-scheme: light;
+        color-scheme: dark;
       }
 
-      .dark .custom-select {
-        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2394a3b8'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
+      /* Force date inputs to use dark color scheme */
+      input[type="date"] {
         color-scheme: dark;
       }
 
@@ -280,6 +311,7 @@ export class SearchBarComponent implements OnInit {
   // Advanced filters - Optional
   @Input() showAdvancedFilters: boolean = false;
   @Input() showPriceFilters: boolean = true;
+  @Input() showDateFilters: boolean = false; // NEW: Date filter toggle
   @Input() statusOptions: DropdownOption[] = [];
   @Input() sortOptions: { label: string; value: string; order: string }[] = [];
 
@@ -303,6 +335,8 @@ export class SearchBarComponent implements OnInit {
   currentStatus: string = "all";
   minPrice: number | null = null;
   maxPrice: number | null = null;
+  startDate: string | null = null; // NEW
+  endDate: string | null = null;   // NEW
 
   selectedSort: string = "createdAt";
   selectedOrder: 'asc' | 'desc' = "desc";
@@ -332,6 +366,8 @@ export class SearchBarComponent implements OnInit {
       status: this.showAdvancedFilters ? this.currentStatus : undefined,
       minPrice: (this.showAdvancedFilters && this.showPriceFilters) ? (this.minPrice || undefined) : undefined,
       maxPrice: (this.showAdvancedFilters && this.showPriceFilters) ? (this.maxPrice || undefined) : undefined,
+      startDate: (this.showAdvancedFilters && this.showDateFilters && this.startDate) ? this.startDate : undefined,
+      endDate: (this.showAdvancedFilters && this.showDateFilters && this.endDate) ? this.endDate : undefined,
 
       sortBy: this.showAdvancedFilters ? this.selectedSort : undefined,
       sortOrder: this.showAdvancedFilters ? this.selectedOrder : undefined,
@@ -370,6 +406,8 @@ export class SearchBarComponent implements OnInit {
     if (this.currentStatus !== 'all') count++;
     if (this.minPrice) count++;
     if (this.maxPrice) count++;
+    if (this.startDate) count++;
+    if (this.endDate) count++;
 
     return count;
   }
@@ -379,6 +417,8 @@ export class SearchBarComponent implements OnInit {
     this.currentStatus = 'all';
     this.minPrice = null;
     this.maxPrice = null;
+    this.startDate = null;
+    this.endDate = null;
 
     this.selectedSort = 'createdAt';
     this.selectedOrder = 'desc';

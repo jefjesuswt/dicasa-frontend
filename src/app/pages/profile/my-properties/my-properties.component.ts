@@ -33,10 +33,10 @@ export class MyPropertiesComponent implements OnInit {
 
   // Mapa de Clases CSS (Estilo Técnico/Neón)
   statusClasses: Record<PropertyStatus, string> = {
-    sale: "text-emerald-400 border-emerald-500/30 bg-emerald-500/10",
-    rent: "text-sky-400 border-sky-500/30 bg-sky-500/10",
-    sold: "text-[var(--text-secondary)] border-[var(--border-light)] bg-[var(--bg-panel)] line-through opacity-70",
-    rented: "text-purple-400 border-purple-500/30 bg-purple-500/10",
+    sale: "text-white border-emerald-500 bg-emerald-600",
+    rent: "text-white border-sky-500 bg-sky-600",
+    sold: "text-white border-gray-500 bg-gray-500 opacity-80",
+    rented: "text-white border-purple-500 bg-purple-600",
   };
 
   ngOnInit(): void {

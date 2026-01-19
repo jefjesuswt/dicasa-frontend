@@ -6,7 +6,7 @@ import {
   PLATFORM_ID,
 } from "@angular/core";
 import { isPlatformBrowser } from "@angular/common";
-import { catchError, map, Observable, of, tap } from "rxjs";
+import { catchError, finalize, map, Observable, of, tap } from "rxjs";
 import { HttpClient } from "@angular/common/http";
 import { Router } from "@angular/router";
 import { environment } from "../../environments/environment";
@@ -277,7 +277,11 @@ export class AuthService {
   }
 
   logout() {
-    this.clearAuthData();
-    this.router.navigate(["/auth/login"]);
+    this.http.post(`${this.apiUrl}/logout`, {})
+      .pipe(finalize(() => {
+        this.clearAuthData();
+        this.router.navigate(["/auth/login"]);
+      }))
+      .subscribe();
   }
 }

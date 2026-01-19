@@ -37,7 +37,7 @@ export const DASHBOARD_ROUTES: Routes = [
           import("./user-list/user-list.component").then(
             (m) => m.UserListComponent
           ),
-        canActivate: [managerOrAdminGuard],
+        canActivate: [adminGuard],
       },
       {
         path: "users/new",
@@ -45,7 +45,7 @@ export const DASHBOARD_ROUTES: Routes = [
           import("./user-form/user-form.component").then(
             (m) => m.UserFormComponent
           ),
-        canActivate: [managerOrAdminGuard],
+        canActivate: [adminGuard],
       },
       {
         path: "users/edit/:id",
@@ -53,7 +53,7 @@ export const DASHBOARD_ROUTES: Routes = [
           import("./user-form/user-form.component").then(
             (m) => m.UserFormComponent
           ),
-        canActivate: [managerOrAdminGuard],
+        canActivate: [adminGuard],
       },
       {
         path: "appointments",
@@ -101,7 +101,7 @@ export const DASHBOARD_ROUTES: Routes = [
           import("./backup/backup.component").then(
             (m) => m.BackupComponent
           ),
-        canActivate: [managerOrAdminGuard],
+        canActivate: [adminGuard],
       },
       {
         path: "manual",

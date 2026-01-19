@@ -12,7 +12,7 @@ import { SeoService } from "../../../services/seo.service";
     <div
       class="min-h-screen bg-[var(--bg-dark)] text-[var(--text-primary)] font-sans bg-grid pt-24 pb-24"
     >
-      <div class="container mx-auto px-6 max-w-6xl">
+      <div class="container mx-auto px-6 max-w-[1600px]">
         <div class="mb-16">
           <h1
             class="text-3xl md:text-4xl text-[var(--text-heading)] uppercase tracking-[0.2em] mb-4"
@@ -26,8 +26,8 @@ import { SeoService } from "../../../services/seo.service";
           </p>
         </div>
 
-        <div class="flex flex-col md:flex-row items-start gap-12 lg:gap-20">
-          <aside class="w-full md:w-64 shrink-0">
+        <div class="flex flex-col md:flex-row items-start gap-12 lg:gap-24">
+          <aside class="w-full md:w-64 shrink-0 md:sticky md:top-32">
             <nav class="flex flex-col border-l border-[var(--border-light)]">
               <a
                 routerLink="my-info"

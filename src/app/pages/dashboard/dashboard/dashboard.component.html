@@ -49,7 +49,7 @@
             class="absolute bottom-[-2px] left-0 w-full h-[2px] bg-sky-500/50 scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left"></span>
         </a>
 
-        @if (isAdmin() || isManager()) {
+        @if (isAdmin()) {
         <a routerLink="users" routerLinkActive="!text-sky-500 !border-sky-500 bg-[var(--bg-elevated)]"
           class="group relative px-6 py-4 text-sm font-bold uppercase tracking-widest text-[var(--text-muted)] border-b-2 border-transparent hover:text-[var(--text-heading)] hover:bg-[var(--bg-elevated)] transition-all cursor-pointer flex items-center gap-3">
           <i class="pi pi-users text-lg mb-0.5"></i>
@@ -88,7 +88,7 @@
         </a>
         }
 
-        @if (isAdmin() || isManager()) {
+        @if (isAdmin()) {
         <a routerLink="backup" routerLinkActive="!text-sky-500 !border-sky-500 bg-[var(--bg-elevated)]"
           class="group relative px-6 py-4 text-sm font-bold uppercase tracking-widest text-[var(--text-muted)] border-b-2 border-transparent hover:text-[var(--text-heading)] hover:bg-[var(--bg-elevated)] transition-all cursor-pointer flex items-center gap-3">
           <i class="pi pi-database text-lg mb-0.5"></i>

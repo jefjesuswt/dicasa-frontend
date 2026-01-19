@@ -11,6 +11,10 @@ import { CommonModule, isPlatformBrowser } from "@angular/common";
 import { FormsModule } from "@angular/forms";
 import { finalize } from "rxjs";
 import { NgMagnizoomModule } from "ng-magnizoom";
+import { environment } from '../../../../environments/environment';
+
+
+
 
 import { PropertyService } from "../../../services/property.service";
 import { Property } from "../../../interfaces/properties/property.interface";
@@ -43,7 +47,7 @@ const initialState: PropertyState = {
     RouterModule,
     NgMagnizoomModule,
     AppointmentFormComponent,
-    AvatarComponent,
+    AvatarComponent
   ],
   templateUrl: "./property-details.component.html",
   styles: [
@@ -104,6 +108,76 @@ export class PropertyDetailsComponent implements OnInit {
     return this.typeLabels[type] || "No especificado";
   }
 
+  // --- MAPA (LEAFLET) ---
+  private map: any; // Usar 'any' o importar tipos si es necesario
+
+  get googleMapsUrl(): string {
+    if (!this.state.property?.address?.latitude || !this.state.property?.address?.longitude) {
+      return '';
+    }
+    const { latitude, longitude } = this.state.property.address;
+    return `https://www.google.com/maps/dir/?api=1&destination=${latitude},${longitude}`;
+  }
+
+  private async fixLeafletIcons(L: any): Promise<void> {
+    const iconRetinaUrl = 'assets/marker-icon-2x.png';
+    const iconUrl = 'assets/marker-icon.png';
+    const shadowUrl = 'assets/marker-shadow.png';
+    const iconDefault = L.icon({
+      iconRetinaUrl,
+      iconUrl,
+      shadowUrl,
+      iconSize: [25, 41],
+      iconAnchor: [12, 41],
+      popupAnchor: [1, -34],
+      tooltipAnchor: [16, -28],
+      shadowSize: [41, 41]
+    });
+    L.Marker.prototype.options.icon = iconDefault;
+  }
+
+  private async initDetailsMap(lat: number, lng: number): Promise<void> {
+    if (!isPlatformBrowser(this.platformId)) return;
+
+    // Loading Leaflet dynamically only in browser
+    const L = await import('leaflet');
+    await this.fixLeafletIcons(L);
+
+    // Small timeout to ensure container exists
+    setTimeout(() => {
+      const container = document.getElementById('details-map');
+      if (!container) return;
+
+      if (this.map) {
+        this.map.remove();
+      }
+
+      this.map = L.map('details-map', {
+        center: [lat, lng],
+        zoom: 15,
+        scrollWheelZoom: false
+      });
+
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; OpenStreetMap contributors'
+      }).addTo(this.map);
+
+      const googleLink = this.googleMapsUrl;
+
+      const popupContent = `
+          <div style="text-align: center; color: #333; padding: 5px;">
+            <b style="font-size: 14px;">${this.state.property?.title}</b><br>
+            <a href="${googleLink}" target="_blank" style="display:inline-block; margin-top:8px; padding:6px 12px; background:#0284c7; color:white; border-radius:4px; text-decoration:none; font-size: 12px; font-weight: bold;">
+              📍 Cómo llegar
+            </a>
+          </div>
+        `;
+
+      const marker = L.marker([lat, lng]).addTo(this.map);
+      marker.bindPopup(popupContent).openPopup();
+    }, 100);
+  }
+
   ngOnInit(): void {
     if (isPlatformBrowser(this.platformId)) {
       window.scrollTo(0, 0);
@@ -135,8 +209,7 @@ export class PropertyDetailsComponent implements OnInit {
 
           this.seoService.updateSeoData(
             property.title,
-            `Propiedad en ${this.getStatusLabel(property.status)}. Precio: $${
-              property.price
+            `Propiedad en ${this.getStatusLabel(property.status)}. Precio: $${property.price
             }. ${property.description.substring(0, 100)}...`,
             mainImage
           );
@@ -153,6 +226,11 @@ export class PropertyDetailsComponent implements OnInit {
             error: null,
             activeImageIndex: 0,
           });
+
+          if (property.address?.latitude && property.address?.longitude) {
+            // Iniciar mapa Leaflet
+            this.initDetailsMap(property.address.latitude, property.address.longitude);
+          }
         },
         error: (errorMessage) => {
           this.setError(errorMessage);

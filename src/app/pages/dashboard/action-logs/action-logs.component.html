@@ -20,42 +20,13 @@
     </div>
 
     <div class="px-6 md:px-12 py-8 animate-fade-in">
-        <!-- Filters Section -->
-        <div class="bg-[var(--bg-panel)] border border-[var(--border-light)] p-6 rounded-sm mb-6">
-            <h3
-                class="text-xs font-bold text-[var(--text-heading)] uppercase tracking-widest mb-4 flex items-center gap-2">
-                <i class="pi pi-filter"></i> Filtros de Búsqueda
-            </h3>
-
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <!-- Filter by Action -->
-                <div>
-                    <label
-                        class="text-xs text-[var(--text-secondary)] uppercase tracking-widest block mb-2">Acción</label>
-                    <input type="text" [(ngModel)]="filterAction" placeholder="e.g., UPDATE_PROPERTY"
-                        class="w-full bg-[var(--bg-dark)] border border-[var(--border-light)] px-4 py-2 text-sm text-[var(--text-primary)] placeholder:text-[var(--text-secondary)] focus:border-sky-500 focus:outline-none transition-colors" />
-                </div>
-
-                <!-- Filter by User ID -->
-                <div>
-                    <label class="text-xs text-[var(--text-secondary)] uppercase tracking-widest block mb-2">Usuario
-                        ID</label>
-                    <input type="text" [(ngModel)]="filterUserId" placeholder="ID de usuario"
-                        class="w-full bg-[var(--bg-dark)] border border-[var(--border-light)] px-4 py-2 text-sm text-[var(--text-primary)] font-mono placeholder:text-[var(--text-secondary)] focus:border-sky-500 focus:outline-none transition-colors" />
-                </div>
-
-                <!-- Actions -->
-                <div class="flex items-end gap-2">
-                    <button (click)="applyFilters()"
-                        class="flex-1 bg-sky-600 hover:bg-sky-500 text-white text-sm font-bold uppercase tracking-wider px-6 py-3 transition-colors">
-                        <i class="pi pi-search mr-2"></i> Buscar
-                    </button>
-                    <button (click)="clearFilters()"
-                        class="px-4 py-3 border border-[var(--border-light)] text-[var(--text-secondary)] hover:text-[var(--text-heading)] hover:border-[var(--border-light)] transition-colors text-sm">
-                        <i class="pi pi-times"></i>
-                    </button>
-                </div>
-            </div>
+        <!-- Filters Section - Now using Shared Search Bar -->
+        <div class="mb-6">
+            <shared-search-bar (search)="onSearch($event)" [dropdownOptions]="actionOptions"
+                placeholder="Buscar por Usuario..." label="Registro de Actividad" dropdownLabel="Filtrar Acción"
+                buttonText="BUSCAR" [showAdvancedFilters]="true" [showDateFilters]="true" [showPriceFilters]="false"
+                [sortOptions]="sortOptions" [currentSortBy]="sortBy" [currentSortOrder]="sortOrder">
+            </shared-search-bar>
         </div>
 
         <!-- Loading State -->
@@ -79,14 +50,13 @@
             </div>
 
             <div class="overflow-x-auto">
-                <table class="w-full text-left border-collapse">
+                <table class="w-full text-left border-collapse table-fixed">
                     <thead class="bg-[var(--bg-panel)] text-xs text-[var(--text-secondary)] uppercase tracking-wider">
                         <tr>
-                            <th class="px-6 py-3 font-medium">Fecha</th>
-                            <th class="px-6 py-3 font-medium">Usuario</th>
-                            <th class="px-6 py-3 font-medium">Acción</th>
-                            <th class="px-6 py-3 font-medium">Recurso</th>
-                            <th class="px-6 py-3 font-medium text-right">ID Log</th>
+                            <th class="px-6 py-3 font-medium" style="width: 15%;">Fecha</th>
+                            <th class="px-6 py-3 font-medium" style="width: 20%;">Usuario</th>
+                            <th class="px-6 py-3 font-medium" style="width: 48%;">Recurso</th>
+                            <th class="px-6 py-3 font-medium" style="width: 17%;">Acción</th>
                         </tr>
                     </thead>
                     <tbody class="text-xs text-[var(--text-secondary)] divide-y divide-[var(--border-light)]">
@@ -118,23 +88,15 @@
                                 }
                             </td>
 
-                            <!-- Acción Column -->
-                            <td class="px-6 py-3">
-                                <span
-                                    [class]="'px-2 py-1 rounded text-xs font-medium uppercase tracking-wider ' + getActionBadgeClass(log.action)">
-                                    {{ log.action }}
-                                </span>
-                            </td>
-
                             <!-- Recurso Column -->
-                            <td class="px-6 py-3">
+                            <td class="px-6 py-3 w-full">
                                 @if (log.resource) {
                                 @switch (log.resource.type) {
                                 @case ('property') {
                                 <a [routerLink]="['/properties', log.resource._id]"
                                     class="text-sky-400 hover:text-sky-300 transition-colors flex items-center gap-1 group">
                                     <i class="pi pi-home text-xs"></i>
-                                    <span class="truncate max-w-[200px]">{{ log.resource.title }}</span>
+                                    <span class="truncate">{{ log.resource.title }}</span>
                                     <i
                                         class="pi pi-external-link text-xs opacity-0 group-hover:opacity-100 transition-opacity"></i>
                                 </a>
@@ -143,7 +105,7 @@
                                 <a [routerLink]="['/dashboard/appointments/edit', log.resource._id]"
                                     class="text-emerald-400 hover:text-emerald-300 transition-colors flex items-center gap-1 group">
                                     <i class="pi pi-calendar text-xs"></i>
-                                    <span class="truncate max-w-[200px]">{{ log.resource.title }}</span>
+                                    <span class="truncate">{{ log.resource.title }}</span>
                                     <i
                                         class="pi pi-external-link text-xs opacity-0 group-hover:opacity-100 transition-opacity"></i>
                                 </a>
@@ -152,7 +114,7 @@
                                 <a [routerLink]="['/dashboard/users/edit', log.resource._id]"
                                     class="text-purple-400 hover:text-purple-300 transition-colors flex items-center gap-1 group">
                                     <i class="pi pi-user text-xs"></i>
-                                    <span class="truncate max-w-[200px]">{{ log.resource.title }}</span>
+                                    <span class="truncate">{{ log.resource.title }}</span>
                                     <i
                                         class="pi pi-external-link text-xs opacity-0 group-hover:opacity-100 transition-opacity"></i>
                                 </a>
@@ -160,7 +122,7 @@
                                 @default {
                                 <div class="flex items-center gap-1 text-[var(--text-secondary)]">
                                     <i class="pi pi-question-circle text-xs"></i>
-                                    <span class="truncate max-w-[200px]">{{ log.resource.title || 'Desconocido'
+                                    <span class="truncate">{{ log.resource.title || 'Desconocido'
                                         }}</span>
                                 </div>
                                 }
@@ -178,14 +140,19 @@
                                 }
                             </td>
 
-                            <!-- ID Log Column -->
-                            <td class="px-6 py-3 text-right text-[var(--text-secondary)]">
-                                {{ log._id | slice : 0 : 6 }}
+                            <!-- Acción Column -->
+                            <td class="px-6 py-3">
+                                <span
+                                    [class]="'px-2 py-1 rounded text-xs font-medium uppercase tracking-wider ' + getActionBadgeClass(log.action)">
+                                    {{ getActionLabel(log.action) }}
+                                </span>
                             </td>
+
+
                         </tr>
                         } @empty {
                         <tr>
-                            <td colspan="5" class="px-6 py-8 text-center text-[var(--text-secondary)] italic">
+                            <td colspan="4" class="px-6 py-8 text-center text-[var(--text-secondary)] italic">
                                 No se encontraron registros.
                             </td>
                         </tr>

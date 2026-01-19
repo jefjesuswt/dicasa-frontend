@@ -116,20 +116,31 @@ export class AnalyticsService {
     page: number = 1,
     limit: number = 10,
     action?: string,
-    userId?: string
+    userId?: string,
+    userName?: string,
+    logId?: string,
+    startDate?: string,
+    endDate?: string,
+    sortBy?: string,
+    sortOrder?: 'asc' | 'desc'
   ): Observable<PaginatedActionLogs> {
-    let params = `page=${page}&limit=${limit}`;
+    const params = new URLSearchParams({
+      page: page.toString(),
+      limit: limit.toString()
+    });
 
-    if (action) {
-      params += `&action=${action}`;
-    }
-
-    if (userId) {
-      params += `&userId=${userId}`;
-    }
+    if (action) params.append('action', action);
+    if (userId) params.append('userId', userId);
+    if (userName) params.append('userName', userName);
+    if (logId) params.append('logId', logId);
+    if (logId) params.append('logId', logId);
+    if (startDate) params.append('startDate', startDate);
+    if (endDate) params.append('endDate', endDate);
+    if (sortBy) params.append('sortBy', sortBy);
+    if (sortOrder) params.append('sortOrder', sortOrder);
 
     return this.http.get<PaginatedActionLogs>(
-      `${this.mainApiUrl}/analytics/action-logs?${params}`
+      `${this.mainApiUrl}/analytics/action-logs?${params.toString()}`
     );
   }
 

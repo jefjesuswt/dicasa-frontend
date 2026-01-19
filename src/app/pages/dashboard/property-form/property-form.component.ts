@@ -1,5 +1,5 @@
-import { Component, inject, OnInit } from "@angular/core";
-import { CommonModule } from "@angular/common";
+import { Component, inject, OnInit, ViewChild, ElementRef, PLATFORM_ID, Inject } from "@angular/core";
+import { CommonModule, isPlatformBrowser } from "@angular/common";
 import {
   FormBuilder,
   FormGroup,
@@ -8,7 +8,7 @@ import {
   AbstractControl,
 } from "@angular/forms";
 import { ActivatedRoute, Router } from "@angular/router";
-import { ToastService } from "../../../services/toast.service"; // REPLACED: HotToastService
+import { ToastService } from "../../../services/toast.service";
 import { finalize, switchMap, tap } from "rxjs/operators";
 import { Observable, of } from "rxjs";
 
@@ -24,6 +24,12 @@ import { LocationService } from "../../../services/location.service";
 import { User } from "../../../interfaces/users";
 import { UsersService } from "../../../services/users.service";
 
+import * as L from 'leaflet';
+import 'leaflet-control-geocoder';
+import { environment } from '../../../../environments/environment';
+
+// Fix moved to ngOnInit to avoid SSR crash
+
 @Component({
   selector: "app-property-form",
   standalone: true,
@@ -38,8 +44,10 @@ export class PropertyFormComponent implements OnInit {
   private toast = inject(ToastService);
   private location = inject(LocationService);
   private usersService = inject(UsersService);
+  private platformId = inject(PLATFORM_ID);
 
   propertyForm!: FormGroup;
+  isAgentMode = false;
   isEditMode = false;
   propertyId: string | null = null;
   agents: User[] = [];
@@ -58,9 +66,16 @@ export class PropertyFormComponent implements OnInit {
   cities: string[] = [];
   isLoadingCities = false;
 
-  constructor() {}
+  // --- VARIABLES DEL MAPA (LEAFLET) ---
+  private map: L.Map | undefined;
+  private marker: L.Marker | undefined;
+  private defaultLat = 10.136;
+  private defaultLng = -64.686;
 
   ngOnInit(): void {
+    // Check for Agent Mode
+    this.isAgentMode = this.route.snapshot.data['isAgentMode'] || false;
+
     this.initializeForm();
 
     this.location
@@ -69,7 +84,8 @@ export class PropertyFormComponent implements OnInit {
         tap((states) => {
           this.states = states;
         }),
-        switchMap(() => this.usersService.getAgents()),
+        // Solo cargar agentes si NO estamos en modo agente
+        switchMap(() => this.isAgentMode ? of([]) : this.usersService.getAgents()),
         tap((agents) => {
           this.agents = agents;
         }),
@@ -79,7 +95,7 @@ export class PropertyFormComponent implements OnInit {
           if (id) {
             this.isEditMode = true;
             this.propertyId = id;
-            this.pageTitle = "Editar Propiedad";
+            this.pageTitle = this.isAgentMode ? "Editar Mi Propiedad" : "Editar Propiedad";
 
             return this.propertyService.getProperty(id);
           } else {
@@ -101,6 +117,11 @@ export class PropertyFormComponent implements OnInit {
             this.patchForm(property);
             this.existingImageUrls = [...property.images];
             this.propertyForm.markAsPristine();
+            // Iniciar mapa con la propiedad cargada
+            setTimeout(() => this.initMap(property), 500);
+          } else {
+            // Modo creación: iniciar mapa default
+            setTimeout(() => this.initMap(), 500);
           }
         },
         error: (errMessage) => {
@@ -127,6 +148,8 @@ export class PropertyFormComponent implements OnInit {
         city: ["", Validators.required],
         state: ["", Validators.required],
         country: ["Venezuela", Validators.required],
+        latitude: [null],
+        longitude: [null]
       }),
 
       features: this.fb.group({
@@ -137,7 +160,7 @@ export class PropertyFormComponent implements OnInit {
         isPetFriendly: [false],
       }),
 
-      agent: [null, Validators.required],
+      agent: [null, this.isAgentMode ? [] : Validators.required],
     });
 
     this.setupConditionalValidators();
@@ -198,7 +221,7 @@ export class PropertyFormComponent implements OnInit {
         status: property.status,
         featured: property.featured,
         address: {
-          address: property.address?.address || "", // city: property.address.city,
+          address: property.address?.address || "",
           state: property.address?.state || "",
           country: property.address?.country || "Venezuela",
         },
@@ -219,12 +242,100 @@ export class PropertyFormComponent implements OnInit {
       this.updateCities(stateValue, property.address?.city);
     }
 
+    // Actualizar mapa si tiene coordenadas
+    // El mapa se iniciará cuando se cargue la vista, pero si ya estamos aquí, podemos intentar resetearlo o guardar los valores
+    // para que initMap los lea del formulario
+    if (property.address?.latitude && property.address?.longitude) {
+      // Los valores ya se parcharon al formulario arriba
+    }
+
     this.toggleResidentialFields(
       property.type,
       this.propertyForm.get("bedrooms")!,
       this.propertyForm.get("bathrooms")!
     );
   }
+
+  // --- EVENTOS DEL MAPA ---
+  // --- LEAFLET MAP LOGIC ---
+  private initMap(property?: any): void {
+    if (!isPlatformBrowser(this.platformId)) return;
+
+    const container = document.getElementById('map-container');
+    if (!container) return;
+
+    if (this.map) {
+      this.map.remove();
+    }
+
+    // Coordenadas iniciales
+    let lat = this.defaultLat;
+    let lng = this.defaultLng;
+
+    // Si pasamos propiedad o el formulario ya tiene valores
+    if (property?.address?.latitude && property?.address?.longitude) {
+      lat = property.address.latitude;
+      lng = property.address.longitude;
+    } else {
+      const formLat = this.propertyForm.get('address.latitude')?.value;
+      const formLng = this.propertyForm.get('address.longitude')?.value;
+      if (formLat && formLng) {
+        lat = formLat;
+        lng = formLng;
+      }
+    }
+
+    this.map = L.map('map-container').setView([lat, lng], 13);
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '&copy; OpenStreetMap contributors'
+    }).addTo(this.map);
+
+    this.marker = L.marker([lat, lng], { draggable: true }).addTo(this.map);
+
+    const updateFn = (lat: number, lng: number) => {
+      this.propertyForm.get('address')?.patchValue({ latitude: lat, longitude: lng });
+      this.propertyForm.markAsDirty();
+    };
+
+    this.marker.on('dragend', () => {
+      if (this.marker) {
+        const { lat, lng } = this.marker.getLatLng();
+        updateFn(lat, lng);
+      }
+    });
+
+    this.map.on('click', (e: L.LeafletMouseEvent) => {
+      if (this.marker) {
+        this.marker.setLatLng(e.latlng);
+        updateFn(e.latlng.lat, e.latlng.lng);
+      }
+    });
+
+    // NOMINATIM GEOCODER (OSM)
+    // @ts-ignore
+    const Geocoder = L.Control.Geocoder.nominatim({
+      geocodingQueryParams: {
+        countrycodes: 've',
+        'accept-language': 'es'
+      }
+    });
+
+    // @ts-ignore
+    new L.Control.Geocoder({
+      defaultMarkGeocode: false,
+      placeholder: 'Buscar (ej: Santiago Mariño)...',
+      geocoder: Geocoder
+    })
+      .on('markgeocode', (e: any) => {
+        const center = e.geocode.center;
+        this.map?.setView(center, 16);
+        this.marker?.setLatLng(center);
+        updateFn(center.lat, center.lng);
+      })
+      .addTo(this.map);
+  }
+
 
   onSubmit(): void {
     if (this.propertyForm.invalid) {
@@ -331,7 +442,11 @@ export class PropertyFormComponent implements OnInit {
   }
 
   cancel(): void {
-    this.router.navigate(["/dashboard/properties"]);
+    if (this.isAgentMode) {
+      this.router.navigate(["/profile/my-properties"]);
+    } else {
+      this.router.navigate(["/dashboard/properties"]);
+    }
   }
 
   get title() {

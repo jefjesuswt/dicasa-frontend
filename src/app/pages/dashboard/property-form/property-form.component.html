@@ -50,6 +50,8 @@
           </h3>
 
           <!-- Agente -->
+          <!-- Agente -->
+          @if (!isAgentMode) {
           <div class="bg-[var(--bg-panel)] border border-[var(--border-light)] p-4 rounded-sm">
             <label for="agent"
               class="block text-xs font-bold text-[var(--text-secondary)] uppercase tracking-widest mb-2">
@@ -69,6 +71,7 @@
             <p class="text-xs text-red-400 uppercase mt-1">Requerido</p>
             }
           </div>
+          }
 
           <!-- Título y Precio -->
           <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -238,6 +241,22 @@
               }
             </div>
           </div>
+
+
+          <!-- MAPA -->
+          <div class="col-span-full mt-4">
+            <label class="block text-xs font-bold text-[var(--text-secondary)] uppercase tracking-widest mb-2">
+              Ubicación Geográfica
+            </label>
+
+            <div id="map-container"
+              class="h-[400px] w-full border border-[var(--border-light)] rounded bg-slate-900 z-0"></div>
+
+            <p class="text-xs text-[var(--text-secondary)] mt-2">
+              Usa la lupa en el mapa para buscar una dirección o arrastra el marcador manualmente.
+            </p>
+          </div>
+
         </section>
 
         <!-- SECCIÓN 4: AMENIDADES -->
@@ -247,7 +266,7 @@
             <i class="pi pi-star"></i> 04 // Amenidades y Servicios
           </h3>
 
-          <div class="grid grid-cols-2 sm:grid-cols-3 gap-4">
+          <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
             <!-- Checkbox Item -->
             <div
               class="flex items-center p-3 bg-[var(--bg-panel)] border border-[var(--border-light)] rounded-sm hover:border-sky-500/30 transition-colors">
@@ -375,14 +394,14 @@
         </div>
 
         <!-- Footer Actions -->
-        <div class="pt-6 border-t border-[var(--border-light)] flex justify-end gap-3">
+        <div class="pt-6 border-t border-[var(--border-light)] flex flex-col-reverse sm:flex-row justify-end gap-3">
           <button type="button" (click)="cancel()" [disabled]="isSaving"
-            class="px-6 py-3 text-xs font-bold uppercase tracking-widest text-[var(--text-secondary)] hover:text-[var(--text-heading)] border border-transparent hover:border-[var(--border-light)] rounded-sm transition-all">
+            class="w-full sm:w-auto px-6 py-3 text-xs font-bold uppercase tracking-widest text-[var(--text-secondary)] hover:text-[var(--text-heading)] border border-transparent hover:border-[var(--border-light)] rounded-sm transition-all text-center">
             Cancelar
           </button>
 
           <button type="submit" [disabled]="propertyForm.invalid || isSaving || propertyForm.pristine"
-            class="px-8 py-3 bg-sky-600 hover:bg-sky-500 text-white text-xs font-bold uppercase tracking-widest rounded-sm shadow-[0_0_15px_rgba(2,132,199,0.3)] hover:shadow-[0_0_20px_rgba(2,132,199,0.5)] disabled:opacity-50 disabled:shadow-none disabled:cursor-not-allowed transition-all flex items-center gap-2">
+            class="w-full sm:w-auto px-8 py-3 bg-sky-600 hover:bg-sky-500 text-white text-xs font-bold uppercase tracking-widest rounded-sm shadow-[0_0_15px_rgba(2,132,199,0.3)] hover:shadow-[0_0_20px_rgba(2,132,199,0.5)] disabled:opacity-50 disabled:shadow-none disabled:cursor-not-allowed transition-all flex items-center justify-center gap-2">
             @if (isSaving) {
             <i class="pi pi-spin pi-spinner"></i>
             <span>Guardando...</span>
