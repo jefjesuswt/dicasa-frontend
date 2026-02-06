@@ -1,6 +1,6 @@
 <a [routerLink]="['/properties', property._id]"
-  class="group relative flex flex-col h-full bg-[var(--bg-dark)] border-2 border-[var(--border-light)] hover:border-sky-500/50 transition-all duration-500 overflow-hidden">
-  <div class="relative h-64 overflow-hidden bg-[var(--bg-dark)]">
+  class="group relative flex flex-col h-full bg-[var(--tooltip-bg)] border-2 border-[var(--border-light)] hover:border-sky-500/50 transition-all duration-500 overflow-hidden shadow-sm hover:shadow-xl">
+  <div class="relative h-64 overflow-hidden bg-[var(--bg-section-alt)]">
     <img [src]="property.images[0] || '/assets/images/placeholder-property.png'" [alt]="property.title"
       class="w-full h-full object-cover transition-all duration-700 group-hover:scale-105"
       (error)="onImageError($event)" />
@@ -24,9 +24,29 @@
         </p>
       </div>
     </div>
+
+    <!-- Toggle Compare Button (New Design) -->
+    <!-- Toggle Compare Button (New Design - Explicit) -->
+    <button
+      (click)="toggleCompare($event)"
+      class="absolute top-3 right-3 z-30 flex items-center gap-2 px-3 py-1.5 rounded-full backdrop-blur-md border transition-all duration-300 group/compare shadow-sm"
+      [ngClass]="{
+        'bg-sky-500 border-sky-400 text-white': isSelectedForComparison,
+        'bg-[var(--tooltip-bg)] border-[var(--border-light)] text-[var(--text-secondary)] hover:bg-[var(--bg-section-alt)]': !isSelectedForComparison
+      }"
+      title="Comparar propiedad">
+      <i class="pi"
+         [class.pi-plus]="!isSelectedForComparison"
+         [class.pi-check]="isSelectedForComparison"
+         [class.font-bold]="isSelectedForComparison">
+      </i>
+      <span class="text-xs font-bold uppercase tracking-wider inline-block">
+        {{ isSelectedForComparison ? 'Comparando' : 'Comparar' }}
+      </span>
+    </button>
   </div>
 
-  <div class="p-6 flex flex-col flex-grow border-t border-[var(--border-light)]">
+  <div class="p-6 flex flex-col flex-grow border-t border-[var(--border-light)] bg-[var(--tooltip-bg)]">
     <div class="mb-2">
       <span class="text-sm font-bold uppercase tracking-widest" [class]="getStatusClass(property.status)">
         {{ getStatusText(property.status) }}
@@ -34,17 +54,17 @@
     </div>
 
     <h3
-      class="text-sm font-bold text-[var(--text-heading)] uppercase tracking-wider mb-6 line-clamp-2 leading-relaxed h-[3rem]">
+      class="text-sm font-bold text-[var(--text-primary)] uppercase tracking-wider mb-6 line-clamp-2 leading-relaxed h-[3rem]">
       {{ property.title }}
     </h3>
 
     <div
-      class="mt-auto grid divide-x divide-[var(--border-light)] border border-[var(--border-light)] bg-[var(--bg-panel)]">
+      class="mt-auto grid divide-x divide-[var(--border-light)] border border-[var(--border-light)] bg-[var(--bg-section-alt)] rounded-sm">
       @if (property.type === 'land') {
       <div class="p-3 flex flex-col items-center justify-center text-center col-span-3">
         <i class="pi pi-globe text-[var(--text-secondary)] mb-1 text-lg group-hover:text-sky-400 transition-colors"></i>
         <span class="text-sm text-[var(--text-secondary)] uppercase tracking-wider">Área Total</span>
-        <span class="text-sm font-bold text-[var(--text-heading)]">{{ property.area | number }} m²</span>
+        <span class="text-sm font-bold text-[var(--text-primary)]">{{ property.area | number }} m²</span>
       </div>
       } @else {
       <div class="grid grid-cols-3 divide-x divide-[var(--border-light)] w-full">
@@ -53,11 +73,11 @@
           <i
             class="pi pi-briefcase text-[var(--text-secondary)] mb-1 group-hover/icon:text-sky-400 transition-colors"></i>
           <span class="text-xs text-[var(--text-secondary)] uppercase">Tipo</span>
-          <span class="text-sm font-bold text-[var(--text-heading)]">Comm.</span>
+          <span class="text-sm font-bold text-[var(--text-primary)]">Comm.</span>
           } @else {
           <i class="pi pi-home text-[var(--text-secondary)] mb-1 group-hover/icon:text-sky-400 transition-colors"></i>
           <span class="text-xs text-[var(--text-secondary)] uppercase">Hab.</span>
-          <span class="text-sm font-bold text-[var(--text-heading)]">{{
+          <span class="text-sm font-bold text-[var(--text-primary)]">{{
             property.bedrooms || 0
             }}</span>
           }
@@ -66,7 +86,7 @@
         <div class="p-3 flex flex-col items-center justify-center text-center group/icon">
           <i class="pi pi-user text-[var(--text-secondary)] mb-1 group-hover/icon:text-sky-400 transition-colors"></i>
           <span class="text-xs text-[var(--text-secondary)] uppercase">Baños</span>
-          <span class="text-sm font-bold text-[var(--text-heading)]">{{
+          <span class="text-sm font-bold text-[var(--text-primary)]">{{
             property.bathrooms || 0
             }}</span>
         </div>
@@ -75,7 +95,7 @@
           <i
             class="pi pi-th-large text-[var(--text-secondary)] mb-1 group-hover/icon:text-sky-400 transition-colors"></i>
           <span class="text-xs text-[var(--text-secondary)] uppercase">M²</span>
-          <span class="text-sm font-bold text-[var(--text-heading)]">{{
+          <span class="text-sm font-bold text-[var(--text-primary)]">{{
             property.area | number
             }}</span>
         </div>
@@ -85,7 +105,7 @@
   </div>
 
   <div
-    class="relative z-20 block w-full py-4 bg-[var(--bg-dark)] border-t border-[var(--border-light)] text-center text-blue-800 dark:text-sky-400 hover:bg-sky-500 hover:text-slate-950 transition-all duration-300 group/btn relative overflow-hidden">
+    class="relative z-20 block w-full py-4 bg-[var(--tooltip-bg)] border-t border-[var(--border-light)] text-center text-sky-600 dark:text-sky-400 hover:bg-sky-500 hover:text-white dark:hover:text-slate-950 transition-all duration-300 group/btn relative overflow-hidden">
     <span class="relative z-10 text-sm font-bold uppercase tracking-[0.2em]">
       Ver Detalles...
     </span>

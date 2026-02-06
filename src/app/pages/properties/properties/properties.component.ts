@@ -5,29 +5,30 @@ import {
   OnDestroy,
   afterNextRender,
   PLATFORM_ID,
-} from "@angular/core";
-import { CommonModule, DOCUMENT, isPlatformBrowser } from "@angular/common";
-import { RouterModule } from "@angular/router";
-import { PropertyService } from "../../../services/property.service";
-import { PropertyCardComponent } from "../../../shared/property-card/property-card.component";
+} from '@angular/core';
+import { CommonModule, DOCUMENT, isPlatformBrowser } from '@angular/common';
+import { RouterModule } from '@angular/router';
+import { PropertyService } from '../../../services/property.service';
+import { PropertyCardComponent } from '../../../shared/property-card/property-card.component';
+import { ComparisonService } from '../../../services/comparison.service';
 import {
   DropdownOption,
   SearchBarComponent,
   SearchParams,
-} from "../../../shared/search-bar/search-bar.component";
-import { FormsModule } from "@angular/forms";
-import { Property } from "../../../interfaces/properties/property.interface";
-import { finalize } from "rxjs";
-import { PaginatedProperties } from "../../../interfaces/properties/paginated-properties.interface";
-import { QueryPropertiesParams } from "../../../interfaces/properties/query-property.interface";
-import { PropertyStatus } from "../../../interfaces/properties/property-status.enum";
-import Fingerprint from "fingerprinter-js";
-import { AnalyticsService } from "../../../services/analytics.service";
-import { v4 as uuidv4 } from "uuid";
-import { SeoService } from "../../../services/seo.service";
+} from '../../../shared/search-bar/search-bar.component';
+import { FormsModule } from '@angular/forms';
+import { Property } from '../../../interfaces/properties/property.interface';
+import { finalize } from 'rxjs';
+import { PaginatedProperties } from '../../../interfaces/properties/paginated-properties.interface';
+import { QueryPropertiesParams } from '../../../interfaces/properties/query-property.interface';
+import { PropertyStatus } from '../../../interfaces/properties/property-status.enum';
+import Fingerprint from 'fingerprinter-js';
+import { AnalyticsService } from '../../../services/analytics.service';
+import { v4 as uuidv4 } from 'uuid';
+import { SeoService } from '../../../services/seo.service';
 
 @Component({
-  selector: "properties-properties",
+  selector: 'properties-properties',
   standalone: true,
   imports: [
     CommonModule,
@@ -36,19 +37,32 @@ import { SeoService } from "../../../services/seo.service";
     SearchBarComponent,
     FormsModule,
   ],
-  templateUrl: "./properties.component.html",
-  styles: [`
-    .transition-opacity { transition: opacity 0.3s ease-in-out; }
-    @keyframes loading-bar {
-      0% { transform: translateX(-100%) scaleX(0.2); }
-      50% { transform: translateX(0%) scaleX(0.5); }
-      100% { transform: translateX(100%) scaleX(0.2); }
-    }
-    .bg-grid {
-      background-image: radial-gradient(var(--border-light) 1px, transparent 1px);
-      background-size: 30px 30px;
-    }
-  `]
+  templateUrl: './properties.component.html',
+  styles: [
+    `
+      .transition-opacity {
+        transition: opacity 0.3s ease-in-out;
+      }
+      @keyframes loading-bar {
+        0% {
+          transform: translateX(-100%) scaleX(0.2);
+        }
+        50% {
+          transform: translateX(0%) scaleX(0.5);
+        }
+        100% {
+          transform: translateX(100%) scaleX(0.2);
+        }
+      }
+      .bg-grid {
+        background-image: radial-gradient(
+          var(--border-light) 1px,
+          transparent 1px
+        );
+        background-size: 30px 30px;
+      }
+    `,
+  ],
 })
 export class PropertiesComponent implements OnInit, OnDestroy {
   private observer: IntersectionObserver | null = null;
@@ -60,39 +74,39 @@ export class PropertiesComponent implements OnInit, OnDestroy {
   isInitialLoad = true;
   error: string | null = null;
 
-  searchQuery: string = "";
-  selectedType: string = "all";
-  currentStatus: string = "all";
-  statusList: PropertyStatus[] = ["sale", "rent"];
+  searchQuery: string = '';
+  selectedType: string = 'all';
+  currentStatus: string = 'all';
+  statusList: PropertyStatus[] = ['sale', 'rent'];
 
   public propertyTypeOptions: DropdownOption[] = [
-    { value: "apartment", label: "Apartamento" },
-    { value: "house", label: "Casa" },
-    { value: "villa", label: "Villa" },
-    { value: "land", label: "Terreno" },
-    { value: "commercial", label: "Comercial" },
+    { value: 'apartment', label: 'Apartamento' },
+    { value: 'house', label: 'Casa' },
+    { value: 'villa', label: 'Villa' },
+    { value: 'land', label: 'Terreno' },
+    { value: 'commercial', label: 'Comercial' },
   ];
 
   // Status options for public view
   public statusOptions: DropdownOption[] = [
-    { value: "all", label: "Todos los Estatus" },
-    { value: "sale", label: "En Venta" },
-    { value: "rent", label: "En Alquiler" },
+    { value: 'all', label: 'Todos los Estatus' },
+    { value: 'sale', label: 'En Venta' },
+    { value: 'rent', label: 'En Alquiler' },
   ];
 
   // Sort options
   public sortOptions = [
-    { label: "Más Recientes", value: "createdAt", order: "desc" },
-    { label: "Más Antiguos", value: "createdAt", order: "asc" },
-    { label: "Precio: Mayor a Menor", value: "price", order: "desc" },
-    { label: "Precio: Menor a Mayor", value: "price", order: "asc" },
+    { label: 'Más Recientes', value: 'createdAt', order: 'desc' },
+    { label: 'Más Antiguos', value: 'createdAt', order: 'asc' },
+    { label: 'Precio: Mayor a Menor', value: 'price', order: 'desc' },
+    { label: 'Precio: Menor a Mayor', value: 'price', order: 'asc' },
   ];
 
   // Advanced filters
   minPrice: number | null = null;
   maxPrice: number | null = null;
-  selectedSort: string = "createdAt";
-  selectedOrder: 'asc' | 'desc' = "desc";
+  selectedSort: string = 'createdAt';
+  selectedOrder: 'asc' | 'desc' = 'desc';
 
   public totalProperties = 0;
   public currentPage = 1;
@@ -101,6 +115,7 @@ export class PropertiesComponent implements OnInit, OnDestroy {
   private propertyService = inject(PropertyService);
   private analyticsService = inject(AnalyticsService);
   private seoService = inject(SeoService);
+  public comparisonService = inject(ComparisonService);
 
   constructor() {
     afterNextRender(() => {
@@ -111,13 +126,12 @@ export class PropertiesComponent implements OnInit, OnDestroy {
   async ngOnInit(): Promise<void> {
     // SEO
     this.seoService.updateSeoData(
-      "Propiedades",
-      "Explora nuestro catálogo de casas, apartamentos y terrenos en venta y alquiler en Lechería."
+      'Propiedades',
+      'Explora nuestro catálogo de casas, apartamentos y terrenos en venta y alquiler en Lechería.'
     );
 
     this.loadProperties();
   }
-
 
   ngOnDestroy() {
     this.observer?.disconnect();
@@ -128,22 +142,22 @@ export class PropertiesComponent implements OnInit, OnDestroy {
 
     const options = {
       root: null,
-      rootMargin: "0px",
+      rootMargin: '0px',
       threshold: 0.15,
     };
 
     this.observer = new IntersectionObserver((entries) => {
       entries.forEach((entry) => {
         if (entry.isIntersecting) {
-          entry.target.classList.add("is-visible");
+          entry.target.classList.add('is-visible');
         } else {
-          entry.target.classList.remove("is-visible");
+          entry.target.classList.remove('is-visible');
         }
       });
     }, options);
 
     setTimeout(() => {
-      const elements = this.document.querySelectorAll(".reveal-on-scroll");
+      const elements = this.document.querySelectorAll('.reveal-on-scroll');
       elements.forEach((el) => this.observer?.observe(el));
     }, 100);
   }
@@ -156,9 +170,9 @@ export class PropertiesComponent implements OnInit, OnDestroy {
       page: this.currentPage,
       limit: this.itemsPerPage,
       search: this.searchQuery || undefined,
-      type: this.selectedType === "all" ? undefined : this.selectedType,
+      type: this.selectedType === 'all' ? undefined : this.selectedType,
       status:
-        this.currentStatus === "all"
+        this.currentStatus === 'all'
           ? undefined
           : (this.currentStatus as PropertyStatus),
       minPrice: this.minPrice || undefined,
@@ -214,13 +228,13 @@ export class PropertiesComponent implements OnInit, OnDestroy {
   }
 
   resetFilters(): void {
-    this.searchQuery = "";
-    this.selectedType = "all";
-    this.currentStatus = "all";
+    this.searchQuery = '';
+    this.selectedType = 'all';
+    this.currentStatus = 'all';
     this.minPrice = null;
     this.maxPrice = null;
-    this.selectedSort = "createdAt";
-    this.selectedOrder = "desc";
+    this.selectedSort = 'createdAt';
+    this.selectedOrder = 'desc';
     this.currentPage = 1;
     this.loadProperties();
   }
@@ -237,20 +251,18 @@ export class PropertiesComponent implements OnInit, OnDestroy {
     this.loadProperties();
 
     if (isPlatformBrowser(this.platformId)) {
-      window.scrollTo({ top: 0, behavior: "smooth" });
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
   }
 
   getTypeLabel(type: string): string {
     const labels: { [key: string]: string } = {
-      apartment: "Apartamento",
-      house: "Casa",
-      villa: "Villa",
-      land: "Terreno",
-      commercial: "Comercial",
+      apartment: 'Apartamento',
+      house: 'Casa',
+      villa: 'Villa',
+      land: 'Terreno',
+      commercial: 'Comercial',
     };
     return labels[type] || type;
   }
-
-
 }

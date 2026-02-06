@@ -78,6 +78,9 @@ export class PropertyDetailsComponent implements OnInit {
   private seoService = inject(SeoService); // <--- INYECTAR
   private platformId = inject(PLATFORM_ID); // <--- INYECTAR
 
+  // Property for SSR check
+  isBrowser = isPlatformBrowser(this.platformId);
+
   private statusLabels: Record<string, string> = {
     sale: 'En Venta',
     rent: 'En Alquiler',
