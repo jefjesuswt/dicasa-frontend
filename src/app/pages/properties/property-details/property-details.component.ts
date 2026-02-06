@@ -4,23 +4,20 @@ import {
   inject,
   OnInit,
   PLATFORM_ID,
-} from "@angular/core";
-import { trigger, transition, style, animate } from "@angular/animations";
-import { ActivatedRoute, Router, RouterModule } from "@angular/router";
-import { CommonModule, isPlatformBrowser } from "@angular/common";
-import { FormsModule } from "@angular/forms";
-import { finalize } from "rxjs";
-import { NgMagnizoomModule } from "ng-magnizoom";
+} from '@angular/core';
+import { trigger, transition, style, animate } from '@angular/animations';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
+import { CommonModule, isPlatformBrowser } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { finalize } from 'rxjs';
+import { NgMagnizoomModule } from 'ng-magnizoom';
 import { environment } from '../../../../environments/environment';
 
-
-
-
-import { PropertyService } from "../../../services/property.service";
-import { Property } from "../../../interfaces/properties/property.interface";
-import { AppointmentFormComponent } from "../../../shared/appointment-form/appointment-form.component";
-import { AvatarComponent } from "../../../shared/avatar/avatar.component";
-import { SeoService } from "../../../services/seo.service";
+import { PropertyService } from '../../../services/property.service';
+import { Property } from '../../../interfaces/properties/property.interface';
+import { AppointmentFormComponent } from '../../../shared/appointment-form/appointment-form.component';
+import { AvatarComponent } from '../../../shared/avatar/avatar.component';
+import { SeoService } from '../../../services/seo.service';
 
 type PropertyState = {
   property: Property | null;
@@ -39,7 +36,7 @@ const initialState: PropertyState = {
 };
 
 @Component({
-  selector: "properties-property-details",
+  selector: 'properties-property-details',
   standalone: true,
   imports: [
     CommonModule,
@@ -47,9 +44,9 @@ const initialState: PropertyState = {
     RouterModule,
     NgMagnizoomModule,
     AppointmentFormComponent,
-    AvatarComponent
+    AvatarComponent,
   ],
-  templateUrl: "./property-details.component.html",
+  templateUrl: './property-details.component.html',
   styles: [
     `
       /* Personalización del scrollbar para las miniaturas */
@@ -65,10 +62,10 @@ const initialState: PropertyState = {
     `,
   ],
   animations: [
-    trigger("fadeImage", [
-      transition(":enter", [
+    trigger('fadeImage', [
+      transition(':enter', [
         style({ opacity: 0 }),
-        animate("400ms ease-out", style({ opacity: 1 })),
+        animate('400ms ease-out', style({ opacity: 1 })),
       ]),
     ]),
   ],
@@ -82,10 +79,10 @@ export class PropertyDetailsComponent implements OnInit {
   private platformId = inject(PLATFORM_ID); // <--- INYECTAR
 
   private statusLabels: Record<string, string> = {
-    sale: "En Venta",
-    rent: "En Alquiler",
-    sold: "Vendida",
-    rented: "Alquilada",
+    sale: 'En Venta',
+    rent: 'En Alquiler',
+    sold: 'Vendida',
+    rented: 'Alquilada',
   };
 
   /* ESTILO ARQUITECTÓNICO:
@@ -93,26 +90,29 @@ export class PropertyDetailsComponent implements OnInit {
      en lugar de efectos "glow" difusos.
   */
   private typeLabels: Record<string, string> = {
-    apartment: "Apartamento",
-    house: "Casa",
-    villa: "Villa",
-    land: "Terreno",
-    commercial: "Comercial",
+    apartment: 'Apartamento',
+    house: 'Casa',
+    villa: 'Villa',
+    land: 'Terreno',
+    commercial: 'Comercial',
   };
 
   getStatusLabel(status: string): string {
-    return this.statusLabels[status] || "No disponible";
+    return this.statusLabels[status] || 'No disponible';
   }
 
   getTypeLabel(type: string): string {
-    return this.typeLabels[type] || "No especificado";
+    return this.typeLabels[type] || 'No especificado';
   }
 
   // --- MAPA (LEAFLET) ---
   private map: any; // Usar 'any' o importar tipos si es necesario
 
   get googleMapsUrl(): string {
-    if (!this.state.property?.address?.latitude || !this.state.property?.address?.longitude) {
+    if (
+      !this.state.property?.address?.latitude ||
+      !this.state.property?.address?.longitude
+    ) {
       return '';
     }
     const { latitude, longitude } = this.state.property.address;
@@ -131,7 +131,7 @@ export class PropertyDetailsComponent implements OnInit {
       iconAnchor: [12, 41],
       popupAnchor: [1, -34],
       tooltipAnchor: [16, -28],
-      shadowSize: [41, 41]
+      shadowSize: [41, 41],
     });
     L.Marker.prototype.options.icon = iconDefault;
   }
@@ -140,7 +140,9 @@ export class PropertyDetailsComponent implements OnInit {
     if (!isPlatformBrowser(this.platformId)) return;
 
     // Loading Leaflet dynamically only in browser
-    const L = await import('leaflet');
+    // Use L.default for production builds (ES module interop)
+    const leafletModule = await import('leaflet');
+    const L = (leafletModule as any).default || leafletModule;
     await this.fixLeafletIcons(L);
 
     // Small timeout to ensure container exists
@@ -155,11 +157,11 @@ export class PropertyDetailsComponent implements OnInit {
       this.map = L.map('details-map', {
         center: [lat, lng],
         zoom: 15,
-        scrollWheelZoom: false
+        scrollWheelZoom: false,
       });
 
       L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '&copy; OpenStreetMap contributors'
+        attribution: '&copy; OpenStreetMap contributors',
       }).addTo(this.map);
 
       const googleLink = this.googleMapsUrl;
@@ -184,11 +186,11 @@ export class PropertyDetailsComponent implements OnInit {
     }
 
     this.route.paramMap.subscribe((params) => {
-      const id = params.get("id");
+      const id = params.get('id');
       if (id) {
         this.loadProperty(id);
       } else {
-        this.setError("ID de propiedad no proporcionado");
+        this.setError('ID de propiedad no proporcionado');
       }
     });
   }
@@ -209,7 +211,8 @@ export class PropertyDetailsComponent implements OnInit {
 
           this.seoService.updateSeoData(
             property.title,
-            `Propiedad en ${this.getStatusLabel(property.status)}. Precio: $${property.price
+            `Propiedad en ${this.getStatusLabel(property.status)}. Precio: $${
+              property.price
             }. ${property.description.substring(0, 100)}...`,
             mainImage
           );
@@ -219,7 +222,7 @@ export class PropertyDetailsComponent implements OnInit {
             ...property,
             images: property.images?.length
               ? property.images
-              : ["/assets/images/placeholder-property.jpg"],
+              : ['/assets/images/placeholder-property.jpg'],
           };
           this.setState({
             property: propertyWithImages,
@@ -229,7 +232,10 @@ export class PropertyDetailsComponent implements OnInit {
 
           if (property.address?.latitude && property.address?.longitude) {
             // Iniciar mapa Leaflet
-            this.initDetailsMap(property.address.latitude, property.address.longitude);
+            this.initDetailsMap(
+              property.address.latitude,
+              property.address.longitude
+            );
           }
         },
         error: (errorMessage) => {
@@ -259,7 +265,7 @@ export class PropertyDetailsComponent implements OnInit {
   }
 
   goBack(): void {
-    this.router.navigate(["/properties"]);
+    this.router.navigate(['/properties']);
   }
 
   // Getters
