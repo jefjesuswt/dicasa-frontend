@@ -1,40 +1,46 @@
-import { Component, inject, OnInit, ViewChild, ElementRef, PLATFORM_ID, Inject } from "@angular/core";
-import { CommonModule, isPlatformBrowser } from "@angular/common";
+import {
+  Component,
+  inject,
+  OnInit,
+  ViewChild,
+  ElementRef,
+  PLATFORM_ID,
+  Inject,
+} from '@angular/core';
+import { CommonModule, isPlatformBrowser } from '@angular/common';
 import {
   FormBuilder,
   FormGroup,
   ReactiveFormsModule,
   Validators,
   AbstractControl,
-} from "@angular/forms";
-import { ActivatedRoute, Router } from "@angular/router";
-import { ToastService } from "../../../services/toast.service";
-import { finalize, switchMap, tap } from "rxjs/operators";
-import { Observable, of } from "rxjs";
+} from '@angular/forms';
+import { ActivatedRoute, Router } from '@angular/router';
+import { ToastService } from '../../../services/toast.service';
+import { finalize, switchMap, tap } from 'rxjs/operators';
+import { Observable, of } from 'rxjs';
 
-import { PropertyService } from "../../../services/property.service";
-import { Property } from "../../../interfaces/properties/property.interface";
+import { PropertyService } from '../../../services/property.service';
+import { Property } from '../../../interfaces/properties/property.interface';
 import {
   CreatePropertyPayload,
   UpdatePropertyPayload,
-} from "../../../services/property.service";
+} from '../../../services/property.service';
 
-import { State } from "../../../interfaces/location/states.interface";
-import { LocationService } from "../../../services/location.service";
-import { User } from "../../../interfaces/users";
-import { UsersService } from "../../../services/users.service";
+import { State } from '../../../interfaces/location/states.interface';
+import { LocationService } from '../../../services/location.service';
+import { User } from '../../../interfaces/users';
+import { UsersService } from '../../../services/users.service';
 
-import * as L from 'leaflet';
-import 'leaflet-control-geocoder';
 import { environment } from '../../../../environments/environment';
 
 // Fix moved to ngOnInit to avoid SSR crash
 
 @Component({
-  selector: "app-property-form",
+  selector: 'app-property-form',
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule],
-  templateUrl: "./property-form.component.html",
+  templateUrl: './property-form.component.html',
 })
 export class PropertyFormComponent implements OnInit {
   private fb = inject(FormBuilder);
@@ -51,7 +57,7 @@ export class PropertyFormComponent implements OnInit {
   isEditMode = false;
   propertyId: string | null = null;
   agents: User[] = [];
-  pageTitle = "Agregar Nueva Propiedad";
+  pageTitle = 'Agregar Nueva Propiedad';
   initialLoading = true;
   isSaving = false;
 
@@ -67,8 +73,8 @@ export class PropertyFormComponent implements OnInit {
   isLoadingCities = false;
 
   // --- VARIABLES DEL MAPA (LEAFLET) ---
-  private map: L.Map | undefined;
-  private marker: L.Marker | undefined;
+  private map: any;
+  private marker: any;
   private defaultLat = 10.136;
   private defaultLng = -64.686;
 
@@ -85,23 +91,27 @@ export class PropertyFormComponent implements OnInit {
           this.states = states;
         }),
         // Solo cargar agentes si NO estamos en modo agente
-        switchMap(() => this.isAgentMode ? of([]) : this.usersService.getAgents()),
+        switchMap(() =>
+          this.isAgentMode ? of([]) : this.usersService.getAgents()
+        ),
         tap((agents) => {
           this.agents = agents;
         }),
         switchMap(() => this.route.paramMap),
         switchMap((params) => {
-          const id = params.get("id");
+          const id = params.get('id');
           if (id) {
             this.isEditMode = true;
             this.propertyId = id;
-            this.pageTitle = this.isAgentMode ? "Editar Mi Propiedad" : "Editar Propiedad";
+            this.pageTitle = this.isAgentMode
+              ? 'Editar Mi Propiedad'
+              : 'Editar Propiedad';
 
             return this.propertyService.getProperty(id);
           } else {
             this.isEditMode = false;
             this.propertyId = null;
-            this.pageTitle = "Agregar Nueva Propiedad";
+            this.pageTitle = 'Agregar Nueva Propiedad';
             return of(null);
           }
         }),
@@ -126,30 +136,33 @@ export class PropertyFormComponent implements OnInit {
         },
         error: (errMessage) => {
           this.initialLoading = false;
-          this.toast.error("Error", `Error al cargar la propiedad: ${errMessage}`);
+          this.toast.error(
+            'Error',
+            `Error al cargar la propiedad: ${errMessage}`
+          );
         },
       });
   }
 
   private initializeForm(): void {
     this.propertyForm = this.fb.group({
-      title: ["", [Validators.required, Validators.minLength(5)]],
-      description: ["", [Validators.required, Validators.minLength(20)]],
+      title: ['', [Validators.required, Validators.minLength(5)]],
+      description: ['', [Validators.required, Validators.minLength(20)]],
       price: [null, [Validators.required, Validators.min(1)]],
       bedrooms: [0, [Validators.required, Validators.min(0)]],
       bathrooms: [0, [Validators.required, Validators.min(0)]],
       area: [null, [Validators.required, Validators.min(1)]],
-      type: ["house", Validators.required],
-      status: ["sale", Validators.required],
+      type: ['house', Validators.required],
+      status: ['sale', Validators.required],
       featured: [false],
 
       address: this.fb.group({
-        address: ["", Validators.required],
-        city: ["", Validators.required],
-        state: ["", Validators.required],
-        country: ["Venezuela", Validators.required],
+        address: ['', Validators.required],
+        city: ['', Validators.required],
+        state: ['', Validators.required],
+        country: ['Venezuela', Validators.required],
         latitude: [null],
-        longitude: [null]
+        longitude: [null],
       }),
 
       features: this.fb.group({
@@ -166,7 +179,7 @@ export class PropertyFormComponent implements OnInit {
     this.setupConditionalValidators();
 
     this.propertyForm
-      .get("address.state")
+      .get('address.state')
       ?.valueChanges.subscribe((stateName) => {
         if (stateName) {
           // 👇 Llama a updateCities SIN el segundo parámetro.
@@ -175,7 +188,7 @@ export class PropertyFormComponent implements OnInit {
         } else {
           // Si el estado se borra, limpia las ciudades
           this.cities = [];
-          this.propertyForm.get("address.city")?.setValue("");
+          this.propertyForm.get('address.city')?.setValue('');
         }
       });
   }
@@ -196,13 +209,13 @@ export class PropertyFormComponent implements OnInit {
         next: (cities) => {
           this.cities = cities;
           if (cityToSelect) {
-            this.propertyForm.get("address.city")?.setValue(cityToSelect);
+            this.propertyForm.get('address.city')?.setValue(cityToSelect);
           } else {
-            this.propertyForm.get("address.city")?.setValue("");
+            this.propertyForm.get('address.city')?.setValue('');
           }
         },
         error: (err) => {
-          this.toast.error("Error", `Error al cargar ciudades: ${err.message}`);
+          this.toast.error('Error', `Error al cargar ciudades: ${err.message}`);
           this.cities = [];
         },
       });
@@ -221,9 +234,9 @@ export class PropertyFormComponent implements OnInit {
         status: property.status,
         featured: property.featured,
         address: {
-          address: property.address?.address || "",
-          state: property.address?.state || "",
-          country: property.address?.country || "Venezuela",
+          address: property.address?.address || '',
+          state: property.address?.state || '',
+          country: property.address?.country || 'Venezuela',
         },
         features: {
           hasParking: property.features?.hasParking ?? false,
@@ -237,7 +250,7 @@ export class PropertyFormComponent implements OnInit {
       { emitEvent: false }
     );
 
-    const stateValue = this.propertyForm.get("address.state")?.value;
+    const stateValue = this.propertyForm.get('address.state')?.value;
     if (stateValue) {
       this.updateCities(stateValue, property.address?.city);
     }
@@ -251,15 +264,20 @@ export class PropertyFormComponent implements OnInit {
 
     this.toggleResidentialFields(
       property.type,
-      this.propertyForm.get("bedrooms")!,
-      this.propertyForm.get("bathrooms")!
+      this.propertyForm.get('bedrooms')!,
+      this.propertyForm.get('bathrooms')!
     );
   }
 
   // --- EVENTOS DEL MAPA ---
   // --- LEAFLET MAP LOGIC ---
-  private initMap(property?: any): void {
+  private async initMap(property?: any): Promise<void> {
     if (!isPlatformBrowser(this.platformId)) return;
+
+    // Dynamic import for SSR safety
+    const leafletModule = await import('leaflet');
+    const L = (leafletModule as any).default || leafletModule;
+    await import('leaflet-control-geocoder');
 
     const container = document.getElementById('map-container');
     if (!container) return;
@@ -267,6 +285,22 @@ export class PropertyFormComponent implements OnInit {
     if (this.map) {
       this.map.remove();
     }
+
+    // Fix icons
+    const iconRetinaUrl = 'assets/marker-icon-2x.png';
+    const iconUrl = 'assets/marker-icon.png';
+    const shadowUrl = 'assets/marker-shadow.png';
+    const iconDefault = L.icon({
+      iconRetinaUrl,
+      iconUrl,
+      shadowUrl,
+      iconSize: [25, 41],
+      iconAnchor: [12, 41],
+      popupAnchor: [1, -34],
+      tooltipAnchor: [16, -28],
+      shadowSize: [41, 41],
+    });
+    L.Marker.prototype.options.icon = iconDefault;
 
     // Coordenadas iniciales
     let lat = this.defaultLat;
@@ -288,24 +322,26 @@ export class PropertyFormComponent implements OnInit {
     this.map = L.map('map-container').setView([lat, lng], 13);
 
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      attribution: '&copy; OpenStreetMap contributors'
-    }).addTo(this.map);
+      attribution: '&copy; OpenStreetMap contributors',
+    }).addTo(this.map!);
 
-    this.marker = L.marker([lat, lng], { draggable: true }).addTo(this.map);
+    this.marker = L.marker([lat, lng], { draggable: true }).addTo(this.map!);
 
     const updateFn = (lat: number, lng: number) => {
-      this.propertyForm.get('address')?.patchValue({ latitude: lat, longitude: lng });
+      this.propertyForm
+        .get('address')
+        ?.patchValue({ latitude: lat, longitude: lng });
       this.propertyForm.markAsDirty();
     };
 
-    this.marker.on('dragend', () => {
+    this.marker!.on('dragend', () => {
       if (this.marker) {
         const { lat, lng } = this.marker.getLatLng();
         updateFn(lat, lng);
       }
     });
 
-    this.map.on('click', (e: L.LeafletMouseEvent) => {
+    this.map!.on('click', (e: L.LeafletMouseEvent) => {
       if (this.marker) {
         this.marker.setLatLng(e.latlng);
         updateFn(e.latlng.lat, e.latlng.lng);
@@ -313,43 +349,48 @@ export class PropertyFormComponent implements OnInit {
     });
 
     // NOMINATIM GEOCODER (OSM)
-    // @ts-ignore
-    const Geocoder = L.Control.Geocoder.nominatim({
-      geocodingQueryParams: {
-        countrycodes: 've',
-        'accept-language': 'es'
-      }
-    });
+    // Access via L.Control as it extends it
+    const GeocoderCtor = (L.Control as any).Geocoder;
+    if (GeocoderCtor) {
+      const Geocoder = GeocoderCtor.nominatim({
+        geocodingQueryParams: {
+          countrycodes: 've',
+          'accept-language': 'es',
+        },
+      });
 
-    // @ts-ignore
-    new L.Control.Geocoder({
-      defaultMarkGeocode: false,
-      placeholder: 'Buscar (ej: Santiago Mariño)...',
-      geocoder: Geocoder
-    })
-      .on('markgeocode', (e: any) => {
-        const center = e.geocode.center;
-        this.map?.setView(center, 16);
-        this.marker?.setLatLng(center);
-        updateFn(center.lat, center.lng);
+      new GeocoderCtor({
+        defaultMarkGeocode: false,
+        placeholder: 'Buscar (ej: Santiago Mariño)...',
+        geocoder: Geocoder,
       })
-      .addTo(this.map);
+        .on('markgeocode', (e: any) => {
+          const center = e.geocode.center;
+          this.map?.setView(center, 16);
+          this.marker?.setLatLng(center);
+          updateFn(center.lat, center.lng);
+        })
+        .addTo(this.map!);
+    }
   }
-
 
   onSubmit(): void {
     if (this.propertyForm.invalid) {
-      this.toast.error("Formulario Inválido", "Por favor, revisa los campos del formulario.");
+      this.toast.error(
+        'Formulario Inválido',
+        'Por favor, revisa los campos del formulario.'
+      );
       this.propertyForm.markAllAsTouched();
       return;
     }
 
-    const hasImages = this.selectedFiles.length > 0 || this.existingImageUrls.length > 0;
+    const hasImages =
+      this.selectedFiles.length > 0 || this.existingImageUrls.length > 0;
 
     if (!hasImages) {
       this.toast.error(
-        "Imagen Requerida",
-        "Debes seleccionar al menos una imagen para la propiedad."
+        'Imagen Requerida',
+        'Debes seleccionar al menos una imagen para la propiedad.'
       );
       return;
     }
@@ -395,14 +436,14 @@ export class PropertyFormComponent implements OnInit {
       .subscribe({
         next: (savedProperty) => {
           this.toast.success(
-            "Éxito",
-            `Propiedad ${this.isEditMode ? "actualizada" : "creada"} con éxito!`
+            'Éxito',
+            `Propiedad ${this.isEditMode ? 'actualizada' : 'creada'} con éxito!`
           );
-          this.router.navigate(["/dashboard/properties"]);
+          this.router.navigate(['/dashboard/properties']);
         },
         error: (errMessage) => {
           // Handle potential upload errors caught by upload$ OR form submission errors
-          this.toast.error("Error", `Error al guardar: ${errMessage}`);
+          this.toast.error('Error', `Error al guardar: ${errMessage}`);
           // Ensure loading states are reset on error
           this.isUploadingImages = false;
           this.isSaving = false;
@@ -417,7 +458,7 @@ export class PropertyFormComponent implements OnInit {
       this.selectedFiles = Array.from(files);
       this.generatePreviews();
     }
-    element.value = "";
+    element.value = '';
   }
 
   private generatePreviews(): void {
@@ -443,25 +484,25 @@ export class PropertyFormComponent implements OnInit {
 
   cancel(): void {
     if (this.isAgentMode) {
-      this.router.navigate(["/profile/my-properties"]);
+      this.router.navigate(['/profile/my-properties']);
     } else {
-      this.router.navigate(["/dashboard/properties"]);
+      this.router.navigate(['/dashboard/properties']);
     }
   }
 
   get title() {
-    return this.propertyForm.get("title");
+    return this.propertyForm.get('title');
   }
 
   get isResidentialType(): boolean {
-    const type = this.propertyForm.get("type")?.value;
-    return type === "house" || type === "apartment" || type === "villa";
+    const type = this.propertyForm.get('type')?.value;
+    return type === 'house' || type === 'apartment' || type === 'villa';
   }
 
   private setupConditionalValidators(): void {
-    const typeControl = this.propertyForm.get("type");
-    const bedroomsControl = this.propertyForm.get("bedrooms");
-    const bathroomsControl = this.propertyForm.get("bathrooms");
+    const typeControl = this.propertyForm.get('type');
+    const bedroomsControl = this.propertyForm.get('bedrooms');
+    const bathroomsControl = this.propertyForm.get('bathrooms');
 
     if (!typeControl || !bedroomsControl || !bathroomsControl) return;
 
@@ -476,7 +517,7 @@ export class PropertyFormComponent implements OnInit {
     bathrooms: AbstractControl
   ): void {
     const isResidential =
-      type === "house" || type === "apartment" || type === "villa";
+      type === 'house' || type === 'apartment' || type === 'villa';
 
     if (isResidential) {
       bedrooms.setValidators([Validators.required, Validators.min(0)]);
