@@ -43,3 +43,6 @@ Thumbs.db
 
 # Environment
 /src/environments
+
+# Local Netlify folder
+.netlify

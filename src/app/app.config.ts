@@ -8,7 +8,6 @@ import {
   withPreloading,
   withViewTransitions,
 } from '@angular/router';
-// import { provideHotToastConfig } from "@ngxpert/hot-toast";
 import { routes } from './app.routes';
 import {
   provideHttpClient,
