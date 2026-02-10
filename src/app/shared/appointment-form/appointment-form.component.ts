@@ -19,7 +19,6 @@ import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { Router } from '@angular/router';
 import { catchError, finalize } from 'rxjs/operators';
 import { EMPTY } from 'rxjs';
-import { DatePickerModule } from 'primeng/datepicker';
 
 import { AppointmentsService } from '../../services/appointment.service';
 import { AuthService } from '../../services/auth.service';

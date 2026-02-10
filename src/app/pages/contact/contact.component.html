@@ -157,12 +157,17 @@
               Teléfono
             </label>
             <div class="border-b border-[var(--border-light)] pb-1 focus-within:border-sky-500 transition-colors">
+              @defer (on viewport) {
               <ngx-intl-tel-input [cssClass]="
                   'custom-dark-phone-input w-full bg-transparent text-[var(--text-heading)] text-base focus:outline-none placeholder-[var(--text-secondary)]'
                 " [preferredCountries]="preferredCountries" [enableAutoCountrySelect]="true" [enablePlaceholder]="true"
                 [selectedCountryISO]="CountryISO.Venezuela" [phoneValidation]="true" [separateDialCode]="true"
                 [numberFormat]="phoneFormat" name="phoneNumber" formControlName="phoneNumber" id="phoneNumber">
               </ngx-intl-tel-input>
+              } @placeholder {
+              <input type="tel" placeholder="Cargando teléfono..." disabled
+                class="block w-full bg-transparent py-3 text-[var(--text-secondary)] text-base" />
+              }
             </div>
             @if (phoneNumber?.invalid && phoneNumber?.touched) {
             <div class="mt-1 text-red-400 text-sm">Número inválido</div>
