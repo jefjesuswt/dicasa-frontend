@@ -8,24 +8,24 @@ import {
   OnDestroy,
   PLATFORM_ID,
   afterNextRender,
-} from "@angular/core";
-import { CommonModule, DOCUMENT } from "@angular/common";
-import { Router, RouterModule, RouterOutlet } from "@angular/router";
-import { PropertyService } from "../../../services/property.service";
-import { AuthService } from "../../../services/auth.service";
-import { finalize } from "rxjs";
-import { Property } from "../../../interfaces/properties";
-import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
-import { PaginatedProperties } from "../../../interfaces/properties/paginated-properties.interface";
-import { StatCard } from "../../../interfaces/dashboard/stat-card.interface";
-import { StatCardsComponent } from "../../../components/dashboard/stat-cards/stat-cards.component";
-import { SeoService } from "../../../services/seo.service";
+} from '@angular/core';
+import { CommonModule, DOCUMENT, isPlatformBrowser } from '@angular/common';
+import { Router, RouterModule, RouterOutlet } from '@angular/router';
+import { PropertyService } from '../../../services/property.service';
+import { AuthService } from '../../../services/auth.service';
+import { finalize } from 'rxjs';
+import { Property } from '../../../interfaces/properties';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { PaginatedProperties } from '../../../interfaces/properties/paginated-properties.interface';
+import { StatCard } from '../../../interfaces/dashboard/stat-card.interface';
+import { StatCardsComponent } from '../../../components/dashboard/stat-cards/stat-cards.component';
+import { SeoService } from '../../../services/seo.service';
 
 @Component({
-  selector: "dashboard-dashboard",
+  selector: 'dashboard-dashboard',
   standalone: true,
   imports: [CommonModule, RouterModule, RouterOutlet, StatCardsComponent],
-  templateUrl: "./dashboard.component.html",
+  templateUrl: './dashboard.component.html',
 })
 export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   private authService = inject(AuthService);
@@ -43,32 +43,32 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
 
   public stats: StatCard[] = [
     {
-      title: "Total de Propiedades",
+      title: 'Total de Propiedades',
       value: 0,
-      icon: "pi pi-home",
-      color: "bg-blue-100", // OJO: Estos colores quizás debas ajustarlos en el hijo luego
-      textColor: "text-blue-800",
+      icon: 'pi pi-home',
+      color: 'bg-blue-100', // OJO: Estos colores quizás debas ajustarlos en el hijo luego
+      textColor: 'text-blue-800',
     },
     {
-      title: "En Venta",
+      title: 'En Venta',
       value: 0,
-      icon: "pi pi-tag",
-      color: "bg-green-100",
-      textColor: "text-green-800",
+      icon: 'pi pi-tag',
+      color: 'bg-green-100',
+      textColor: 'text-green-800',
     },
     {
-      title: "En Alquiler",
+      title: 'En Alquiler',
       value: 0,
-      icon: "pi pi-key",
-      color: "bg-purple-100",
-      textColor: "text-purple-800",
+      icon: 'pi pi-key',
+      color: 'bg-purple-100',
+      textColor: 'text-purple-800',
     },
     {
-      title: "Vendidas/Rentadas",
+      title: 'Vendidas/Rentadas',
       value: 0,
-      icon: "pi pi-check-circle",
-      color: "bg-yellow-100",
-      textColor: "text-yellow-800",
+      icon: 'pi pi-check-circle',
+      color: 'bg-yellow-100',
+      textColor: 'text-yellow-800',
     },
   ];
 
@@ -80,8 +80,8 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
 
   ngOnInit(): void {
     this.seoService.updateSeoData(
-      "Panel de Control",
-      "Gestión administrativa de propiedades y usuarios."
+      'Panel de Control',
+      'Gestión administrativa de propiedades y usuarios.'
     );
 
     this.loadStatsData();
@@ -111,17 +111,17 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
           this.updateStats(response.data);
         },
         error: (error) => {
-          console.error("Error loading stats data", error);
+          console.error('Error loading stats data', error);
         },
       });
   }
 
   private updateStats(properties: Property[]): void {
     this.stats[0].value = properties.length;
-    this.stats[1].value = properties.filter((p) => p.status === "sale").length;
-    this.stats[2].value = properties.filter((p) => p.status === "rent").length;
+    this.stats[1].value = properties.filter((p) => p.status === 'sale').length;
+    this.stats[2].value = properties.filter((p) => p.status === 'rent').length;
     this.stats[3].value = properties.filter(
-      (p) => p.status === "sold" || p.status === "rented"
+      (p) => p.status === 'sold' || p.status === 'rented'
     ).length;
   }
 
@@ -129,21 +129,21 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     this.observer?.disconnect();
 
     // Check if running in browser/environment with IntersectionObserver
-    if (typeof IntersectionObserver === 'undefined') {
+    if (!isPlatformBrowser(this.platformId)) {
       return;
     }
 
-    const options = { root: null, rootMargin: "0px", threshold: 0.1 };
+    const options = { root: null, rootMargin: '0px', threshold: 0.1 };
 
     this.observer = new IntersectionObserver((entries) => {
       entries.forEach((entry) => {
         if (entry.isIntersecting) {
-          entry.target.classList.add("is-visible");
+          entry.target.classList.add('is-visible');
         }
       });
     }, options);
 
-    const elements = this.document.querySelectorAll(".reveal-on-scroll");
+    const elements = this.document.querySelectorAll('.reveal-on-scroll');
     elements.forEach((el) => this.observer?.observe(el));
   }
 }

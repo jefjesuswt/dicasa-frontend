@@ -4,18 +4,19 @@ import {
   OnInit,
   OnDestroy,
   afterNextRender,
-} from "@angular/core";
-import { CommonModule, DOCUMENT } from "@angular/common";
-import { RouterModule } from "@angular/router";
-import { PropertyService } from "../../services/property.service";
-import { Property } from "../../interfaces/properties/property.interface";
-import { SeoService } from "../../services/seo.service";
+  PLATFORM_ID,
+} from '@angular/core';
+import { CommonModule, DOCUMENT, isPlatformBrowser } from '@angular/common';
+import { RouterModule } from '@angular/router';
+import { PropertyService } from '../../services/property.service';
+import { Property } from '../../interfaces/properties/property.interface';
+import { SeoService } from '../../services/seo.service';
 
 @Component({
-  selector: "home-home",
+  selector: 'home-home',
   standalone: true,
   imports: [CommonModule, RouterModule],
-  templateUrl: "./home.component.html",
+  templateUrl: './home.component.html',
 })
 export class HomeComponent implements OnInit, OnDestroy {
   featuredProperties: Property[] = [];
@@ -25,6 +26,7 @@ export class HomeComponent implements OnInit, OnDestroy {
   private propertyService = inject(PropertyService);
   private seoService = inject(SeoService); // <--- INYECTAR
   private document = inject(DOCUMENT);
+  private platformId = inject(PLATFORM_ID);
   private observer: IntersectionObserver | null = null;
 
   constructor() {
@@ -35,32 +37,32 @@ export class HomeComponent implements OnInit, OnDestroy {
 
   services = [
     {
-      title: "Asesoría Legal",
-      icon: "pi pi-briefcase",
-      desc: "Soporte jurídico especializado para garantizar transacciones seguras.",
+      title: 'Asesoría Legal',
+      icon: 'pi pi-briefcase',
+      desc: 'Soporte jurídico especializado para garantizar transacciones seguras.',
     },
     {
-      title: "Gestión Inmobiliaria",
-      icon: "pi pi-building",
-      desc: "Compra, venta y administración con las mejores ofertas.",
+      title: 'Gestión Inmobiliaria',
+      icon: 'pi pi-building',
+      desc: 'Compra, venta y administración con las mejores ofertas.',
     },
     {
-      title: "Consultoría Financiera",
-      icon: "pi pi-chart-line",
-      desc: "Optimización de procesos de inversión para maximizar retorno.",
+      title: 'Consultoría Financiera',
+      icon: 'pi pi-chart-line',
+      desc: 'Optimización de procesos de inversión para maximizar retorno.',
     },
     {
-      title: "Integridad & Ética",
-      icon: "pi pi-shield",
-      desc: "Compromiso inquebrantable con la transparencia.",
+      title: 'Integridad & Ética',
+      icon: 'pi pi-shield',
+      desc: 'Compromiso inquebrantable con la transparencia.',
     },
   ];
 
   ngOnInit(): void {
     // --- SEO STATIC ---
     this.seoService.updateSeoData(
-      "Inicio",
-      "Asesoría integral y de calidad. Compra, venta y alquiler de propiedades en Lechería con Dicasa Group."
+      'Inicio',
+      'Asesoría integral y de calidad. Compra, venta y alquiler de propiedades en Lechería con Dicasa Group.'
     );
 
     this.loadProperties();
@@ -77,7 +79,7 @@ export class HomeComponent implements OnInit, OnDestroy {
     this.propertyService.getFeaturedProperties().subscribe({
       next: (properties) => {
         this.featuredProperties = properties
-          .filter(p => p.status === 'sale' || p.status === 'rent')
+          .filter((p) => p.status === 'sale' || p.status === 'rent')
           .slice(0, 3);
         this.loading = false;
 
@@ -92,23 +94,25 @@ export class HomeComponent implements OnInit, OnDestroy {
   }
 
   private initScrollAnimations() {
+    if (!isPlatformBrowser(this.platformId)) return;
+
     this.observer?.disconnect();
 
     const options = {
       root: null,
-      rootMargin: "0px",
+      rootMargin: '0px',
       threshold: 0.15,
     };
 
     this.observer = new IntersectionObserver((entries) => {
       entries.forEach((entry) => {
         if (entry.isIntersecting) {
-          entry.target.classList.add("is-visible");
+          entry.target.classList.add('is-visible');
         }
       });
     }, options);
 
-    const elements = this.document.querySelectorAll(".reveal-on-scroll");
+    const elements = this.document.querySelectorAll('.reveal-on-scroll');
     elements.forEach((el) => this.observer?.observe(el));
   }
 }

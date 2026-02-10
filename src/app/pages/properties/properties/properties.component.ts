@@ -138,6 +138,8 @@ export class PropertiesComponent implements OnInit, OnDestroy {
   }
 
   private initScrollObserver() {
+    if (!isPlatformBrowser(this.platformId)) return;
+
     this.observer?.disconnect();
 
     const options = {

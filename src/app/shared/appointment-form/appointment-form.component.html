@@ -66,14 +66,14 @@
     <div
       class="relative w-full bg-[var(--bg-panel)] border border-[var(--border-light)] focus-within:border-sky-500 focus-within:bg-[var(--bg-dark)] focus-within:ring-1 focus-within:ring-sky-500/20 transition-all duration-300"
       [class.border-red-500]="phoneNumber?.invalid && phoneNumber?.touched">
-      @if (isBrowser) {
+      @defer (on viewport) {
       <ngx-intl-tel-input [cssClass]="
           'w-full !bg-transparent !border-none !shadow-none !text-[var(--text-heading)] text-sm !h-[46px] flex items-center'
         " [preferredCountries]="preferredCountries" [enableAutoCountrySelect]="true" [enablePlaceholder]="true"
         [selectedCountryISO]="CountryISO.Venezuela" [phoneValidation]="true" [separateDialCode]="true"
         [numberFormat]="phoneFormat" name="phoneNumber" formControlName="phoneNumber"
         id="phoneNumber"></ngx-intl-tel-input>
-      } @else {
+      } @placeholder {
         <!-- Skeleton para SSR -->
         <div class="w-full h-[46px] bg-[var(--bg-panel)] animate-pulse flex items-center px-4">
            <div class="h-4 w-24 bg-slate-700 rounded mr-2"></div>

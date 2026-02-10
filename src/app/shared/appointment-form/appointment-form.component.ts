@@ -5,7 +5,6 @@ import {
   inject,
   signal,
   ViewEncapsulation,
-  PLATFORM_ID,
 } from '@angular/core';
 import {
   FormBuilder,
@@ -15,7 +14,7 @@ import {
   AbstractControl,
   ValidationErrors,
 } from '@angular/forms';
-import { CommonModule, isPlatformBrowser } from '@angular/common';
+import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { catchError, finalize } from 'rxjs/operators';
 import { EMPTY } from 'rxjs';
@@ -185,9 +184,6 @@ export class AppointmentFormComponent implements OnInit {
   ];
   phoneFormat = PhoneNumberFormat.International;
   CountryISO = CountryISO;
-
-  private platformId = inject(PLATFORM_ID);
-  isBrowser = isPlatformBrowser(this.platformId);
 
   isSubmitting = signal(false);
 
