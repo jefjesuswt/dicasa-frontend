@@ -9,7 +9,7 @@ import { trigger, transition, style, animate } from '@angular/animations';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { finalize } from 'rxjs';
+import { finalize, timeout } from 'rxjs';
 import { NgMagnizoomModule } from 'ng-magnizoom';
 import { environment } from '../../../../environments/environment';
 
@@ -200,11 +200,25 @@ export class PropertyDetailsComponent implements OnInit {
 
   private loadProperty(id: string): void {
     this.setLoading(true);
+
+    const isServer = !isPlatformBrowser(this.platformId);
+    // En SSR, limitamos el tiempo de espera a 4s para evitar que Netlify mate la función (timeout 10s).
+    // Si falla, el cliente reintentará.
+    const requestTimeout = isServer ? 4000 : 30000;
+
+    console.log(
+      `[PropertyDetails] Loading property ${id} (Server: ${isServer})`
+    );
+
     this.propertyService
       .getProperty(id)
-      .pipe(finalize(() => this.setLoading(false)))
+      .pipe(
+        timeout(requestTimeout),
+        finalize(() => this.setLoading(false))
+      )
       .subscribe({
         next: (property) => {
+          console.log(`[PropertyDetails] Success loading ${id}`);
           // --- SEO DINÁMICO ---
           // Esto actualiza los metadatos con la info real de la casa
           const mainImage =
@@ -241,8 +255,11 @@ export class PropertyDetailsComponent implements OnInit {
             );
           }
         },
-        error: (errorMessage) => {
-          this.setError(errorMessage);
+        error: (err) => {
+          console.error(`[PropertyDetails] Error loading ${id}:`, err);
+          // Si es timeout en SSR, no mostramos error fatal, dejamos que el cliente reintente (hydration).
+          // Pero por ahora, mostramos el error para depurar.
+          this.setError('Error cargando propiedad. Intente recargar.');
         },
       });
   }
