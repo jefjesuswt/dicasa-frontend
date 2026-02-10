@@ -5,7 +5,8 @@ import {
   inject,
   signal,
   ViewEncapsulation,
-} from "@angular/core";
+  PLATFORM_ID,
+} from '@angular/core';
 import {
   FormBuilder,
   FormGroup,
@@ -13,25 +14,25 @@ import {
   ReactiveFormsModule,
   AbstractControl,
   ValidationErrors,
-} from "@angular/forms";
-import { CommonModule } from "@angular/common";
-import { Router } from "@angular/router";
-import { catchError, finalize } from "rxjs/operators";
-import { EMPTY } from "rxjs";
-import { DatePickerModule } from "primeng/datepicker";
+} from '@angular/forms';
+import { CommonModule, isPlatformBrowser } from '@angular/common';
+import { Router } from '@angular/router';
+import { catchError, finalize } from 'rxjs/operators';
+import { EMPTY } from 'rxjs';
+import { DatePickerModule } from 'primeng/datepicker';
 
-import { AppointmentsService } from "../../services/appointment.service";
-import { AuthService } from "../../services/auth.service";
-import { CreateAppointmentDto } from "../../interfaces/appointments";
+import { AppointmentsService } from '../../services/appointment.service';
+import { AuthService } from '../../services/auth.service';
+import { CreateAppointmentDto } from '../../interfaces/appointments';
 import {
   CountryISO,
   NgxIntlTelInputModule,
   PhoneNumberFormat,
   SearchCountryField,
-} from "ngx-intl-tel-input";
-import parsePhoneNumberFromString from "libphonenumber-js/max";
-import { ToastService } from "../../services/toast.service";
-import { CustomDatepickerComponent } from "../custom-datepicker/custom-datepicker.component";
+} from 'ngx-intl-tel-input';
+import parsePhoneNumberFromString from 'libphonenumber-js/max';
+import { ToastService } from '../../services/toast.service';
+import { CustomDatepickerComponent } from '../custom-datepicker/custom-datepicker.component';
 
 function timeRangeValidator(control: AbstractControl): ValidationErrors | null {
   const value = control.value;
@@ -65,7 +66,7 @@ function timeRangeValidator(control: AbstractControl): ValidationErrors | null {
 }
 
 @Component({
-  selector: "shared-appointment-form",
+  selector: 'shared-appointment-form',
   standalone: true,
   imports: [
     CommonModule,
@@ -73,7 +74,7 @@ function timeRangeValidator(control: AbstractControl): ValidationErrors | null {
     CustomDatepickerComponent,
     NgxIntlTelInputModule,
   ],
-  templateUrl: "./appointment-form.component.html",
+  templateUrl: './appointment-form.component.html',
   encapsulation: ViewEncapsulation.None, // Necesario para estilar el datepicker interno
   styles: [
     `
@@ -85,7 +86,7 @@ function timeRangeValidator(control: AbstractControl): ValidationErrors | null {
         border: none !important;
         box-shadow: none !important;
         color: white !important;
-        font-family: "Courier New", monospace !important;
+        font-family: 'Courier New', monospace !important;
         font-size: 0.875rem !important; /* text-sm */
         padding: 0.75rem 1rem !important; /* Matches px-4 py-3 of other inputs */
         width: 100%;
@@ -113,7 +114,7 @@ function timeRangeValidator(control: AbstractControl): ValidationErrors | null {
         border: none !important;
         box-shadow: none !important;
         color: white !important;
-        font-family: "Courier New", monospace !important;
+        font-family: 'Courier New', monospace !important;
         font-size: 1rem !important;
         width: 100%;
         height: 100%;
@@ -186,6 +187,9 @@ export class AppointmentFormComponent implements OnInit {
   phoneFormat = PhoneNumberFormat.International;
   CountryISO = CountryISO;
 
+  private platformId = inject(PLATFORM_ID);
+  isBrowser = isPlatformBrowser(this.platformId);
+
   isSubmitting = signal(false);
 
   minDate!: Date;
@@ -256,27 +260,27 @@ export class AppointmentFormComponent implements OnInit {
 
     if (user && user.phoneNumber) {
       try {
-        const fullCleanNumber = user.phoneNumber.replace(/[\s-]/g, "");
+        const fullCleanNumber = user.phoneNumber.replace(/[\s-]/g, '');
         const phoneNumber = parsePhoneNumberFromString(fullCleanNumber);
         if (phoneNumber && phoneNumber.nationalNumber) {
           numberToPatch = phoneNumber.nationalNumber;
         }
       } catch (error) {
-        console.error("Error parsing phone:", error);
+        console.error('Error parsing phone:', error);
         numberToPatch = user.phoneNumber;
       }
     }
 
     this.appointmentForm = this.fb.group({
-      name: [user?.name || "", Validators.required],
-      email: [user?.email || "", [Validators.required, Validators.email]],
+      name: [user?.name || '', Validators.required],
+      email: [user?.email || '', [Validators.required, Validators.email]],
       phoneNumber: [numberToPatch || null, Validators.required],
       appointmentDate: [
         this.defaultPickerDate,
         [Validators.required, timeRangeValidator],
       ],
       message: [
-        "Hola, estoy interesado/a en esta propiedad y me gustaría agendar una visita.",
+        'Hola, estoy interesado/a en esta propiedad y me gustaría agendar una visita.',
         [Validators.required, Validators.minLength(10)],
       ],
     });
@@ -286,21 +290,21 @@ export class AppointmentFormComponent implements OnInit {
     if (this.appointmentForm.invalid) {
       this.appointmentForm.markAllAsTouched();
 
-      const dateErrors = this.appointmentForm.get("appointmentDate")?.errors;
-      if (dateErrors?.["timeRange"]) {
+      const dateErrors = this.appointmentForm.get('appointmentDate')?.errors;
+      if (dateErrors?.['timeRange']) {
         this.toast.warning(
-          "Horario Inválido",
-          "Nuestras oficinas trabajan de 8:00 AM a 6:00 PM."
+          'Horario Inválido',
+          'Nuestras oficinas trabajan de 8:00 AM a 6:00 PM.'
         );
-      } else if (dateErrors?.["weekend"]) {
+      } else if (dateErrors?.['weekend']) {
         this.toast.warning(
-          "Fines de Semana",
-          "Nuestras oficinas administrativas no laboran sábados ni domingos."
+          'Fines de Semana',
+          'Nuestras oficinas administrativas no laboran sábados ni domingos.'
         );
       } else {
         this.toast.error(
-          "Formulario Incompleto",
-          "Por favor verifica los campos marcados en rojo."
+          'Formulario Incompleto',
+          'Por favor verifica los campos marcados en rojo.'
         );
       }
       return;
@@ -308,10 +312,10 @@ export class AppointmentFormComponent implements OnInit {
 
     const phoneValue = this.appointmentForm.value.phoneNumber;
 
-    if (typeof phoneValue !== "object" || !phoneValue?.internationalNumber) {
+    if (typeof phoneValue !== 'object' || !phoneValue?.internationalNumber) {
       this.toast.error(
-        "Teléfono Inválido",
-        "Por favor ingresa un número de teléfono válido."
+        'Teléfono Inválido',
+        'Por favor ingresa un número de teléfono válido.'
       );
       this.phoneNumber?.setErrors({ invalidNumber: true });
       return;
@@ -330,17 +334,17 @@ export class AppointmentFormComponent implements OnInit {
       .pipe(
         catchError((errorMessage: string) => {
           const isScheduleConflict =
-            errorMessage.toLowerCase().includes("horario") ||
-            errorMessage.toLowerCase().includes("choca") ||
-            errorMessage.toLowerCase().includes("ocupado");
+            errorMessage.toLowerCase().includes('horario') ||
+            errorMessage.toLowerCase().includes('choca') ||
+            errorMessage.toLowerCase().includes('ocupado');
 
           if (isScheduleConflict) {
             this.toast.warning(
-              "Horario No Disponible",
+              'Horario No Disponible',
               errorMessage // Pasamos el mensaje exacto del backend
             );
           } else {
-            this.toast.error("No se pudo agendar", errorMessage);
+            this.toast.error('No se pudo agendar', errorMessage);
           }
           return EMPTY;
         }),
@@ -351,8 +355,8 @@ export class AppointmentFormComponent implements OnInit {
       .subscribe(() => {
         this.isSubmitting.set(false);
         this.toast.success(
-          "Solicitud Enviada",
-          "Tu cita ha sido agendada correctamente. Te contactaremos pronto."
+          'Solicitud Enviada',
+          'Tu cita ha sido agendada correctamente. Te contactaremos pronto.'
         );
         this.resetAndFillForm();
       });
@@ -372,19 +376,19 @@ export class AppointmentFormComponent implements OnInit {
   }
 
   get name() {
-    return this.appointmentForm.get("name");
+    return this.appointmentForm.get('name');
   }
   get email() {
-    return this.appointmentForm.get("email");
+    return this.appointmentForm.get('email');
   }
   get phoneNumber() {
-    return this.appointmentForm.get("phoneNumber");
+    return this.appointmentForm.get('phoneNumber');
   }
   get message() {
-    return this.appointmentForm.get("message");
+    return this.appointmentForm.get('message');
   }
   get appointmentDate() {
-    return this.appointmentForm.get("appointmentDate");
+    return this.appointmentForm.get('appointmentDate');
   }
 
   get isAuthenticated(): boolean {
@@ -392,6 +396,6 @@ export class AppointmentFormComponent implements OnInit {
   }
 
   goToLogin(): void {
-    this.router.navigate(["/auth/login"]);
+    this.router.navigate(['/auth/login']);
   }
 }
