@@ -1,120 +1,115 @@
-import { Routes } from "@angular/router";
-import { managerOrAdminGuard, adminGuard } from "../../guards/auth.guards";
+import { Routes } from '@angular/router';
+import { managerOrAdminGuard, adminGuard } from '../../guards/auth.guards';
 
 export const DASHBOARD_ROUTES: Routes = [
   {
-    path: "",
+    path: '',
     loadComponent: () =>
-      import("./dashboard/dashboard.component").then(
+      import('./dashboard/dashboard.component').then(
         (m) => m.DashboardComponent
       ),
     children: [
-      { path: "", redirectTo: "properties", pathMatch: "full" },
+      { path: '', redirectTo: 'properties', pathMatch: 'full' },
       {
-        path: "properties",
+        path: 'properties',
         loadComponent: () =>
-          import("./property-list/property-list.component").then(
+          import('./property-list/property-list.component').then(
             (m) => m.PropertyListComponent
           ),
       },
       {
-        path: "properties/new",
+        path: 'properties/new',
         loadComponent: () =>
-          import("./property-form/property-form.component").then(
+          import('./property-form/property-form.component').then(
             (m) => m.PropertyFormComponent
           ),
       },
       {
-        path: "properties/edit/:id",
+        path: 'properties/edit/:id',
         loadComponent: () =>
-          import("./property-form/property-form.component").then(
+          import('./property-form/property-form.component').then(
             (m) => m.PropertyFormComponent
           ),
       },
       {
-        path: "users",
+        path: 'users',
         loadComponent: () =>
-          import("./user-list/user-list.component").then(
+          import('./user-list/user-list.component').then(
             (m) => m.UserListComponent
           ),
-        canActivate: [adminGuard],
+        canActivate: [managerOrAdminGuard],
       },
       {
-        path: "users/new",
+        path: 'users/new',
         loadComponent: () =>
-          import("./user-form/user-form.component").then(
+          import('./user-form/user-form.component').then(
             (m) => m.UserFormComponent
           ),
-        canActivate: [adminGuard],
+        canActivate: [managerOrAdminGuard],
       },
       {
-        path: "users/edit/:id",
+        path: 'users/edit/:id',
         loadComponent: () =>
-          import("./user-form/user-form.component").then(
+          import('./user-form/user-form.component').then(
             (m) => m.UserFormComponent
           ),
-        canActivate: [adminGuard],
+        canActivate: [managerOrAdminGuard],
       },
       {
-        path: "appointments",
+        path: 'appointments',
         loadComponent: () =>
           import(
-            "./admin-appointment-list/admin-appointment-list.component"
+            './admin-appointment-list/admin-appointment-list.component'
           ).then((m) => m.AdminAppointmentListComponent),
         canActivate: [managerOrAdminGuard],
       },
       {
-        path: "appointments/new",
+        path: 'appointments/new',
         loadComponent: () =>
           import(
-            "./admin-appointment-form/admin-appointment-form.component"
+            './admin-appointment-form/admin-appointment-form.component'
           ).then((m) => m.AdminAppointmentFormComponent),
         canActivate: [managerOrAdminGuard],
       },
       {
-        path: "appointments/edit/:id",
+        path: 'appointments/edit/:id',
         loadComponent: () =>
           import(
-            "./admin-appointment-form/admin-appointment-form.component"
+            './admin-appointment-form/admin-appointment-form.component'
           ).then((m) => m.AdminAppointmentFormComponent),
         canActivate: [managerOrAdminGuard],
       },
       {
-        path: "statistics",
+        path: 'statistics',
         loadComponent: () =>
-          import(
-            "./statistics/statistics.component"
-          ).then((m) => m.StatisticsComponent),
+          import('./statistics/statistics.component').then(
+            (m) => m.StatisticsComponent
+          ),
         canActivate: [managerOrAdminGuard], // MANAGER y ADMIN pueden ver estadísticas
       },
       {
-        path: "action-logs",
+        path: 'action-logs',
         loadComponent: () =>
-          import(
-            "./action-logs/action-logs.component"
-          ).then((m) => m.ActionLogsComponent),
-        canActivate: [adminGuard], // Solo ADMIN (IT) puede ver logs de acciones
+          import('./action-logs/action-logs.component').then(
+            (m) => m.ActionLogsComponent
+          ),
+        canActivate: [managerOrAdminGuard], // Solo ADMIN (IT) puede ver logs de acciones
       },
       {
-        path: "backup",
+        path: 'backup',
         loadComponent: () =>
-          import("./backup/backup.component").then(
-            (m) => m.BackupComponent
-          ),
+          import('./backup/backup.component').then((m) => m.BackupComponent),
         canActivate: [adminGuard],
       },
       {
-        path: "manual",
+        path: 'manual',
         loadComponent: () =>
-          import("./manual/manual.component").then(
-            (m) => m.ManualComponent
-          ),
+          import('./manual/manual.component').then((m) => m.ManualComponent),
       },
-
     ],
   },
   {
-    path: "**",
-    redirectTo: "",
+    path: '**',
+    redirectTo: '',
   },
 ];
