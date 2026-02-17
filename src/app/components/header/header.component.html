@@ -25,6 +25,15 @@
         <i class="pi text-base" [class.pi-moon]="isDarkMode()" [class.pi-sun]="!isDarkMode()"></i>
       </button>
 
+      <!-- Help / Manual Button (Staff only) -->
+      @if (isStaff()) {
+      <button (click)="closeMenusAndNavigate('/manual')"
+        class="h-9 w-9 flex items-center justify-center text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-white/5 transition-colors"
+        aria-label="Manual de Ayuda">
+        <i class="pi pi-question-circle text-base"></i>
+      </button>
+      }
+
       <div class="flex items-center gap-8">
         @for (link of navLinks; track link.path) {
         <a [routerLink]="link.path" routerLinkActive="text-[var(--text-heading)]"
@@ -115,6 +124,14 @@
         <i class="pi text-lg" [class.pi-moon]="isDarkMode()" [class.pi-sun]="!isDarkMode()"></i>
       </button>
 
+      @if (isStaff()) {
+      <button (click)="closeMenusAndNavigate('/manual')"
+        class="h-10 w-10 flex items-center justify-center text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-white/5 transition-colors rounded-full"
+        aria-label="Manual de Ayuda">
+        <i class="pi pi-question-circle text-lg"></i>
+      </button>
+      }
+
       <button (click)="toggleMobileMenu()" class="text-[var(--text-heading)] p-2">
         <i class="pi" [class.pi-bars]="!isMenuOpen" [class.pi-times]="isMenuOpen" style="font-size: 1.2rem"></i>
       </button>
@@ -154,6 +171,12 @@
           <button (click)="closeMenusAndNavigate('/dashboard')"
             class="w-full text-left py-2 text-xs font-bold uppercase tracking-widest text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors">
             <i class="pi pi-objects-column mr-2 text-sky-500"></i> Dashboard
+          </button>
+          }
+          @if (isStaff()) {
+          <button (click)="closeMenusAndNavigate('/manual')"
+            class="w-full text-left py-2 text-xs font-bold uppercase tracking-widest text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors">
+            <i class="pi pi-question-circle mr-2 text-sky-500"></i> Manual de Ayuda
           </button>
           }
           <button (click)="closeMenusAndNavigate('/profile')"

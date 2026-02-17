@@ -1,4 +1,4 @@
-import { HttpClient } from "@angular/common/http";
+import { HttpClient, HttpParams } from "@angular/common/http";
 import { Injectable, inject } from "@angular/core";
 import { Observable, Subscription, interval, tap } from "rxjs";
 import {
@@ -107,6 +107,30 @@ export class AnalyticsService {
     return this.http.get<DashboardStats>(
       `${this.mainApiUrl}/analytics/dashboard`
     );
+  }
+
+  /**
+   * Exporta los action logs a un archivo PDF.
+   */
+  exportActionLogsPdf(
+    action?: string,
+    userId?: string,
+    userName?: string,
+    startDate?: string,
+    endDate?: string
+  ): Observable<Blob> {
+    let params = new HttpParams();
+
+    if (action) params = params.set('action', action);
+    if (userId) params = params.set('userId', userId);
+    if (userName) params = params.set('userName', userName);
+    if (startDate) params = params.set('startDate', startDate);
+    if (endDate) params = params.set('endDate', endDate);
+
+    return this.http.get(`${this.mainApiUrl}/analytics/action-logs/export/pdf`, {
+      params,
+      responseType: 'blob',
+    });
   }
 
   /**

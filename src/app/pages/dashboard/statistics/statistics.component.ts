@@ -1,4 +1,4 @@
-import { Component, OnInit, inject, signal } from "@angular/core";
+import { Component, OnInit, inject, signal, ViewChild, ElementRef } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { BaseChartDirective } from "ng2-charts";
 import { ChartConfiguration, ChartData } from "chart.js";
@@ -6,6 +6,7 @@ import {
   AnalyticsService,
   DashboardStats,
 } from "../../../services/analytics.service";
+import { PdfExportService } from "../../../services/pdf-export.service";
 
 @Component({
   selector: "app-statistics",
@@ -15,6 +16,7 @@ import {
 })
 export class StatisticsComponent implements OnInit {
   private analyticsService = inject(AnalyticsService);
+  public pdfService = inject(PdfExportService);
 
   stats = signal<DashboardStats | null>(null);
   loading = signal(true);
@@ -94,7 +96,6 @@ export class StatisticsComponent implements OnInit {
   public agentPerformanceData: ChartData<"bar"> = { labels: [], datasets: [] };
 
   // Estados de ordenamiento
-  public agentSortCriteria: 'total' | 'completed' = 'total';
   public sortedAgents: any[] = [];
 
   ngOnInit() {
@@ -116,25 +117,13 @@ export class StatisticsComponent implements OnInit {
     });
   }
 
-  setAgentSort(criteria: 'total' | 'completed') {
-    this.agentSortCriteria = criteria;
-    this.applyAgentSort();
-  }
-
   private applyAgentSort() {
     const data = this.stats();
     if (!data) return;
 
+    // Sort by Conversion Rate (High to Low) as requested for Ranking
     this.sortedAgents = [...data.charts.topAgents].sort((a, b) => {
-      switch (this.agentSortCriteria) {
-        case 'total':
-          return b.totalAppointments - a.totalAppointments;
-        case 'completed':
-          return b.completedAppointments - a.completedAppointments;
-
-        default:
-          return 0;
-      }
+      return b.conversionRate - a.conversionRate;
     });
   }
 
@@ -239,5 +228,12 @@ export class StatisticsComponent implements OnInit {
         },
       ],
     };
+  }
+
+  async exportReport() {
+    await this.pdfService.exportToPdf(
+      'stats-content-print-target',
+      'Reporte Estadísticas Dicasa'
+    );
   }
 }

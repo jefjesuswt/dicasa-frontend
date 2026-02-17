@@ -3,6 +3,7 @@ import {
   authGuard,
   unauthGuard,
   managerOrAdminGuard,
+  staffGuard,
 } from "./guards/auth.guards";
 
 export const routes: Routes = [
@@ -54,6 +55,14 @@ export const routes: Routes = [
       ),
     canActivate: [authGuard, managerOrAdminGuard],
     data: { preload: false },
+  },
+  {
+    path: "manual",
+    loadComponent: () =>
+      import("./pages/manual/manual-page.component").then(
+        (m) => m.ManualPageComponent
+      ),
+    canActivate: [authGuard, staffGuard],
   },
   { path: "**", redirectTo: "" },
 ];

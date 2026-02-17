@@ -38,6 +38,8 @@ export class HeaderComponent {
     return this.authService.canAccessDashboard();
   });
 
+  public isStaff = computed(() => this.authService.isStaff());
+
   public isDarkMode = computed(() => this.themeService.isDarkMode());
 
   navLinks: NavLink[] = [

@@ -68,7 +68,7 @@ export interface DropdownOption {
           <div class="px-4 md:px-6 pb-3">
             <div class="flex flex-wrap items-center gap-2">
               <span class="text-sm font-semibold text-[var(--text-secondary)] uppercase tracking-wide">Filtros activos:</span>
-              
+
               @if (selectedValue !== 'all') {
                 <div class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-sky-500/10 text-sky-600 dark:text-sky-400 rounded-full text-sm font-medium border border-sky-500/20">
                   <span>{{ dropdownLabel }}: {{ getSelectedTypeLabel() }}</span>
@@ -77,7 +77,7 @@ export interface DropdownOption {
                   </button>
                 </div>
               }
-              
+
               @if (currentStatus !== 'all') {
                 <div class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-sky-500/10 text-sky-600 dark:text-sky-400 rounded-full text-sm font-medium border border-sky-500/20">
                   <span>Estatus: {{ getSelectedStatusLabel() }}</span>
@@ -86,7 +86,7 @@ export interface DropdownOption {
                   </button>
                 </div>
               }
-              
+
               @if (minPrice) {
                 <div class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-sky-500/10 text-sky-600 dark:text-sky-400 rounded-full text-sm font-medium border border-sky-500/20">
                   <span>Desde: $ {{ minPrice }}</span>
@@ -95,7 +95,7 @@ export interface DropdownOption {
                   </button>
                 </div>
               }
-              
+
               @if (maxPrice) {
                 <div class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-sky-500/10 text-sky-600 dark:text-sky-400 rounded-full text-sm font-medium border border-sky-500/20">
                   <span>Hasta: $ {{ maxPrice }}</span>
@@ -104,10 +104,10 @@ export interface DropdownOption {
                   </button>
                 </div>
               }
-              
 
-              
-              <button 
+
+
+              <button
                 (click)="clearAdvancedFilters()"
                 class="text-sm font-semibold text-red-600 hover:text-red-500 dark:text-red-400 dark:hover:text-red-300 uppercase tracking-wide transition-colors ml-1">
                 Limpiar todos
@@ -119,7 +119,7 @@ export interface DropdownOption {
         <!-- Filter Controls - Always Visible -->
         <div class="px-4 md:px-6 py-5 bg-[var(--bg-panel)] border-t border-[var(--border-light)]">
           <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
-            
+
             <!-- Type Filter -->
             @if (showDropdown && dropdownOptions.length > 0) {
               <div class="flex flex-col gap-2">
@@ -127,9 +127,9 @@ export interface DropdownOption {
                   <i class="pi pi-building text-sm"></i>
                   {{ dropdownLabel || "Tipo" }}
                 </label>
-                <select 
+                <select
                   [(ngModel)]="selectedValue"
-                  (change)="onSearch()"
+                  (ngModelChange)="onSearch()"
                   class="bg-[var(--bg-dark)] text-[var(--text-heading)] text-sm px-3 py-2.5 pr-10 rounded-xl border border-[var(--border-light)] hover:border-sky-500/50 focus:border-sky-500 focus:ring-4 focus:ring-sky-500/10 outline-none transition-all cursor-pointer appearance-none custom-select">
                   <option value="all">Todos</option>
                   @for(opt of dropdownOptions; track opt.value) {
@@ -138,7 +138,7 @@ export interface DropdownOption {
                 </select>
               </div>
             }
-            
+
             <!-- Status Filter -->
             @if (statusOptions.length > 0) {
               <div class="flex flex-col gap-2">
@@ -146,9 +146,9 @@ export interface DropdownOption {
                   <i class="pi pi-tag text-sm"></i>
                   Estatus
                 </label>
-                <select 
+                <select
                   [(ngModel)]="currentStatus"
-                  (change)="onSearch()"
+                  (ngModelChange)="onSearch()"
                   class="bg-[var(--bg-dark)] text-[var(--text-heading)] text-sm px-3 py-2.5 pr-10 rounded-xl border border-[var(--border-light)] hover:border-sky-500/50 focus:border-sky-500 focus:ring-4 focus:ring-sky-500/10 outline-none transition-all cursor-pointer appearance-none custom-select">
                   @for(opt of statusOptions; track opt.value) {
                     <option [value]="opt.value">{{ opt.label }}</option>
@@ -164,10 +164,10 @@ export interface DropdownOption {
                   <i class="pi pi-dollar text-sm"></i>
                   Precio Mínimo
                 </label>
-                <input 
-                  type="number" 
+                <input
+                  type="number"
                   [(ngModel)]="minPrice"
-                  (change)="onSearch()"
+                  (ngModelChange)="onSearch()"
                   placeholder="0"
                   class="bg-[var(--bg-dark)] text-[var(--text-heading)] text-sm px-3 py-2.5 rounded-xl border border-[var(--border-light)] hover:border-sky-500/50 focus:border-sky-500 focus:ring-4 focus:ring-sky-500/10 outline-none transition-all placeholder:text-[var(--text-secondary)]">
               </div>
@@ -180,10 +180,10 @@ export interface DropdownOption {
                   <i class="pi pi-dollar text-sm"></i>
                   Precio Máximo
                 </label>
-                <input 
-                  type="number" 
+                <input
+                  type="number"
                   [(ngModel)]="maxPrice"
-                  (change)="onSearch()"
+                  (ngModelChange)="onSearch()"
                   placeholder="Sin límite"
                   class="bg-[var(--bg-dark)] text-[var(--text-heading)] text-sm px-3 py-2.5 rounded-xl border border-[var(--border-light)] hover:border-sky-500/50 focus:border-sky-500 focus:ring-4 focus:ring-sky-500/10 outline-none transition-all placeholder:text-[var(--text-secondary)]">
               </div>
@@ -201,7 +201,7 @@ export interface DropdownOption {
                 <input
                   type="date"
                   [(ngModel)]="startDate"
-                  (change)="onSearch()"
+                  (ngModelChange)="onSearch()"
                   class="bg-[var(--bg-dark)] text-[var(--text-heading)] text-sm px-3 py-2.5 rounded-xl border border-[var(--border-light)] hover:border-sky-500/50 focus:border-sky-500 focus:ring-4 focus:ring-sky-500/10 outline-none transition-all cursor-pointer">
               </div>
 
@@ -213,7 +213,7 @@ export interface DropdownOption {
                 <input
                   type="date"
                   [(ngModel)]="endDate"
-                  (change)="onSearch()"
+                  (ngModelChange)="onSearch()"
                   class="bg-[var(--bg-dark)] text-[var(--text-heading)] text-sm px-3 py-2.5 rounded-xl border border-[var(--border-light)] hover:border-sky-500/50 focus:border-sky-500 focus:ring-4 focus:ring-sky-500/10 outline-none transition-all cursor-pointer">
               </div>
             }
@@ -225,7 +225,7 @@ export interface DropdownOption {
                   <i class="pi pi-sort-alt text-sm"></i>
                   Ordenar
                 </label>
-                <select 
+                <select
                   [ngModel]="selectedSort + selectedOrder"
                   (change)="onSortChange($event); onSearch()"
                   class="bg-[var(--bg-dark)] text-[var(--text-heading)] text-sm px-3 py-2.5 pr-10 rounded-xl border border-[var(--border-light)] hover:border-sky-500/50 focus:border-sky-500 focus:ring-4 focus:ring-sky-500/10 outline-none transition-all cursor-pointer appearance-none custom-select">

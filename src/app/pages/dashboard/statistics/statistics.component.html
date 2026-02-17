@@ -11,9 +11,22 @@
       </div>
 
       <div
-        class="flex items-center gap-3 bg-[var(--bg-panel)] px-4 py-2 rounded-full border border-[var(--border-light)]">
-        <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-        <span class="text-sm text-[var(--text-primary)] uppercase">Sistema Online</span>
+        class="flex items-center gap-3">
+        <button (click)="exportReport()"
+          [disabled]="pdfService.isGenerating()"
+          class="flex items-center gap-2 px-4 py-2 bg-sky-500 hover:bg-sky-600 disabled:opacity-50 disabled:cursor-wait text-white text-xs font-bold uppercase tracking-widest transition-colors rounded-sm">
+          @if (pdfService.isGenerating()) {
+            <i class="pi pi-spin pi-spinner text-sm"></i>
+            <span>Generando...</span>
+          } @else {
+            <i class="pi pi-file-pdf text-sm"></i>
+            <span>Exportar Reporte</span>
+          }
+        </button>
+        <div class="bg-[var(--bg-panel)] px-4 py-2 rounded-full border border-[var(--border-light)] flex items-center gap-3">
+          <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+          <span class="text-sm text-[var(--text-primary)] uppercase">Sistema Online</span>
+        </div>
       </div>
     </div>
   </div>
@@ -25,7 +38,7 @@
       <span class="text-sm text-[var(--text-secondary)] uppercase">Sincronizando Datos...</span>
     </div>
     } @else if (stats(); as data) {
-    <div class="flex flex-col gap-8">
+    <div id="stats-content-print-target" class="flex flex-col gap-8">
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <div
           class="bg-[var(--bg-panel)] border border-[var(--border-light)] p-6 rounded-sm hover:border-sky-500/20 transition-colors group">
@@ -86,7 +99,7 @@
         </div>
       </div>
 
-      <div class="bg-[var(--bg-panel)] border border-[var(--border-light)] p-6 rounded-sm relative overflow-hidden">
+      <div class="bg-[var(--bg-panel)] border border-[var(--border-light)] p-6 rounded-sm relative overflow-hidden print-break-after print-avoid-break">
         <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-sky-600 to-blue-900 opacity-30"></div>
         <div class="flex justify-between items-end mb-6">
           <div>
@@ -109,7 +122,7 @@
       </div>
 
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <div class="bg-[var(--bg-panel)] border border-[var(--border-light)] p-6 rounded-sm flex flex-col">
+        <div class="bg-[var(--bg-panel)] border border-[var(--border-light)] p-6 rounded-sm flex flex-col no-print">
           <h3
             class="text-sm font-bold text-[var(--text-heading)] uppercase tracking-widest mb-6 border-l-2 border-sky-500 pl-3">
             Composición de Cartera
@@ -120,7 +133,7 @@
           </div>
         </div>
 
-        <div class="bg-[var(--bg-panel)] border border-[var(--border-light)] p-6 rounded-sm flex flex-col">
+        <div class="bg-[var(--bg-panel)] border border-[var(--border-light)] p-6 rounded-sm flex flex-col print-avoid-break">
           <div class="flex justify-between items-start mb-6 border-l-2 border-emerald-500 pl-3">
             <h3 class="text-sm font-bold text-[var(--text-heading)] uppercase tracking-widest">
               Efectividad Comercial
@@ -140,7 +153,7 @@
       <div class="flex flex-col gap-8">
 
         <!-- 1. CHART: COMPARATIVA DE RENDIMIENTO (FULL WIDTH) -->
-        <div class="bg-[var(--bg-panel)] border border-[var(--border-light)] p-6 rounded-sm">
+        <div class="bg-[var(--bg-panel)] border border-[var(--border-light)] p-6 rounded-sm print-avoid-break">
           <div class="flex items-center gap-3 mb-6">
             <div class="w-8 h-8 rounded-full bg-sky-500/10 flex items-center justify-center">
               <i class="pi pi-chart-bar text-sky-500 text-sm"></i>
@@ -158,7 +171,7 @@
 
         <div class="grid grid-cols-1 xl:grid-cols-2 gap-8">
           <!-- TOP PROPIEDADES -->
-          <div class="bg-[var(--bg-panel)] border border-[var(--border-light)] p-6 rounded-sm">
+          <div class="bg-[var(--bg-panel)] border border-[var(--border-light)] p-6 rounded-sm print-avoid-break">
             <div class="flex items-center gap-3 mb-6">
               <div class="w-8 h-8 rounded-full bg-sky-500/10 flex items-center justify-center">
                 <i class="pi pi-star text-sky-500 text-sm"></i>
@@ -197,7 +210,7 @@
 
 
           <!-- 2. LIST CARD -->
-          <div class="bg-[var(--bg-panel)] border border-[var(--border-light)] p-6 rounded-sm">
+          <div class="bg-[var(--bg-panel)] border border-[var(--border-light)] p-6 rounded-sm print-avoid-break">
             <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
               <div class="flex items-center gap-3">
                 <div class="w-8 h-8 rounded-full bg-emerald-500/10 flex items-center justify-center">
@@ -206,27 +219,6 @@
                 <h3 class="text-sm font-bold text-[var(--text-heading)] uppercase tracking-wider">
                   Ranking de Asesores
                 </h3>
-              </div>
-
-              <!-- SORTING UI -->
-              <div
-                class="flex items-center bg-[var(--bg-dark)]/50 border border-[var(--border-light)] p-1 rounded-sm gap-1">
-                <button (click)="setAgentSort('total')"
-                  class="px-3 py-1.5 text-[10px] uppercase font-bold tracking-tighter transition-all rounded-sm"
-                  [class.bg-sky-500]="agentSortCriteria === 'total'" [class.text-white]="agentSortCriteria === 'total'"
-                  [class.text-[var(--text-secondary)]]="agentSortCriteria !== 'total'"
-                  [class.hover:text-sky-400]="agentSortCriteria !== 'total'">
-                  Total
-                </button>
-                <button (click)="setAgentSort('completed')"
-                  class="px-3 py-1.5 text-[10px] uppercase font-bold tracking-tighter transition-all rounded-sm"
-                  [class.bg-sky-500]="agentSortCriteria === 'completed'"
-                  [class.text-white]="agentSortCriteria === 'completed'"
-                  [class.text-[var(--text-secondary)]]="agentSortCriteria !== 'completed'"
-                  [class.hover:text-sky-400]="agentSortCriteria !== 'completed'">
-                  Éxitos
-                </button>
-
               </div>
             </div>
 

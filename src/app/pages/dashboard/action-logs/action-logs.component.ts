@@ -76,6 +76,35 @@ export class ActionLogsComponent implements OnInit {
         this.loadLogs();
     }
 
+    exportPdf(): void {
+        this.loading.set(true);
+        // Map filters same as loadLogs
+        const action = this.currentFilters.selectedValue !== "all" ? this.currentFilters.selectedValue : undefined;
+        const query = this.currentFilters.query ? this.currentFilters.query.trim() : "";
+        const userName = query;
+
+        this.analyticsService.exportActionLogsPdf(
+            action,
+            undefined, // userId
+            userName || undefined,
+            this.currentFilters.startDate,
+            this.currentFilters.endDate
+        ).pipe(finalize(() => this.loading.set(false)))
+        .subscribe({
+            next: (blob: Blob) => {
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `reporte-auditoria-${new Date().toISOString().split('T')[0]}.pdf`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                window.URL.revokeObjectURL(url);
+            },
+            error: (err) => console.error('Error exporting PDF:', err)
+        });
+    }
+
     loadLogs(): void {
         this.loading.set(true);
 

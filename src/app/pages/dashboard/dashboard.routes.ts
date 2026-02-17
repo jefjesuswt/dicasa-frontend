@@ -101,11 +101,6 @@ export const DASHBOARD_ROUTES: Routes = [
           import('./backup/backup.component').then((m) => m.BackupComponent),
         canActivate: [adminGuard],
       },
-      {
-        path: 'manual',
-        loadComponent: () =>
-          import('./manual/manual.component').then((m) => m.ManualComponent),
-      },
     ],
   },
   {
